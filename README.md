@@ -30,3 +30,7 @@ python -m unittest discover -s tests -p "test_*.py"
 The Verification Profile and its committed contracts are authority. The
 independent Python and TypeScript adapters are cross-implementation evidence
 of conformance; neither implementation is authoritative.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).
