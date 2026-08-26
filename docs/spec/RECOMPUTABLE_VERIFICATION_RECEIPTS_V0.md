@@ -203,3 +203,21 @@ The pinned suite executes:
 - contradictory outcome/reason projection rejection;
 - outcome-relevant hidden-state rejection, plus a counterfactual demonstration
   that the forbidden input could change the semantic outcome.
+
+## 11. Adversarial semantic audit
+
+The pinned v0 conformance set includes deliberately broken mutant behaviors.
+Every conforming adapter MUST mechanically distinguish the correct contract
+from all of them:
+
+- sorting or deduplicating arrays during canonicalization;
+- applying Unicode NFC normalization;
+- ignoring canonical-result projections;
+- converting an unavailable normative dependency into `REFUTED`;
+- allowing uncommitted ambient state to affect evaluation;
+- trusting a stored result without evaluating changed evidence.
+
+A mutant is killed only when the named witness demonstrates the mutant's
+specific faulty behavior and the correct gate produces the frozen contrary
+result. Merely observing unrelated digest drift does not kill a semantic
+mutant.

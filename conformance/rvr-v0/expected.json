@@ -33,5 +33,39 @@
       "reasonCode": "rvr.gate.evidence_closure_incomplete",
       "evaluationPerformed": false
     }
+  },
+  "mutantAudit": {
+    "requiredKilled": [
+      {
+        "id": "sort_arrays_as_sets",
+        "killedBy": "array-order-and-duplicates",
+        "faultObservation": "distinct-arrays-collapsed"
+      },
+      {
+        "id": "normalize_unicode_nfc",
+        "killedBy": "unicode-not-normalized",
+        "faultObservation": "distinct-unicode-strings-collapsed"
+      },
+      {
+        "id": "ignore_result_projection",
+        "killedBy": "projectionContradiction",
+        "faultObservation": "contradictory-receipt-accepted"
+      },
+      {
+        "id": "missing_dependency_as_refuted",
+        "killedBy": "cannotRecompute",
+        "faultObservation": "semantic-outcome-returned-without-normative-dependency"
+      },
+      {
+        "id": "allow_uncommitted_ambient_override",
+        "killedBy": "hiddenState",
+        "faultObservation": "uncommitted-input-produced-semantic-outcome"
+      },
+      {
+        "id": "trust_stored_result_without_evaluation",
+        "killedBy": "diverged",
+        "faultObservation": "mutated-evidence-reported-reproduced-without-evaluation"
+      }
+    ]
   }
 }

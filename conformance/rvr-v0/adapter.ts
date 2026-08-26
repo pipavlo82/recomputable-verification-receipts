@@ -14,6 +14,7 @@ const PROFILE_SCHEMA_PATH = resolve(PACKAGE, "verification-profile.schema.json")
 const RVR_SCHEMA_PATH = resolve(PACKAGE, "rvr.schema.json")
 const VECTORS_PATH = resolve(PACKAGE, "vectors.json")
 const EXPECTED_PATH = resolve(PACKAGE, "expected.json")
+const MUTANTS_PATH = resolve(PACKAGE, "mutants.json")
 const MANIFEST_PATH = resolve(PACKAGE, "manifest.json")
 
 const MANIFEST_MEMBERS = [
@@ -21,6 +22,7 @@ const MANIFEST_MEMBERS = [
   "conformance/rvr-v0/adapter.py",
   "conformance/rvr-v0/adapter.ts",
   "conformance/rvr-v0/expected.json",
+  "conformance/rvr-v0/mutants.json",
   "conformance/rvr-v0/rvr.schema.json",
   "conformance/rvr-v0/vectors.json",
   "conformance/rvr-v0/verification-profile.json",
@@ -568,6 +570,124 @@ function runCanonicalVectors(vectors: RecordJson): RecordJson {
   return { passed: passed.length, vectorIds: passed }
 }
 
+function mutantSortArraysAsSets(value: unknown): string {
+  if (value === null) return "null"
+  if (value === true) return "true"
+  if (value === false) return "false"
+  if (typeof value === "string") return canonicalJson(value)
+  if (typeof value === "number") throw new CanonicalizationError("mutant rejects numbers")
+  if (Array.isArray(value)) {
+    const entries = [...new Set(value.map(mutantSortArraysAsSets))].sort()
+    return `[${entries.join(",")}]`
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>
+    const keys = Object.keys(record).sort(compareScalarStrings)
+    return `{${keys.map((key) => `${canonicalJson(key)}:${mutantSortArraysAsSets(record[key])}`).join(",")}}`
+  }
+  throw new CanonicalizationError("mutant unsupported value")
+}
+
+function mutantNormalizeUnicodeNfc(value: unknown): string {
+  if (value === null) return "null"
+  if (value === true) return "true"
+  if (value === false) return "false"
+  if (typeof value === "string") return canonicalJson(value.normalize("NFC"))
+  if (typeof value === "number") throw new CanonicalizationError("mutant rejects numbers")
+  if (Array.isArray(value)) return `[${value.map(mutantNormalizeUnicodeNfc).join(",")}]`
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>
+    const normalized: Record<string, unknown> = {}
+    for (const [key, item] of Object.entries(record)) normalized[key.normalize("NFC")] = item
+    const keys = Object.keys(normalized).sort(compareScalarStrings)
+    return `{${keys.map((key) => `${canonicalJson(key)}:${mutantNormalizeUnicodeNfc(normalized[key])}`).join(",")}}`
+  }
+  throw new CanonicalizationError("mutant unsupported value")
+}
+
+function mutantAcceptsWithoutProjection(bundle: RecordJson, profileDigest: string, rvrSchema: RecordJson): boolean {
+  requireSchema(bundle.receipt, rvrSchema, "#", "mutant receipt")
+  const identities: Record<string, string> = {
+    claimDigest: canonicalDigest(bundle.claim),
+    evidenceSetDigest: evidenceSetDigest(bundle.evidenceSet),
+    verificationProfileDigest: profileDigest,
+    resultDigest: canonicalDigest(bundle.canonicalResult),
+  }
+  return Object.entries(identities).every(([field, actual]) => bundle.receipt[field] === actual)
+}
+
+function runMutantAudit(
+  mutants: RecordJson,
+  expected: RecordJson,
+  vectors: RecordJson,
+  reproducedBundle: RecordJson,
+  diverged: RecordJson,
+  cannot: RecordJson,
+  contradictoryBundle: RecordJson,
+  projection: RecordJson,
+  unsafeResult: RecordJson,
+  hidden: RecordJson,
+  profileDigest: string,
+  rvrSchema: RecordJson,
+): RecordJson {
+  const definitions = mutants.mutants as RecordJson[]
+  const required = expected.mutantAudit.requiredKilled as RecordJson[]
+  if (!jsonSame(definitions.map((item) => item.id), required.map((item) => item.id))) {
+    throw new Error("mutant inventory differs from expected kill matrix")
+  }
+  const canonicalById = new Map<string, RecordJson>(
+    vectors.canonicalByteVectors.map((item: RecordJson) => [item.id, item]),
+  )
+  const results: RecordJson[] = []
+
+  definitions.forEach((definition, index) => {
+    const expectedKill = required[index]!
+    const mutantId = definition.id
+    if (definition.requiredWitness !== expectedKill.killedBy) throw new Error(`${mutantId}: witness mismatch`)
+    if (definition.expectedFaultObservation !== expectedKill.faultObservation) {
+      throw new Error(`${mutantId}: fault observation mismatch`)
+    }
+    let faultObserved = false
+    if (mutantId === "sort_arrays_as_sets") {
+      const witness = canonicalById.get(definition.requiredWitness)!
+      faultObserved = canonicalJson(witness.left) !== canonicalJson(witness.right)
+        && mutantSortArraysAsSets(witness.left) === mutantSortArraysAsSets(witness.right)
+    } else if (mutantId === "normalize_unicode_nfc") {
+      const witness = canonicalById.get(definition.requiredWitness)!
+      faultObserved = canonicalJson(witness.left) !== canonicalJson(witness.right)
+        && mutantNormalizeUnicodeNfc(witness.left) === mutantNormalizeUnicodeNfc(witness.right)
+    } else if (mutantId === "ignore_result_projection") {
+      faultObserved = projection.gateStatus === "REJECTED"
+        && mutantAcceptsWithoutProjection(contradictoryBundle, profileDigest, rvrSchema)
+    } else if (mutantId === "missing_dependency_as_refuted") {
+      const mutantOutput = {
+        verificationOutcome: "REFUTED",
+        recomputationStatus: "REPRODUCED",
+        evaluationPerformed: false,
+      }
+      faultObserved = cannot.recomputationStatus === "CANNOT_RECOMPUTE"
+        && mutantOutput.verificationOutcome === "REFUTED"
+    } else if (mutantId === "allow_uncommitted_ambient_override") {
+      faultObserved = hidden.gateStatus === "REJECTED" && unsafeResult.outcome === "REFUTED"
+    } else if (mutantId === "trust_stored_result_without_evaluation") {
+      const mutantOutput = {
+        verificationOutcome: reproducedBundle.receipt.outcome,
+        recomputationStatus: "REPRODUCED",
+        evaluationPerformed: false,
+      }
+      faultObserved = diverged.recomputationStatus === "DIVERGED"
+        && diverged.evaluationPerformed === true
+        && mutantOutput.recomputationStatus === "REPRODUCED"
+        && mutantOutput.evaluationPerformed === false
+    } else throw new Error(`unimplemented mutant: ${mutantId}`)
+
+    if (!faultObserved) throw new Error(`mutant survived: ${mutantId}`)
+    results.push({ ...expectedKill, killed: true })
+  })
+
+  return { killed: results.length, total: definitions.length, results }
+}
+
 function buildManifest(): RecordJson {
   const members = [...MANIFEST_MEMBERS].sort(compareScalarStrings).map((path) => ({ path, sha256: exactFileDigest(path) }))
   const rows = members.map((item) => `${item.path}\t${item.sha256}\n`).join("")
@@ -600,6 +720,7 @@ export function runGate(): RecordJson {
   const profile = loadJson(PROFILE_PATH)
   const vectors = loadJson(VECTORS_PATH)
   const expected = loadJson(EXPECTED_PATH)
+  const mutants = loadJson(MUTANTS_PATH)
   const profileDigest = auditProfile(profile, profileSchema)
   const manifest = auditManifest()
   const canonicalByteVectors = runCanonicalVectors(vectors)
@@ -670,6 +791,21 @@ export function runGate(): RecordJson {
   }
   assertExpected(hidden, expected.cases.HIDDEN_STATE_NEGATIVE_CONTROL, "HIDDEN_STATE_NEGATIVE_CONTROL")
 
+  const mutantAudit = runMutantAudit(
+    mutants,
+    expected,
+    vectors,
+    reproducedBundle,
+    diverged,
+    cannot,
+    contradictoryBundle,
+    projection,
+    unsafeResult,
+    hidden,
+    profileDigest,
+    rvrSchema,
+  )
+
   return {
     gate: "RVR_V0_CONFORMANCE_PASS",
     implementation: "typescript-independent-rvr-v0",
@@ -686,6 +822,7 @@ export function runGate(): RecordJson {
       PROJECTION_NEGATIVE_CONTROL: projection,
       HIDDEN_STATE_NEGATIVE_CONTROL: hidden,
     },
+    adversarialMutants: mutantAudit,
     producerImports: 0,
   }
 }

@@ -40,6 +40,12 @@ class RvrV0ConformanceTests(unittest.TestCase):
         )
         self.assertEqual(python_report["canonicalByteVectors"], typescript_report["canonicalByteVectors"])
         self.assertEqual(python_report["cases"], typescript_report["cases"])
+        self.assertEqual(python_report["adversarialMutants"], typescript_report["adversarialMutants"])
+        self.assertEqual(python_report["adversarialMutants"]["killed"], 6)
+        self.assertEqual(
+            python_report["adversarialMutants"]["killed"],
+            python_report["adversarialMutants"]["total"],
+        )
 
 
 if __name__ == "__main__":

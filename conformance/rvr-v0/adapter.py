@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,7 @@ PROFILE_SCHEMA_PATH = PACKAGE / "verification-profile.schema.json"
 RVR_SCHEMA_PATH = PACKAGE / "rvr.schema.json"
 VECTORS_PATH = PACKAGE / "vectors.json"
 EXPECTED_PATH = PACKAGE / "expected.json"
+MUTANTS_PATH = PACKAGE / "mutants.json"
 MANIFEST_PATH = PACKAGE / "manifest.json"
 
 MANIFEST_MEMBERS = (
@@ -31,6 +33,7 @@ MANIFEST_MEMBERS = (
     "conformance/rvr-v0/adapter.py",
     "conformance/rvr-v0/adapter.ts",
     "conformance/rvr-v0/expected.json",
+    "conformance/rvr-v0/mutants.json",
     "conformance/rvr-v0/rvr.schema.json",
     "conformance/rvr-v0/vectors.json",
     "conformance/rvr-v0/verification-profile.json",
@@ -602,6 +605,148 @@ def run_canonical_vectors(vectors: dict[str, Any]) -> dict[str, Any]:
     return {"passed": len(passed), "vectorIds": passed}
 
 
+def mutant_sort_arrays_as_sets(value: Any) -> str:
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if isinstance(value, str):
+        return canonical_json(value)
+    if isinstance(value, (int, float)):
+        raise CanonicalizationError("mutant rejects numbers")
+    if isinstance(value, list):
+        entries = sorted(set(mutant_sort_arrays_as_sets(item) for item in value))
+        return "[" + ",".join(entries) + "]"
+    if isinstance(value, dict):
+        keys = sorted(value, key=lambda item: tuple(ord(character) for character in item))
+        return "{" + ",".join(
+            f"{canonical_json(key)}:{mutant_sort_arrays_as_sets(value[key])}" for key in keys
+        ) + "}"
+    raise CanonicalizationError("mutant unsupported value")
+
+
+def mutant_normalize_unicode_nfc(value: Any) -> str:
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if isinstance(value, str):
+        return canonical_json(unicodedata.normalize("NFC", value))
+    if isinstance(value, (int, float)):
+        raise CanonicalizationError("mutant rejects numbers")
+    if isinstance(value, list):
+        return "[" + ",".join(mutant_normalize_unicode_nfc(item) for item in value) + "]"
+    if isinstance(value, dict):
+        normalized = {unicodedata.normalize("NFC", key): item for key, item in value.items()}
+        keys = sorted(normalized, key=lambda item: tuple(ord(character) for character in item))
+        return "{" + ",".join(
+            f"{canonical_json(key)}:{mutant_normalize_unicode_nfc(normalized[key])}" for key in keys
+        ) + "}"
+    raise CanonicalizationError("mutant unsupported value")
+
+
+def mutant_accepts_without_projection(
+    bundle: dict[str, Any], profile_digest: str, rvr_schema: dict[str, Any]
+) -> bool:
+    receipt = bundle["receipt"]
+    require_schema(receipt, rvr_schema, label="mutant receipt")
+    identities = {
+        "claimDigest": canonical_digest(bundle["claim"]),
+        "evidenceSetDigest": evidence_set_digest(bundle["evidenceSet"]),
+        "verificationProfileDigest": profile_digest,
+        "resultDigest": canonical_digest(bundle["canonicalResult"]),
+    }
+    return all(receipt[field] == actual for field, actual in identities.items())
+
+
+def run_mutant_audit(
+    mutants: dict[str, Any],
+    expected: dict[str, Any],
+    vectors: dict[str, Any],
+    reproduced_bundle: dict[str, Any],
+    diverged: dict[str, Any],
+    cannot: dict[str, Any],
+    contradictory_bundle: dict[str, Any],
+    projection: dict[str, Any],
+    unsafe_result: dict[str, Any],
+    hidden: dict[str, Any],
+    profile_digest: str,
+    rvr_schema: dict[str, Any],
+) -> dict[str, Any]:
+    definitions = mutants["mutants"]
+    required = expected["mutantAudit"]["requiredKilled"]
+    if [item["id"] for item in definitions] != [item["id"] for item in required]:
+        raise AssertionError("mutant inventory differs from expected kill matrix")
+    canonical_by_id = {item["id"]: item for item in vectors["canonicalByteVectors"]}
+    results: list[dict[str, Any]] = []
+
+    for definition, expected_kill in zip(definitions, required):
+        mutant_id = definition["id"]
+        if definition["requiredWitness"] != expected_kill["killedBy"]:
+            raise AssertionError(f"{mutant_id}: witness mismatch")
+        if definition["expectedFaultObservation"] != expected_kill["faultObservation"]:
+            raise AssertionError(f"{mutant_id}: fault observation mismatch")
+
+        if mutant_id == "sort_arrays_as_sets":
+            witness = canonical_by_id[definition["requiredWitness"]]
+            fault_observed = (
+                canonical_json(witness["left"]) != canonical_json(witness["right"])
+                and mutant_sort_arrays_as_sets(witness["left"])
+                == mutant_sort_arrays_as_sets(witness["right"])
+            )
+        elif mutant_id == "normalize_unicode_nfc":
+            witness = canonical_by_id[definition["requiredWitness"]]
+            fault_observed = (
+                canonical_json(witness["left"]) != canonical_json(witness["right"])
+                and mutant_normalize_unicode_nfc(witness["left"])
+                == mutant_normalize_unicode_nfc(witness["right"])
+            )
+        elif mutant_id == "ignore_result_projection":
+            fault_observed = (
+                projection["gateStatus"] == "REJECTED"
+                and mutant_accepts_without_projection(contradictory_bundle, profile_digest, rvr_schema)
+            )
+        elif mutant_id == "missing_dependency_as_refuted":
+            mutant_output = {
+                "verificationOutcome": "REFUTED",
+                "recomputationStatus": "REPRODUCED",
+                "evaluationPerformed": False,
+            }
+            fault_observed = (
+                cannot["recomputationStatus"] == "CANNOT_RECOMPUTE"
+                and mutant_output["verificationOutcome"] == "REFUTED"
+            )
+        elif mutant_id == "allow_uncommitted_ambient_override":
+            fault_observed = (
+                hidden["gateStatus"] == "REJECTED"
+                and unsafe_result["outcome"] == "REFUTED"
+            )
+        elif mutant_id == "trust_stored_result_without_evaluation":
+            mutant_output = {
+                "verificationOutcome": reproduced_bundle["receipt"]["outcome"],
+                "recomputationStatus": "REPRODUCED",
+                "evaluationPerformed": False,
+            }
+            fault_observed = (
+                diverged["recomputationStatus"] == "DIVERGED"
+                and diverged["evaluationPerformed"] is True
+                and mutant_output["recomputationStatus"] == "REPRODUCED"
+                and mutant_output["evaluationPerformed"] is False
+            )
+        else:
+            raise AssertionError(f"unimplemented mutant: {mutant_id}")
+
+        if not fault_observed:
+            raise AssertionError(f"mutant survived: {mutant_id}")
+        results.append({**expected_kill, "killed": True})
+
+    return {"killed": len(results), "total": len(definitions), "results": results}
+
+
 def manifest_rows(members: list[dict[str, str]]) -> bytes:
     rows = "".join(f"{item['path']}\t{item['sha256']}\n" for item in members)
     return rows.encode("utf-8")
@@ -654,6 +799,7 @@ def run_gate() -> dict[str, Any]:
     profile = load_json(PROFILE_PATH)
     vectors = load_json(VECTORS_PATH)
     expected = load_json(EXPECTED_PATH)
+    mutants = load_json(MUTANTS_PATH)
 
     profile_digest = audit_profile(profile, profile_schema)
     manifest_report = audit_manifest()
@@ -743,6 +889,21 @@ def run_gate() -> dict[str, Any]:
         "HIDDEN_STATE_NEGATIVE_CONTROL",
     )
 
+    mutant_audit = run_mutant_audit(
+        mutants,
+        expected,
+        vectors,
+        reproduced_bundle,
+        diverged,
+        cannot,
+        contradictory_bundle,
+        projection,
+        unsafe_result,
+        hidden,
+        profile_digest,
+        rvr_schema,
+    )
+
     return {
         "gate": "RVR_V0_CONFORMANCE_PASS",
         "implementation": "python-independent-rvr-v0",
@@ -759,6 +920,7 @@ def run_gate() -> dict[str, Any]:
             "PROJECTION_NEGATIVE_CONTROL": projection,
             "HIDDEN_STATE_NEGATIVE_CONTROL": hidden,
         },
+        "adversarialMutants": mutant_audit,
         "producerImports": 0,
     }
 

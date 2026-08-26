@@ -1,0 +1,41 @@
+{
+  "schema": "rvr.adversarial-mutants.v0",
+  "mutants": [
+    {
+      "id": "sort_arrays_as_sets",
+      "fault": "canonicalizer sorts and deduplicates arrays",
+      "requiredWitness": "array-order-and-duplicates",
+      "expectedFaultObservation": "distinct-arrays-collapsed"
+    },
+    {
+      "id": "normalize_unicode_nfc",
+      "fault": "canonicalizer applies NFC normalization to strings",
+      "requiredWitness": "unicode-not-normalized",
+      "expectedFaultObservation": "distinct-unicode-strings-collapsed"
+    },
+    {
+      "id": "ignore_result_projection",
+      "fault": "receipt gate accepts top-level fields that contradict the canonical result",
+      "requiredWitness": "projectionContradiction",
+      "expectedFaultObservation": "contradictory-receipt-accepted"
+    },
+    {
+      "id": "missing_dependency_as_refuted",
+      "fault": "missing normative dependency is converted into a semantic REFUTED result",
+      "requiredWitness": "cannotRecompute",
+      "expectedFaultObservation": "semantic-outcome-returned-without-normative-dependency"
+    },
+    {
+      "id": "allow_uncommitted_ambient_override",
+      "fault": "uncommitted ambient override is allowed to influence evaluation",
+      "requiredWitness": "hiddenState",
+      "expectedFaultObservation": "uncommitted-input-produced-semantic-outcome"
+    },
+    {
+      "id": "trust_stored_result_without_evaluation",
+      "fault": "recomputation trusts the stored result despite mutated evidence",
+      "requiredWitness": "diverged",
+      "expectedFaultObservation": "mutated-evidence-reported-reproduced-without-evaluation"
+    }
+  ]
+}

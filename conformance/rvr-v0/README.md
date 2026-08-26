@@ -12,7 +12,8 @@ bun conformance/rvr-v0/adapter.ts --check
 
 Each gate independently parses strict JSON, validates schemas, audits exact
 dependency and package identities, runs canonical-byte vectors, constructs
-receipts, and recomputes every semantic and negative-control case. Neither
+receipts, recomputes every semantic and negative-control case, and proves that
+all pinned adversarial mutants are killed by their intended witnesses. Neither
 imports a producer implementation or the other adapter.
 
 `verification-profile.json` and the contracts it identifies are authority.

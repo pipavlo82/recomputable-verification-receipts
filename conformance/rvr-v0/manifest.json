@@ -1,23 +1,27 @@
 {
   "schema": "rvr.conformance-manifest.v0",
   "hashAlgorithm": "sha256-lowercase-hex",
-  "memberCount": 9,
+  "memberCount": 10,
   "members": [
     {
       "path": "conformance/rvr-v0/README.md",
-      "sha256": "833d952092adc0e3b7c6bd2d6e136177f81c33b5e66441f5a27ae41dca461042"
+      "sha256": "336d331bee0862a34cb4320198f61c64b14ef358a0689d7d6418fa38d280d4c3"
     },
     {
       "path": "conformance/rvr-v0/adapter.py",
-      "sha256": "9275e96a507d8b7fbaba5ee31b3389bb7509bba0014ef04f08cc05770583f8d6"
+      "sha256": "27bc410c8155de04412ccc579ca1976b0da47717bf4751603102005e8da5cdf3"
     },
     {
       "path": "conformance/rvr-v0/adapter.ts",
-      "sha256": "3ae10e423046c90cd3ae61d7e4e2748e992c15013a5eec3b66030adcc53e3110"
+      "sha256": "228e3ee678019d9c2c1e84a362efcdea52a711098822fb052872c2440417e857"
     },
     {
       "path": "conformance/rvr-v0/expected.json",
-      "sha256": "527c95ab7162cedc13db6240cfda5d9d9836cc86b7867fb74ebf7103bfddaeb7"
+      "sha256": "3a1fa57b8b63fb68823f8c51141b237ef5b0f2a83a6d92a68591821e9cea44ac"
+    },
+    {
+      "path": "conformance/rvr-v0/mutants.json",
+      "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847"
     },
     {
       "path": "conformance/rvr-v0/rvr.schema.json",
@@ -29,7 +33,7 @@
     },
     {
       "path": "conformance/rvr-v0/verification-profile.json",
-      "sha256": "bbe5fd7644065591df3992ddda11128b0d43cbffb8714523aeb577454db492ef"
+      "sha256": "416930b9e6310bd0a14813463320a2bd7608d3f10d435488d1147668879e21f9"
     },
     {
       "path": "conformance/rvr-v0/verification-profile.schema.json",
@@ -37,9 +41,9 @@
     },
     {
       "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
-      "sha256": "8e717eeecdb0afa94d290de271f8e7bb6b880e04a95ec49541500e8c13d49bda"
+      "sha256": "b17e922a87035e3bb5e6e03f1a1c811e7594e5649eb3b7cb23d3c54488beb22e"
     }
   ],
   "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
-  "packageDigest": "c9a32a7918b72c53e434bb174ed43abb3a8c55387792f66517da8a8206b3fa60"
+  "packageDigest": "9e6d347d05d2744925a36a66c477d41b53646cd2e788f53391f137d317e88f2a"
 }

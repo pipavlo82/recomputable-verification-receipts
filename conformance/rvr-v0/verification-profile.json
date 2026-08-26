@@ -4,7 +4,7 @@
   "verificationSpecification": {
     "id": "verification-specification",
     "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
-    "sha256": "8e717eeecdb0afa94d290de271f8e7bb6b880e04a95ec49541500e8c13d49bda",
+    "sha256": "b17e922a87035e3bb5e6e03f1a1c811e7594e5649eb3b7cb23d3c54488beb22e",
     "requiredForRecomputation": true
   },
   "conformanceVectorSet": {
@@ -13,7 +13,13 @@
       {
         "id": "expected-results",
         "path": "conformance/rvr-v0/expected.json",
-        "sha256": "527c95ab7162cedc13db6240cfda5d9d9836cc86b7867fb74ebf7103bfddaeb7",
+        "sha256": "3a1fa57b8b63fb68823f8c51141b237ef5b0f2a83a6d92a68591821e9cea44ac",
+        "requiredForRecomputation": false
+      },
+      {
+        "id": "adversarial-mutants",
+        "path": "conformance/rvr-v0/mutants.json",
+        "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847",
         "requiredForRecomputation": false
       },
       {
@@ -23,7 +29,7 @@
         "requiredForRecomputation": false
       }
     ],
-    "digest": "2d8eacd9d55a940266480dde2dad1537961d5112d5f92530cc6b45f694ea3e3d",
+    "digest": "5eaad4c174d4018886cd3284002d7974514e65f2a4cae7114c96d6bff5eac084",
     "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows"
   },
   "canonicalByteContract": {
