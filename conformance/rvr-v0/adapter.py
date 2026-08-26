@@ -19,13 +19,10 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
+PROFILE_PACKAGE_ROOT = ROOT
 PACKAGE = ROOT / "conformance/rvr-v0"
 PROFILE_PATH = PACKAGE / "verification-profile.json"
-PROFILE_SCHEMA_PATH = PACKAGE / "verification-profile.schema.json"
-RVR_SCHEMA_PATH = PACKAGE / "rvr.schema.json"
-VECTORS_PATH = PACKAGE / "vectors.json"
-EXPECTED_PATH = PACKAGE / "expected.json"
-MUTANTS_PATH = PACKAGE / "mutants.json"
+PROFILE_MANIFEST_SCHEMA_PATH = PACKAGE / "verification-profile-manifest.schema.json"
 MANIFEST_PATH = PACKAGE / "manifest.json"
 
 MANIFEST_MEMBERS = (
@@ -34,10 +31,11 @@ MANIFEST_MEMBERS = (
     "conformance/rvr-v0/adapter.ts",
     "conformance/rvr-v0/expected.json",
     "conformance/rvr-v0/mutants.json",
+    "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
     "conformance/rvr-v0/rvr.schema.json",
     "conformance/rvr-v0/vectors.json",
     "conformance/rvr-v0/verification-profile.json",
-    "conformance/rvr-v0/verification-profile.schema.json",
+    "conformance/rvr-v0/verification-profile-manifest.schema.json",
     "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
 )
 
@@ -55,6 +53,10 @@ class CanonicalizationError(RvrError):
 
 
 class SchemaValidationError(RvrError):
+    pass
+
+
+class DependencyResolutionError(RvrError):
     pass
 
 
@@ -125,12 +127,43 @@ def strict_json_loads(text: str) -> Any:
     return normalize_json_strings(parsed)
 
 
+def parse_json_bytes(data: bytes, label: str) -> Any:
+    try:
+        text = data.decode("utf-8")
+    except UnicodeError as error:
+        raise StrictJsonError(f"cannot decode UTF-8 JSON {label}: {error}") from error
+    return strict_json_loads(text)
+
+
 def load_json(path: Path) -> Any:
     try:
-        text = path.read_bytes().decode("utf-8")
-    except (OSError, UnicodeError) as error:
-        raise StrictJsonError(f"cannot read UTF-8 JSON {path}: {error}") from error
-    return strict_json_loads(text)
+        data = path.read_bytes()
+    except OSError as error:
+        raise StrictJsonError(f"cannot read JSON {path}: {error}") from error
+    return parse_json_bytes(data, str(path))
+
+
+def canonical_string(value: str) -> str:
+    escaped: list[str] = ['"']
+    short_escapes = {
+        0x08: "\\b",
+        0x09: "\\t",
+        0x0A: "\\n",
+        0x0C: "\\f",
+        0x0D: "\\r",
+        0x22: '\\"',
+        0x5C: "\\\\",
+    }
+    for character in normalize_scalar_text(value):
+        code = ord(character)
+        if code in short_escapes:
+            escaped.append(short_escapes[code])
+        elif code <= 0x1F:
+            escaped.append(f"\\u{code:04x}")
+        else:
+            escaped.append(character)
+    escaped.append('"')
+    return "".join(escaped)
 
 
 def canonical_json(value: Any) -> str:
@@ -141,8 +174,7 @@ def canonical_json(value: Any) -> str:
     if value is False:
         return "false"
     if isinstance(value, str):
-        normalized = normalize_scalar_text(value)
-        return json.dumps(normalized, ensure_ascii=False, separators=(",", ":"))
+        return canonical_string(value)
     if isinstance(value, (int, float)):
         raise CanonicalizationError("rvr-canonical-json-v0 forbids numbers")
     if isinstance(value, list):
@@ -284,32 +316,69 @@ def require_schema(value: Any, schema: dict[str, Any], pointer: str = "#", label
 
 def dependency_entries(profile: dict[str, Any]) -> list[dict[str, Any]]:
     return [
+        profile["profileSchemaContract"]["manifest"],
+        profile["profileSchemaContract"]["constraints"],
         profile["verificationSpecification"],
         *profile["conformanceVectorSet"]["members"],
         *profile["schemaContracts"],
     ]
 
 
-def exact_file_digest(repository_path: str) -> str:
-    path = ROOT / repository_path
+def resolve_dependency_path(package_root: Path, dependency_path: str) -> Path:
+    if not isinstance(dependency_path, str) or not dependency_path:
+        raise DependencyResolutionError("dependency path must be a non-empty string")
+    if dependency_path.startswith("/") or "\\" in dependency_path or ":" in dependency_path:
+        raise DependencyResolutionError(f"dependency path is not relative POSIX: {dependency_path!r}")
+    segments = dependency_path.split("/")
+    if any(segment in ("", ".", "..") for segment in segments):
+        raise DependencyResolutionError(f"dependency path contains a forbidden segment: {dependency_path!r}")
+    resolved_root = package_root.resolve()
+    resolved_path = resolved_root.joinpath(*segments).resolve()
+    try:
+        resolved_path.relative_to(resolved_root)
+    except ValueError as error:
+        raise DependencyResolutionError(f"dependency escapes profile package root: {dependency_path!r}") from error
+    return resolved_path
+
+
+def exact_file_digest(dependency_path: str, package_root: Path = PROFILE_PACKAGE_ROOT) -> str:
+    path = resolve_dependency_path(package_root, dependency_path)
     if not path.is_file():
-        raise FileNotFoundError(repository_path)
+        raise FileNotFoundError(dependency_path)
     return sha256_hex(path.read_bytes())
 
 
-def audit_profile(profile: dict[str, Any], profile_schema: dict[str, Any]) -> str:
-    require_schema(profile, profile_schema, label="verification profile")
+def audit_profile(
+    profile: dict[str, Any],
+    manifest_schema: dict[str, Any],
+    manifest_schema_bytes: bytes,
+) -> tuple[str, dict[str, Any], dict[str, bytes]]:
+    require_schema(profile, manifest_schema, label="verification profile manifest")
     entries = dependency_entries(profile)
     ids = [entry["id"] for entry in entries]
     if len(ids) != len(set(ids)):
         raise GateRejection("rvr.gate.identity_mismatch", "duplicate profile dependency id")
+    pinned_bytes: dict[str, bytes] = {}
     for entry in entries:
         try:
-            actual = exact_file_digest(entry["path"])
-        except FileNotFoundError as error:
+            path = resolve_dependency_path(PROFILE_PACKAGE_ROOT, entry["path"])
+            dependency_bytes = path.read_bytes()
+        except (DependencyResolutionError, OSError) as error:
             raise GateRejection("rvr.gate.identity_mismatch", f"missing pinned dependency: {error}") from error
+        actual = sha256_hex(dependency_bytes)
         if actual != entry["sha256"]:
             raise GateRejection("rvr.gate.identity_mismatch", f"dependency digest mismatch: {entry['id']}")
+        pinned_bytes[entry["id"]] = dependency_bytes
+
+    manifest_dependency = profile["profileSchemaContract"]["manifest"]
+    if pinned_bytes[manifest_dependency["id"]] != manifest_schema_bytes:
+        raise GateRejection("rvr.gate.identity_mismatch", "generic manifest schema bytes differ from pinned bytes")
+    constraints_dependency = profile["profileSchemaContract"]["constraints"]
+    constraints_schema = parse_json_bytes(
+        pinned_bytes[constraints_dependency["id"]],
+        constraints_dependency["path"],
+    )
+    require_schema(profile, constraints_schema, label="verification profile constraints")
 
     vector_members = sorted(profile["conformanceVectorSet"]["members"], key=lambda item: item["path"])
     rows = "".join(f"{item['path']}\t{item['sha256']}\n" for item in vector_members)
@@ -321,7 +390,7 @@ def audit_profile(profile: dict[str, Any], profile_schema: dict[str, Any]) -> st
         raise GateRejection("rvr.gate.identity_mismatch", "evidence-set schema pin mismatch")
     if profile["canonicalResultContract"]["schemaSha256"] != rvr_schema_pin["sha256"]:
         raise GateRejection("rvr.gate.identity_mismatch", "canonical-result schema pin mismatch")
-    return canonical_digest(profile)
+    return canonical_digest(profile), constraints_schema, pinned_bytes
 
 
 def normalize_evidence_set(evidence_set: dict[str, Any]) -> dict[str, Any]:
@@ -510,7 +579,7 @@ def required_dependency_failure(
             return dependency["id"]
         try:
             actual = exact_file_digest(dependency["path"])
-        except FileNotFoundError:
+        except (DependencyResolutionError, OSError):
             return dependency["id"]
         if actual != dependency["sha256"]:
             return dependency["id"]
@@ -582,6 +651,9 @@ def run_canonical_vectors(vectors: dict[str, Any]) -> dict[str, Any]:
         elif kind == "canonical-json":
             if canonical_json(strict_json_loads(vector["rawJson"])) != vector["expected"]:
                 raise AssertionError(vector["id"])
+        elif kind == "canonical-utf8-hex":
+            if canonical_bytes(vector["value"]).hex() != vector["expectedHex"]:
+                raise AssertionError(vector["id"])
         elif kind == "different":
             if canonical_bytes(vector["left"]) == canonical_bytes(vector["right"]):
                 raise AssertionError(vector["id"])
@@ -603,6 +675,56 @@ def run_canonical_vectors(vectors: dict[str, Any]) -> dict[str, Any]:
             raise AssertionError(f"unsupported canonical vector: {kind}")
         passed.append(vector["id"])
     return {"passed": len(passed), "vectorIds": passed}
+
+
+def run_resolver_vectors(vectors: dict[str, Any]) -> dict[str, Any]:
+    accepted: list[str] = []
+    rejected: list[str] = []
+    for vector in vectors["resolverVectors"]:
+        try:
+            resolve_dependency_path(PROFILE_PACKAGE_ROOT, vector["path"])
+            actual = "ACCEPTED"
+            accepted.append(vector["id"])
+        except DependencyResolutionError:
+            actual = "REJECTED"
+            rejected.append(vector["id"])
+        if actual != vector["expected"]:
+            raise AssertionError(f"{vector['id']}: expected {vector['expected']}, got {actual}")
+    return {"passed": len(accepted) + len(rejected), "accepted": accepted, "rejected": rejected}
+
+
+def run_profile_schema_boundary(
+    profile: dict[str, Any],
+    manifest_schema: dict[str, Any],
+    manifest_schema_bytes: bytes,
+    constraints_schema: dict[str, Any],
+    vectors: dict[str, Any],
+) -> dict[str, Any]:
+    vector = vectors["profileSchemaBoundary"]
+    alternate = copy.deepcopy(profile)
+    alternate["profileId"] = vector["alternateProfileId"]
+    generic_valid = not validate_schema(alternate, manifest_schema)
+    profile_specific_valid = not validate_schema(alternate, constraints_schema)
+    if generic_valid != vector["genericManifestMustAccept"]:
+        raise AssertionError("generic profile manifest boundary mismatch")
+    if profile_specific_valid != vector["sha256EqualsConstraintsMustAccept"]:
+        raise AssertionError("profile-specific constraints boundary mismatch")
+    tampered = copy.deepcopy(profile)
+    tampered["profileSchemaContract"]["constraints"]["sha256"] = vector["tamperedConstraintsDigest"]
+    try:
+        audit_profile(tampered, manifest_schema, manifest_schema_bytes)
+    except GateRejection as error:
+        tampered_pin_rejected = error.reason_code == "rvr.gate.identity_mismatch"
+    else:
+        tampered_pin_rejected = False
+    if tampered_pin_rejected != vector["tamperedConstraintsPinMustReject"]:
+        raise AssertionError("tampered profile constraints pin boundary mismatch")
+    return {
+        "alternateProfileId": vector["alternateProfileId"],
+        "genericManifestAccepted": generic_valid,
+        "sha256EqualsConstraintsAccepted": profile_specific_valid,
+        "tamperedConstraintsPinRejected": tampered_pin_rejected,
+    }
 
 
 def mutant_sort_arrays_as_sets(value: Any) -> str:
@@ -794,16 +916,31 @@ def assert_expected(actual: dict[str, Any], expected: dict[str, Any], case_name:
 
 
 def run_gate() -> dict[str, Any]:
-    profile_schema = load_json(PROFILE_SCHEMA_PATH)
-    rvr_schema = load_json(RVR_SCHEMA_PATH)
+    profile_manifest_schema_bytes = PROFILE_MANIFEST_SCHEMA_PATH.read_bytes()
+    profile_manifest_schema = parse_json_bytes(
+        profile_manifest_schema_bytes,
+        str(PROFILE_MANIFEST_SCHEMA_PATH),
+    )
     profile = load_json(PROFILE_PATH)
-    vectors = load_json(VECTORS_PATH)
-    expected = load_json(EXPECTED_PATH)
-    mutants = load_json(MUTANTS_PATH)
-
-    profile_digest = audit_profile(profile, profile_schema)
+    profile_digest, profile_constraints_schema, pinned_bytes = audit_profile(
+        profile,
+        profile_manifest_schema,
+        profile_manifest_schema_bytes,
+    )
+    rvr_schema = parse_json_bytes(pinned_bytes["rvr-schema"], "rvr-schema")
+    vectors = parse_json_bytes(pinned_bytes["verification-vectors"], "verification-vectors")
+    expected = parse_json_bytes(pinned_bytes["expected-results"], "expected-results")
+    mutants = parse_json_bytes(pinned_bytes["adversarial-mutants"], "adversarial-mutants")
     manifest_report = audit_manifest()
     canonical_report = run_canonical_vectors(vectors)
+    resolver_report = run_resolver_vectors(vectors)
+    profile_schema_boundary = run_profile_schema_boundary(
+        profile,
+        profile_manifest_schema,
+        profile_manifest_schema_bytes,
+        profile_constraints_schema,
+        vectors,
+    )
 
     reproduced_case = vectors["verificationCases"]["reproduced"]
     reproduced_bundle = make_bundle(reproduced_case, profile, profile_digest, rvr_schema)
@@ -911,6 +1048,8 @@ def run_gate() -> dict[str, Any]:
         "verificationProfileDigest": profile_digest,
         "canonicalByteContract": profile["canonicalByteContract"]["id"],
         "canonicalByteVectors": canonical_report,
+        "dependencyResolver": resolver_report,
+        "profileSchemaBoundary": profile_schema_boundary,
         "manifest": manifest_report,
         "cases": {
             "REPRODUCED": reproduced,
@@ -920,7 +1059,7 @@ def run_gate() -> dict[str, Any]:
             "PROJECTION_NEGATIVE_CONTROL": projection,
             "HIDDEN_STATE_NEGATIVE_CONTROL": hidden,
         },
-        "adversarialMutants": mutant_audit,
+        "adversarialSemanticMutants": mutant_audit,
         "producerImports": 0,
     }
 

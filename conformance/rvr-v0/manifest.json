@@ -1,19 +1,19 @@
 {
   "schema": "rvr.conformance-manifest.v0",
   "hashAlgorithm": "sha256-lowercase-hex",
-  "memberCount": 10,
+  "memberCount": 11,
   "members": [
     {
       "path": "conformance/rvr-v0/README.md",
-      "sha256": "336d331bee0862a34cb4320198f61c64b14ef358a0689d7d6418fa38d280d4c3"
+      "sha256": "f4aef3d1ae319064a72efe889278d6e2691e6f4980c62ef94e463a09fc71dd7d"
     },
     {
       "path": "conformance/rvr-v0/adapter.py",
-      "sha256": "27bc410c8155de04412ccc579ca1976b0da47717bf4751603102005e8da5cdf3"
+      "sha256": "b2bbc75caa7b5548fda2b050dfc9561ea551f518aba26f563f91a03ae06839c1"
     },
     {
       "path": "conformance/rvr-v0/adapter.ts",
-      "sha256": "228e3ee678019d9c2c1e84a362efcdea52a711098822fb052872c2440417e857"
+      "sha256": "e90c8e86313c6814b76b17cd016f320f5d89f6b21c146f83f0538b54996f14d0"
     },
     {
       "path": "conformance/rvr-v0/expected.json",
@@ -24,26 +24,30 @@
       "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847"
     },
     {
+      "path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+      "sha256": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf"
+    },
+    {
       "path": "conformance/rvr-v0/rvr.schema.json",
       "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae"
     },
     {
       "path": "conformance/rvr-v0/vectors.json",
-      "sha256": "97aab239217c4f9c62c23a8fb2afe05bf48c3fe0b476a43162363a457b56d27d"
+      "sha256": "fb5aabb9571850663c0a008daa5fb1720cf34fa71cbbab81ee09a4d4fc4e31c8"
+    },
+    {
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1"
     },
     {
       "path": "conformance/rvr-v0/verification-profile.json",
-      "sha256": "416930b9e6310bd0a14813463320a2bd7608d3f10d435488d1147668879e21f9"
-    },
-    {
-      "path": "conformance/rvr-v0/verification-profile.schema.json",
-      "sha256": "c413406378dc8f5b051dc916d5e21dd15f7209782d2835f37939e35b041c8c86"
+      "sha256": "667164d69fbecf354b56822f1520b2c7b876fda542085f3b3b36f3e9b73994fa"
     },
     {
       "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
-      "sha256": "b17e922a87035e3bb5e6e03f1a1c811e7594e5649eb3b7cb23d3c54488beb22e"
+      "sha256": "ed6f02fa669cf6dfd2f5875692e360cc7b39a4a44bd90d3c36f8940b287b9c52"
     }
   ],
   "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
-  "packageDigest": "9e6d347d05d2744925a36a66c477d41b53646cd2e788f53391f137d317e88f2a"
+  "packageDigest": "e2c7712e4ce5551628cf2d1b65b0ae4458d5d2f7aaed7ffd3c969505ee29d63c"
 }

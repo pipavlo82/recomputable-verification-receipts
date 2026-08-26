@@ -14,6 +14,11 @@ result identity, projection checks, and mechanically distinct failure paths.
 It has no dependency on ReceiptOS, TSEI, Protected Relation Fixtures, an
 on-chain registry, or a particular producer implementation.
 
+The v0 Verification Profile format has a generic manifest boundary plus a
+separately pinned profile-specific constraints schema. Normative dependency
+paths resolve from an explicit supplied profile package root; they are never
+interpreted relative to ambient process state.
+
 Run the gate:
 
 ```bash

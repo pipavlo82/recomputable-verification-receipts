@@ -38,6 +38,24 @@
       "expected": "\"a\\\"b\\\\c\\n\""
     },
     {
+      "id": "all-control-character-escapes",
+      "kind": "canonical",
+      "value": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f",
+      "expected": "\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f\""
+    },
+    {
+      "id": "solidus-is-literal",
+      "kind": "canonical",
+      "value": "</rvr/profile>",
+      "expected": "\"</rvr/profile>\""
+    },
+    {
+      "id": "u2028-u2029-are-literal-utf8",
+      "kind": "canonical-utf8-hex",
+      "value": "\u2028\u2029",
+      "expectedHex": "22e280a8e280a922"
+    },
+    {
       "id": "numbers-forbidden",
       "kind": "reject-value",
       "value": 1
@@ -59,6 +77,50 @@
       "expected": "{\"value\":\"𐀀\"}"
     }
   ],
+  "resolverVectors": [
+    {
+      "id": "package-relative-posix-path",
+      "path": "conformance/rvr-v0/vectors.json",
+      "expected": "ACCEPTED"
+    },
+    {
+      "id": "reject-absolute-path",
+      "path": "/conformance/rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-reverse-solidus",
+      "path": "conformance\\rvr-v0\\vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-empty-segment",
+      "path": "conformance//rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-dot-segment",
+      "path": "conformance/./rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-dotdot-segment",
+      "path": "conformance/rvr-v0/../../../outside.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-colon-segment",
+      "path": "C:/outside.json",
+      "expected": "REJECTED"
+    }
+  ],
+  "profileSchemaBoundary": {
+    "alternateProfileId": "example-external-profile-v0",
+    "genericManifestMustAccept": true,
+    "sha256EqualsConstraintsMustAccept": false,
+    "tamperedConstraintsDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tamperedConstraintsPinMustReject": true
+  },
   "verificationCases": {
     "reproduced": {
       "claim": {

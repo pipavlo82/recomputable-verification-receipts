@@ -1,20 +1,17 @@
 #!/usr/bin/env bun
 /** Independent TypeScript/Bun implementation of the RVR v0 profile. */
 import { createHash } from "node:crypto"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
+import { readFileSync, realpathSync } from "node:fs"
+import { resolve, sep } from "node:path"
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json }
 type RecordJson = { [key: string]: any }
 
 const ROOT = resolve(import.meta.dir, "../..")
+const PROFILE_PACKAGE_ROOT = ROOT
 const PACKAGE = resolve(ROOT, "conformance/rvr-v0")
 const PROFILE_PATH = resolve(PACKAGE, "verification-profile.json")
-const PROFILE_SCHEMA_PATH = resolve(PACKAGE, "verification-profile.schema.json")
-const RVR_SCHEMA_PATH = resolve(PACKAGE, "rvr.schema.json")
-const VECTORS_PATH = resolve(PACKAGE, "vectors.json")
-const EXPECTED_PATH = resolve(PACKAGE, "expected.json")
-const MUTANTS_PATH = resolve(PACKAGE, "mutants.json")
+const PROFILE_MANIFEST_SCHEMA_PATH = resolve(PACKAGE, "verification-profile-manifest.schema.json")
 const MANIFEST_PATH = resolve(PACKAGE, "manifest.json")
 
 const MANIFEST_MEMBERS = [
@@ -23,10 +20,11 @@ const MANIFEST_MEMBERS = [
   "conformance/rvr-v0/adapter.ts",
   "conformance/rvr-v0/expected.json",
   "conformance/rvr-v0/mutants.json",
+  "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
   "conformance/rvr-v0/rvr.schema.json",
   "conformance/rvr-v0/vectors.json",
   "conformance/rvr-v0/verification-profile.json",
-  "conformance/rvr-v0/verification-profile.schema.json",
+  "conformance/rvr-v0/verification-profile-manifest.schema.json",
   "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
 ] as const
 
@@ -34,6 +32,7 @@ class RvrError extends Error {}
 class StrictJsonError extends RvrError {}
 class CanonicalizationError extends RvrError {}
 class SchemaValidationError extends RvrError {}
+class DependencyResolutionError extends RvrError {}
 class GateRejection extends RvrError {
   constructor(readonly reasonCode: string, message: string) {
     super(message)
@@ -42,7 +41,35 @@ class GateRejection extends RvrError {
 
 const sha256Hex = (bytes: Uint8Array | string): string => createHash("sha256").update(bytes).digest("hex")
 const readBytes = (path: string): Buffer => readFileSync(path)
-const exactFileDigest = (repositoryPath: string): string => sha256Hex(readBytes(resolve(ROOT, repositoryPath)))
+const utf8Decoder = new TextDecoder("utf-8", { fatal: true })
+
+function resolveDependencyPath(packageRoot: string, dependencyPath: string): string {
+  if (!dependencyPath || dependencyPath.startsWith("/") || dependencyPath.includes("\\") || dependencyPath.includes(":")) {
+    throw new DependencyResolutionError(`dependency path is not relative POSIX: ${JSON.stringify(dependencyPath)}`)
+  }
+  const segments = dependencyPath.split("/")
+  if (segments.some((segment) => segment === "" || segment === "." || segment === "..")) {
+    throw new DependencyResolutionError(`dependency path contains a forbidden segment: ${JSON.stringify(dependencyPath)}`)
+  }
+  const resolvedRoot = realpathSync(packageRoot)
+  const lexicalPath = resolve(resolvedRoot, ...segments)
+  if (lexicalPath !== resolvedRoot && !lexicalPath.startsWith(`${resolvedRoot}${sep}`)) {
+    throw new DependencyResolutionError(`dependency escapes profile package root: ${JSON.stringify(dependencyPath)}`)
+  }
+  try {
+    const resolvedPath = realpathSync(lexicalPath)
+    if (resolvedPath !== resolvedRoot && !resolvedPath.startsWith(`${resolvedRoot}${sep}`)) {
+      throw new DependencyResolutionError(`dependency link escapes profile package root: ${JSON.stringify(dependencyPath)}`)
+    }
+    return resolvedPath
+  } catch (error) {
+    if (error instanceof DependencyResolutionError) throw error
+    return lexicalPath
+  }
+}
+
+const exactFileDigest = (dependencyPath: string, packageRoot = PROFILE_PACKAGE_ROOT): string =>
+  sha256Hex(readBytes(resolveDependencyPath(packageRoot, dependencyPath)))
 
 function assertScalarString(value: string): void {
   for (let index = 0; index < value.length; index += 1) {
@@ -194,7 +221,8 @@ class StrictJsonParser {
 }
 
 const strictJsonParse = (text: string): Json => new StrictJsonParser(text).parse()
-const loadJson = (path: string): RecordJson => strictJsonParse(readBytes(path).toString("utf8")) as RecordJson
+const parseJsonBytes = (bytes: Uint8Array): RecordJson => strictJsonParse(utf8Decoder.decode(bytes)) as RecordJson
+const loadJson = (path: string): RecordJson => parseJsonBytes(readBytes(path))
 
 function compareScalarStrings(left: string, right: string): number {
   assertScalarString(left)
@@ -209,11 +237,29 @@ function compareScalarStrings(left: string, right: string): number {
   return a.length - b.length
 }
 
+function canonicalString(value: string): string {
+  assertScalarString(value)
+  let output = '"'
+  for (const character of value) {
+    const code = character.codePointAt(0)!
+    if (code === 0x08) output += "\\b"
+    else if (code === 0x09) output += "\\t"
+    else if (code === 0x0a) output += "\\n"
+    else if (code === 0x0c) output += "\\f"
+    else if (code === 0x0d) output += "\\r"
+    else if (code === 0x22) output += '\\"'
+    else if (code === 0x5c) output += "\\\\"
+    else if (code <= 0x1f) output += `\\u${code.toString(16).padStart(4, "0")}`
+    else output += character
+  }
+  return `${output}"`
+}
+
 function canonicalJson(value: unknown): string {
   if (value === null) return "null"
   if (value === true) return "true"
   if (value === false) return "false"
-  if (typeof value === "string") { assertScalarString(value); return JSON.stringify(value) }
+  if (typeof value === "string") return canonicalString(value)
   if (typeof value === "number") throw new CanonicalizationError("rvr-canonical-json-v0 forbids numbers")
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`
   if (typeof value === "object") {
@@ -311,19 +357,45 @@ function requireSchema(value: unknown, schema: RecordJson, pointer = "#", label 
 }
 
 function dependencyEntries(profile: RecordJson): RecordJson[] {
-  return [profile.verificationSpecification, ...profile.conformanceVectorSet.members, ...profile.schemaContracts]
+  return [
+    profile.profileSchemaContract.manifest,
+    profile.profileSchemaContract.constraints,
+    profile.verificationSpecification,
+    ...profile.conformanceVectorSet.members,
+    ...profile.schemaContracts,
+  ]
 }
 
-function auditProfile(profile: RecordJson, profileSchema: RecordJson): string {
-  requireSchema(profile, profileSchema, "#", "verification profile")
+function auditProfile(
+  profile: RecordJson,
+  manifestSchema: RecordJson,
+  manifestSchemaBytes: Buffer,
+): [string, RecordJson, Map<string, Buffer>] {
+  requireSchema(profile, manifestSchema, "#", "verification profile manifest")
   const entries = dependencyEntries(profile)
   const ids = entries.map((item) => item.id)
   if (new Set(ids).size !== ids.length) throw new GateRejection("rvr.gate.identity_mismatch", "duplicate profile dependency id")
+  const pinnedBytes = new Map<string, Buffer>()
   for (const dependency of entries) {
-    if (exactFileDigest(dependency.path) !== dependency.sha256) {
-      throw new GateRejection("rvr.gate.identity_mismatch", `dependency digest mismatch: ${dependency.id}`)
+    try {
+      const path = resolveDependencyPath(PROFILE_PACKAGE_ROOT, dependency.path)
+      const dependencyBytes = readBytes(path)
+      if (sha256Hex(dependencyBytes) !== dependency.sha256) {
+        throw new GateRejection("rvr.gate.identity_mismatch", `dependency digest mismatch: ${dependency.id}`)
+      }
+      pinnedBytes.set(dependency.id, dependencyBytes)
+    } catch (error) {
+      if (error instanceof GateRejection) throw error
+      throw new GateRejection("rvr.gate.identity_mismatch", `missing pinned dependency: ${dependency.id}`)
     }
   }
+  const manifestDependency = profile.profileSchemaContract.manifest
+  if (!pinnedBytes.get(manifestDependency.id)!.equals(manifestSchemaBytes)) {
+    throw new GateRejection("rvr.gate.identity_mismatch", "generic manifest schema bytes differ from pinned bytes")
+  }
+  const constraintsDependency = profile.profileSchemaContract.constraints
+  const constraintsSchema = parseJsonBytes(pinnedBytes.get(constraintsDependency.id)!)
+  requireSchema(profile, constraintsSchema, "#", "verification profile constraints")
   const vectorMembers = [...profile.conformanceVectorSet.members].sort((a, b) => compareScalarStrings(a.path, b.path))
   const rows = vectorMembers.map((item) => `${item.path}\t${item.sha256}\n`).join("")
   if (sha256Hex(rows) !== profile.conformanceVectorSet.digest) {
@@ -334,7 +406,7 @@ function auditProfile(profile: RecordJson, profileSchema: RecordJson): string {
     || profile.canonicalResultContract.schemaSha256 !== rvrSchemaPin.sha256) {
     throw new GateRejection("rvr.gate.identity_mismatch", "profile schema pin mismatch")
   }
-  return canonicalDigest(profile)
+  return [canonicalDigest(profile), constraintsSchema, pinnedBytes]
 }
 
 function normalizeEvidenceSet(evidenceSet: RecordJson): RecordJson {
@@ -554,6 +626,8 @@ function runCanonicalVectors(vectors: RecordJson): RecordJson {
       if (canonicalJson(vector.value) !== vector.expected) throw new Error(vector.id)
     } else if (vector.kind === "canonical-json") {
       if (canonicalJson(strictJsonParse(vector.rawJson)) !== vector.expected) throw new Error(vector.id)
+    } else if (vector.kind === "canonical-utf8-hex") {
+      if (canonicalBytes(vector.value).toString("hex") !== vector.expectedHex) throw new Error(vector.id)
     } else if (vector.kind === "different") {
       if (canonicalJson(vector.left) === canonicalJson(vector.right)) throw new Error(vector.id)
     } else if (vector.kind === "reject-value") {
@@ -568,6 +642,60 @@ function runCanonicalVectors(vectors: RecordJson): RecordJson {
     passed.push(vector.id)
   }
   return { passed: passed.length, vectorIds: passed }
+}
+
+function runResolverVectors(vectors: RecordJson): RecordJson {
+  const accepted: string[] = []
+  const rejected: string[] = []
+  for (const vector of vectors.resolverVectors) {
+    let actual: string
+    try {
+      resolveDependencyPath(PROFILE_PACKAGE_ROOT, vector.path)
+      actual = "ACCEPTED"
+      accepted.push(vector.id)
+    } catch (error) {
+      if (!(error instanceof DependencyResolutionError)) throw error
+      actual = "REJECTED"
+      rejected.push(vector.id)
+    }
+    if (actual !== vector.expected) throw new Error(`${vector.id}: expected ${vector.expected}, got ${actual}`)
+  }
+  return { passed: accepted.length + rejected.length, accepted, rejected }
+}
+
+function runProfileSchemaBoundary(
+  profile: RecordJson,
+  manifestSchema: RecordJson,
+  manifestSchemaBytes: Buffer,
+  constraintsSchema: RecordJson,
+  vectors: RecordJson,
+): RecordJson {
+  const vector = vectors.profileSchemaBoundary
+  const alternate = structuredClone(profile)
+  alternate.profileId = vector.alternateProfileId
+  const genericValid = validateSchema(alternate, manifestSchema).length === 0
+  const profileSpecificValid = validateSchema(alternate, constraintsSchema).length === 0
+  if (genericValid !== vector.genericManifestMustAccept) throw new Error("generic profile manifest boundary mismatch")
+  if (profileSpecificValid !== vector.sha256EqualsConstraintsMustAccept) {
+    throw new Error("profile-specific constraints boundary mismatch")
+  }
+  const tampered = structuredClone(profile)
+  tampered.profileSchemaContract.constraints.sha256 = vector.tamperedConstraintsDigest
+  let tamperedPinRejected = false
+  try {
+    auditProfile(tampered, manifestSchema, manifestSchemaBytes)
+  } catch (error) {
+    tamperedPinRejected = error instanceof GateRejection && error.reasonCode === "rvr.gate.identity_mismatch"
+  }
+  if (tamperedPinRejected !== vector.tamperedConstraintsPinMustReject) {
+    throw new Error("tampered profile constraints pin boundary mismatch")
+  }
+  return {
+    alternateProfileId: vector.alternateProfileId,
+    genericManifestAccepted: genericValid,
+    sha256EqualsConstraintsAccepted: profileSpecificValid,
+    tamperedConstraintsPinRejected: tamperedPinRejected,
+  }
 }
 
 function mutantSortArraysAsSets(value: unknown): string {
@@ -715,15 +843,28 @@ function assertExpected(actual: RecordJson, expected: RecordJson, caseName: stri
 }
 
 export function runGate(): RecordJson {
-  const profileSchema = loadJson(PROFILE_SCHEMA_PATH)
-  const rvrSchema = loadJson(RVR_SCHEMA_PATH)
+  const profileManifestSchemaBytes = readBytes(PROFILE_MANIFEST_SCHEMA_PATH)
+  const profileManifestSchema = parseJsonBytes(profileManifestSchemaBytes)
   const profile = loadJson(PROFILE_PATH)
-  const vectors = loadJson(VECTORS_PATH)
-  const expected = loadJson(EXPECTED_PATH)
-  const mutants = loadJson(MUTANTS_PATH)
-  const profileDigest = auditProfile(profile, profileSchema)
+  const [profileDigest, profileConstraintsSchema, pinnedBytes] = auditProfile(
+    profile,
+    profileManifestSchema,
+    profileManifestSchemaBytes,
+  )
+  const rvrSchema = parseJsonBytes(pinnedBytes.get("rvr-schema")!)
+  const vectors = parseJsonBytes(pinnedBytes.get("verification-vectors")!)
+  const expected = parseJsonBytes(pinnedBytes.get("expected-results")!)
+  const mutants = parseJsonBytes(pinnedBytes.get("adversarial-mutants")!)
   const manifest = auditManifest()
   const canonicalByteVectors = runCanonicalVectors(vectors)
+  const dependencyResolver = runResolverVectors(vectors)
+  const profileSchemaBoundary = runProfileSchemaBoundary(
+    profile,
+    profileManifestSchema,
+    profileManifestSchemaBytes,
+    profileConstraintsSchema,
+    vectors,
+  )
 
   const reproducedCase = vectors.verificationCases.reproduced
   const reproducedBundle = makeBundle(reproducedCase, profile, profileDigest, rvrSchema)
@@ -813,6 +954,8 @@ export function runGate(): RecordJson {
     verificationProfileDigest: profileDigest,
     canonicalByteContract: profile.canonicalByteContract.id,
     canonicalByteVectors,
+    dependencyResolver,
+    profileSchemaBoundary,
     manifest,
     cases: {
       REPRODUCED: reproduced,
@@ -822,7 +965,7 @@ export function runGate(): RecordJson {
       PROJECTION_NEGATIVE_CONTROL: projection,
       HIDDEN_STATE_NEGATIVE_CONTROL: hidden,
     },
-    adversarialMutants: mutantAudit,
+    adversarialSemanticMutants: mutantAudit,
     producerImports: 0,
   }
 }

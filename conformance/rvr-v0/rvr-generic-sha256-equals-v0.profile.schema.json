@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/profiles/rvr-generic-sha256-equals-v0/profile.schema.json",
+  "title": "RVR generic SHA256_EQUALS profile constraints v0",
+  "description": "Profile-specific constraints applied after the generic RVR Verification Profile Manifest schema.",
+  "type": "object",
+  "required": [
+    "schema",
+    "profileId",
+    "profileSchemaContract",
+    "verificationSpecification",
+    "conformanceVectorSet",
+    "evidenceSetContract",
+    "canonicalResultContract",
+    "externalContextPolicy"
+  ],
+  "properties": {
+    "schema": { "const": "rvr.verification-profile.v0" },
+    "profileId": { "const": "rvr-generic-sha256-equals-v0" },
+    "profileSchemaContract": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "verification-profile-manifest-schema" },
+            "path": { "const": "conformance/rvr-v0/verification-profile-manifest.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "rvr-generic-sha256-equals-profile-schema" },
+            "path": { "const": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        }
+      }
+    },
+    "verificationSpecification": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "verification-specification" },
+        "path": { "const": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md" },
+        "requiredForRecomputation": { "const": true }
+      }
+    },
+    "conformanceVectorSet": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "rvr-v0-first-falsification-set" }
+      }
+    },
+    "evidenceSetContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "conformance/rvr-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/evidenceSet" },
+        "digestRule": { "const": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order" }
+      }
+    },
+    "canonicalResultContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "conformance/rvr-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/canonicalResult" },
+        "outcomeProjection": { "const": "/outcome" },
+        "reasonCodeProjection": { "const": "/reasonCode" }
+      }
+    },
+    "externalContextPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": { "const": "FORBIDDEN_UNLESS_COMMITTED" },
+        "ambientInputs": { "const": "FORBIDDEN" },
+        "immutableCommitments": { "type": "array", "maxItems": 0 }
+      }
+    }
+  }
+}

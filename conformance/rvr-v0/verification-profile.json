@@ -1,10 +1,30 @@
 {
   "schema": "rvr.verification-profile.v0",
   "profileId": "rvr-generic-sha256-equals-v0",
+  "profileSchemaContract": {
+    "manifest": {
+      "id": "verification-profile-manifest-schema",
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1",
+      "requiredForRecomputation": true
+    },
+    "constraints": {
+      "id": "rvr-generic-sha256-equals-profile-schema",
+      "path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+      "sha256": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf",
+      "requiredForRecomputation": true
+    }
+  },
+  "dependencyResolution": {
+    "base": "SUPPLIED_PROFILE_PACKAGE_ROOT",
+    "pathFormat": "relative-posix-no-empty-dot-dotdot-or-colon-segments",
+    "locatorRole": "NORMATIVE_PACKAGE_RELATIVE_PATH",
+    "verificationOrder": "resolve-read-sha256-match-use"
+  },
   "verificationSpecification": {
     "id": "verification-specification",
     "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
-    "sha256": "b17e922a87035e3bb5e6e03f1a1c811e7594e5649eb3b7cb23d3c54488beb22e",
+    "sha256": "ed6f02fa669cf6dfd2f5875692e360cc7b39a4a44bd90d3c36f8940b287b9c52",
     "requiredForRecomputation": true
   },
   "conformanceVectorSet": {
@@ -25,11 +45,11 @@
       {
         "id": "verification-vectors",
         "path": "conformance/rvr-v0/vectors.json",
-        "sha256": "97aab239217c4f9c62c23a8fb2afe05bf48c3fe0b476a43162363a457b56d27d",
+        "sha256": "fb5aabb9571850663c0a008daa5fb1720cf34fa71cbbab81ee09a4d4fc4e31c8",
         "requiredForRecomputation": false
       }
     ],
-    "digest": "5eaad4c174d4018886cd3284002d7974514e65f2a4cae7114c96d6bff5eac084",
+    "digest": "81dfe25d7b0a9c6ba1ca4e129e9bfbde61c0cd4b8ef0393bcdc2079a936d6762",
     "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows"
   },
   "canonicalByteContract": {
@@ -40,6 +60,9 @@
     "arrayOrder": "preserved-with-duplicates",
     "unicode": "scalar-values-only-no-normalization",
     "numbers": "forbidden",
+    "stringEscaping": "rvr-json-string-escaping-v0",
+    "solidus": "literal",
+    "lineSeparators": "U+2028-and-U+2029-literal",
     "whitespace": "none"
   },
   "schemaContracts": [
@@ -47,12 +70,6 @@
       "id": "rvr-schema",
       "path": "conformance/rvr-v0/rvr.schema.json",
       "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
-      "requiredForRecomputation": true
-    },
-    {
-      "id": "verification-profile-schema",
-      "path": "conformance/rvr-v0/verification-profile.schema.json",
-      "sha256": "c413406378dc8f5b051dc916d5e21dd15f7209782d2835f37939e35b041c8c86",
       "requiredForRecomputation": true
     }
   ],

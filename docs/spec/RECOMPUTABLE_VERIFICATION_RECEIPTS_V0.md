@@ -68,8 +68,7 @@ Canonicalization rules:
    pair represents its single Unicode scalar value.
 3. Apply no Unicode normalization.
 4. Encode null as `null` and booleans as `true` or `false`.
-5. Encode strings with JSON string escaping, without optional solidus escaping
-   or ASCII-forcing.
+5. Encode strings using the exact `rvr-json-string-escaping-v0` table below.
 6. Preserve array order and duplicates.
 7. Sort object keys by ascending Unicode scalar-value sequence.
 8. Emit no insignificant whitespace.
@@ -78,6 +77,28 @@ Canonicalization rules:
 The conformance vectors include discrimination for array order, null presence,
 Unicode normalization, scalar-value key ordering, escaping, forbidden numbers,
 duplicate keys, and lone surrogates.
+
+### 4.1 Exact string escaping
+
+`rvr-json-string-escaping-v0` emits an opening quotation mark, processes each
+Unicode scalar value in order, then emits a closing quotation mark:
+
+| Scalar value | Exact emitted sequence |
+| --- | --- |
+| `U+0022` quotation mark | `\"` |
+| `U+005C` reverse solidus | `\\` |
+| `U+0008` | `\b` |
+| `U+0009` | `\t` |
+| `U+000A` | `\n` |
+| `U+000C` | `\f` |
+| `U+000D` | `\r` |
+| Other `U+0000` through `U+001F` | `\u00xx`, with exactly two lowercase hexadecimal digits |
+| Every other Unicode scalar value | Its literal UTF-8 encoding |
+
+The solidus `U+002F` is therefore literal. `U+2028` and `U+2029` are also
+literal and MUST NOT be emitted as `\u2028` or `\u2029`. No other optional
+JSON escape spelling is permitted. These rules apply identically to object
+keys and string values.
 
 ## 5. Identity rules
 
@@ -120,9 +141,24 @@ The conformance-vector-set digest is SHA-256 over UTF-8 rows sorted by path:
 
 ## 6. Verification Profile closure
 
+Every Verification Profile is validated in two mechanically separate layers:
+
+1. the generic `RVR Verification Profile Manifest v0` schema, which defines
+   the common closure envelope without fixing a domain profile ID, paths, or
+   JSON Pointers; and
+2. the profile-specific constraints schema identified and pinned by that
+   manifest instance.
+
+The generic manifest schema is the RVR v0 bootstrap contract supplied to the
+verifier. After strict parsing, the manifest's own generic-schema pin MUST
+identify byte-for-byte the same bootstrap schema. The profile-specific schema
+MUST NOT be parsed or applied until its exact bytes match its committed digest.
+
 The Verification Profile commits to:
 
 - this verification specification by exact file-byte digest;
+- the generic manifest schema and its profile-specific constraints schema by
+  exact file-byte digest;
 - the pinned vector and expected-result files and their aggregate digest;
 - `rvr-canonical-json-v0` directly;
 - the receipt, claim, evidence-set, and canonical-result schema contracts by
@@ -139,6 +175,39 @@ outcome-relevant input must be the claim, an exact payload committed through
 the evidence set, or an immutable external-context commitment defined by the
 profile. The v0 profile defines no external-context commitment and therefore
 forbids all outcome-relevant external context.
+
+### 6.1 Dependency resolution
+
+A verifier receives an explicit profile package root together with the profile
+package. Every dependency `path` is a normative package-relative locator, not
+a process-CWD path, URL, Git reference, or advisory hint. It MUST use `/` as
+its separator, MUST be relative, and MUST contain no empty, `.` or `..` path
+segment, reverse solidus, or colon. The colon exclusion prevents host-specific
+drive-letter interpretation. Resolution MUST remain within the supplied
+profile package root, including after resolving filesystem links.
+
+For each dependency the only valid order is:
+
+```text
+resolve under supplied profile package root
+  -> read exact bytes
+  -> verify SHA-256 against the committed lowercase hexadecimal digest
+  -> use the bytes
+```
+
+Bytes MUST NOT influence validation or evaluation before their committed
+digest matches. The bytes that matched the digest MUST be the bytes subsequently
+used; re-reading the locator for semantic use is forbidden. RVR v0 requires no
+HTTP, Git, registry, or global path namespace.
+
+### 6.2 Meaning of committed UNAVAILABLE
+
+Reproducing an `UNVERIFIABLE` result proves that the committed evidence-set
+descriptor contained `UNAVAILABLE` and that the identified profile correctly
+derived `UNVERIFIABLE` from that committed state. RVR alone does not prove the
+historical fact that the evidence was objectively impossible to obtain. A
+profile that requires proof of absence or unavailability MUST define and
+commit that proof as outcome-relevant evidence or immutable external context.
 
 ## 7. Canonical result and projections
 
@@ -204,9 +273,11 @@ The pinned suite executes:
 - outcome-relevant hidden-state rejection, plus a counterfactual demonstration
   that the forbidden input could change the semantic outcome.
 
-## 11. Adversarial semantic audit
+## 11. Adversarial semantic mutant/witness audit
 
-The pinned v0 conformance set includes deliberately broken mutant behaviors.
+The pinned v0 conformance set includes deliberately broken semantic behaviors
+and their executable falsification witnesses. It is a semantic mutant/witness
+audit, not a claim that every item is a full end-to-end mutated implementation.
 Every conforming adapter MUST mechanically distinguish the correct contract
 from all of them:
 
@@ -217,7 +288,6 @@ from all of them:
 - allowing uncommitted ambient state to affect evaluation;
 - trusting a stored result without evaluating changed evidence.
 
-A mutant is killed only when the named witness demonstrates the mutant's
-specific faulty behavior and the correct gate produces the frozen contrary
-result. Merely observing unrelated digest drift does not kill a semantic
-mutant.
+A semantic mutant/witness is killed only when the named witness demonstrates
+the specific faulty behavior and the correct gate produces the frozen contrary
+result. Merely observing unrelated digest drift does not kill it.

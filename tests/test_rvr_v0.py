@@ -11,10 +11,10 @@ TYPESCRIPT_ADAPTER = ROOT / "conformance/rvr-v0/adapter.ts"
 
 
 class RvrV0ConformanceTests(unittest.TestCase):
-    def run_gate(self, command):
+    def run_gate(self, command, cwd=ROOT):
         completed = subprocess.run(
             command,
-            cwd=ROOT,
+            cwd=cwd,
             text=True,
             capture_output=True,
             check=False,
@@ -39,13 +39,38 @@ class RvrV0ConformanceTests(unittest.TestCase):
             typescript_report["verificationProfileDigest"],
         )
         self.assertEqual(python_report["canonicalByteVectors"], typescript_report["canonicalByteVectors"])
-        self.assertEqual(python_report["cases"], typescript_report["cases"])
-        self.assertEqual(python_report["adversarialMutants"], typescript_report["adversarialMutants"])
-        self.assertEqual(python_report["adversarialMutants"]["killed"], 6)
-        self.assertEqual(
-            python_report["adversarialMutants"]["killed"],
-            python_report["adversarialMutants"]["total"],
+        self.assertEqual(python_report["canonicalByteVectors"]["passed"], 13)
+        self.assertEqual(python_report["dependencyResolver"], typescript_report["dependencyResolver"])
+        self.assertEqual(python_report["dependencyResolver"]["passed"], 7)
+        self.assertEqual(python_report["profileSchemaBoundary"], typescript_report["profileSchemaBoundary"])
+        self.assertTrue(python_report["profileSchemaBoundary"]["genericManifestAccepted"])
+        self.assertFalse(
+            python_report["profileSchemaBoundary"]["sha256EqualsConstraintsAccepted"]
         )
+        self.assertTrue(
+            python_report["profileSchemaBoundary"]["tamperedConstraintsPinRejected"]
+        )
+        self.assertEqual(python_report["cases"], typescript_report["cases"])
+        self.assertEqual(
+            python_report["adversarialSemanticMutants"],
+            typescript_report["adversarialSemanticMutants"],
+        )
+        self.assertEqual(python_report["adversarialSemanticMutants"]["killed"], 6)
+        self.assertEqual(
+            python_report["adversarialSemanticMutants"]["killed"],
+            python_report["adversarialSemanticMutants"]["total"],
+        )
+
+    def test_profile_package_root_is_not_process_cwd(self):
+        commands = (
+            [sys.executable, str(PYTHON_ADAPTER), "--check"],
+            ["bun", str(TYPESCRIPT_ADAPTER), "--check"],
+        )
+        for command in commands:
+            with self.subTest(command=command[0]):
+                report = self.run_gate(command, cwd=ROOT.parent)
+                self.assertEqual(report["gate"], "RVR_V0_CONFORMANCE_PASS")
+                self.assertEqual(report["dependencyResolver"]["passed"], 7)
 
 
 if __name__ == "__main__":
