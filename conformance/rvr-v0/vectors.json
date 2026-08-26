@@ -1,0 +1,139 @@
+{
+  "schema": "rvr.conformance-vectors.v0",
+  "canonicalByteVectors": [
+    {
+      "id": "object-key-order",
+      "kind": "canonical",
+      "value": {"z": true, "a": false},
+      "expected": "{\"a\":false,\"z\":true}"
+    },
+    {
+      "id": "unicode-scalar-key-order",
+      "kind": "canonical",
+      "value": {"𐀀": "astral", "": "bmp"},
+      "expected": "{\"\":\"bmp\",\"𐀀\":\"astral\"}"
+    },
+    {
+      "id": "array-order-and-duplicates",
+      "kind": "different",
+      "left": ["a", "a", "b"],
+      "right": ["a", "b", "a"]
+    },
+    {
+      "id": "null-is-present",
+      "kind": "different",
+      "left": {"value": null},
+      "right": {}
+    },
+    {
+      "id": "unicode-not-normalized",
+      "kind": "different",
+      "left": "é",
+      "right": "é"
+    },
+    {
+      "id": "json-string-escaping",
+      "kind": "canonical",
+      "value": "a\"b\\c\n",
+      "expected": "\"a\\\"b\\\\c\\n\""
+    },
+    {
+      "id": "numbers-forbidden",
+      "kind": "reject-value",
+      "value": 1
+    },
+    {
+      "id": "duplicate-keys-forbidden",
+      "kind": "reject-json",
+      "rawJson": "{\"a\":true,\"a\":false}"
+    },
+    {
+      "id": "lone-surrogate-forbidden",
+      "kind": "reject-json",
+      "rawJson": "\"\\ud800\""
+    },
+    {
+      "id": "escaped-surrogate-pair-is-scalar",
+      "kind": "canonical-json",
+      "rawJson": "{\"value\":\"\\ud800\\udc00\"}",
+      "expected": "{\"value\":\"𐀀\"}"
+    }
+  ],
+  "verificationCases": {
+    "reproduced": {
+      "claim": {
+        "schema": "rvr.claim.sha256-equals.v0",
+        "operation": "SHA256_EQUALS",
+        "evidenceMember": "subject",
+        "expectedDigest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+      },
+      "evidenceSet": {
+        "schema": "rvr.evidence-set.v0",
+        "members": [
+          {
+            "id": "subject",
+            "status": "PRESENT",
+            "mediaType": "application/octet-stream",
+            "byteLength": "5",
+            "digest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+          }
+        ]
+      },
+      "payloadsBase64": {
+        "subject": "YWxwaGE="
+      }
+    },
+    "unverifiableReproduced": {
+      "claim": {
+        "schema": "rvr.claim.sha256-equals.v0",
+        "operation": "SHA256_EQUALS",
+        "evidenceMember": "subject",
+        "expectedDigest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+      },
+      "evidenceSet": {
+        "schema": "rvr.evidence-set.v0",
+        "members": [
+          {
+            "id": "subject",
+            "status": "UNAVAILABLE",
+            "reasonCode": "rvr.v0.evidence_unavailable"
+          }
+        ]
+      },
+      "payloadsBase64": {}
+    }
+  },
+  "negativeControls": {
+    "diverged": {
+      "baseCase": "reproduced",
+      "mutation": {
+        "kind": "replace-evidence-payload-and-rebuild-descriptor",
+        "memberId": "subject",
+        "replacementBase64": "YmV0YQ=="
+      },
+      "receiptClaimMustRemainFixed": true,
+      "evaluationMustRun": true
+    },
+    "cannotRecompute": {
+      "baseCase": "reproduced",
+      "unavailableDependencyId": "verification-specification",
+      "evaluationMustRun": false
+    },
+    "projectionContradiction": {
+      "baseCase": "reproduced",
+      "mutateReceiptField": "outcome",
+      "replacement": "REFUTED",
+      "preserveResultDigest": true
+    },
+    "hiddenState": {
+      "baseCase": "reproduced",
+      "outcomeRelevantInput": {
+        "name": "expectedDigestOverride",
+        "value": "f44e64e75f3948e9f73f8dfa94721c4ce8cbb4f265c4790c702b2d41cfbf2753",
+        "commitment": null
+      },
+      "unsafeCounterfactualMustChangeOutcome": true,
+      "evaluationMustRun": false
+    }
+  }
+}

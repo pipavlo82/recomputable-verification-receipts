@@ -1,0 +1,95 @@
+{
+  "schema": "rvr.verification-profile.v0",
+  "profileId": "rvr-generic-sha256-equals-v0",
+  "verificationSpecification": {
+    "id": "verification-specification",
+    "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
+    "sha256": "8e717eeecdb0afa94d290de271f8e7bb6b880e04a95ec49541500e8c13d49bda",
+    "requiredForRecomputation": true
+  },
+  "conformanceVectorSet": {
+    "id": "rvr-v0-first-falsification-set",
+    "members": [
+      {
+        "id": "expected-results",
+        "path": "conformance/rvr-v0/expected.json",
+        "sha256": "527c95ab7162cedc13db6240cfda5d9d9836cc86b7867fb74ebf7103bfddaeb7",
+        "requiredForRecomputation": false
+      },
+      {
+        "id": "verification-vectors",
+        "path": "conformance/rvr-v0/vectors.json",
+        "sha256": "97aab239217c4f9c62c23a8fb2afe05bf48c3fe0b476a43162363a457b56d27d",
+        "requiredForRecomputation": false
+      }
+    ],
+    "digest": "2d8eacd9d55a940266480dde2dad1537961d5112d5f92530cc6b45f694ea3e3d",
+    "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows"
+  },
+  "canonicalByteContract": {
+    "id": "rvr-canonical-json-v0",
+    "encoding": "UTF-8",
+    "domain": "null-boolean-unicode-scalar-string-array-object",
+    "objectKeyOrder": "unicode-scalar-value-ascending",
+    "arrayOrder": "preserved-with-duplicates",
+    "unicode": "scalar-values-only-no-normalization",
+    "numbers": "forbidden",
+    "whitespace": "none"
+  },
+  "schemaContracts": [
+    {
+      "id": "rvr-schema",
+      "path": "conformance/rvr-v0/rvr.schema.json",
+      "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+      "requiredForRecomputation": true
+    },
+    {
+      "id": "verification-profile-schema",
+      "path": "conformance/rvr-v0/verification-profile.schema.json",
+      "sha256": "c413406378dc8f5b051dc916d5e21dd15f7209782d2835f37939e35b041c8c86",
+      "requiredForRecomputation": true
+    }
+  ],
+  "evidenceSetContract": {
+    "schemaPath": "conformance/rvr-v0/rvr.schema.json",
+    "schemaSha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+    "schemaPointer": "#/$defs/evidenceSet",
+    "digestRule": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order"
+  },
+  "canonicalResultContract": {
+    "schemaPath": "conformance/rvr-v0/rvr.schema.json",
+    "schemaSha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+    "schemaPointer": "#/$defs/canonicalResult",
+    "outcomeProjection": "/outcome",
+    "reasonCodeProjection": "/reasonCode"
+  },
+  "resultHashRules": {
+    "algorithm": "SHA-256",
+    "input": "rvr-canonical-json-v0(canonicalResult)",
+    "encoding": "UTF-8-exactly-once",
+    "output": "lowercase-hex-no-prefix"
+  },
+  "reasonCodeNamespace": {
+    "verification": [
+      "rvr.v0.digest_match",
+      "rvr.v0.digest_mismatch",
+      "rvr.v0.required_evidence_unavailable"
+    ],
+    "recomputation": [
+      "rvr.recompute.identical",
+      "rvr.recompute.canonical_result_diverged",
+      "rvr.recompute.normative_dependency_unavailable"
+    ],
+    "gateRejections": [
+      "rvr.gate.schema_invalid",
+      "rvr.gate.identity_mismatch",
+      "rvr.gate.result_projection_mismatch",
+      "rvr.gate.evidence_closure_incomplete"
+    ]
+  },
+  "externalContextPolicy": {
+    "mode": "FORBIDDEN_UNLESS_COMMITTED",
+    "ambientInputs": "FORBIDDEN",
+    "immutableCommitments": []
+  }
+}

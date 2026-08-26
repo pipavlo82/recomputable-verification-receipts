@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/schemas/verification-profile.v0.schema.json",
+  "title": "RVR Verification Profile v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "profileId",
+    "verificationSpecification",
+    "conformanceVectorSet",
+    "canonicalByteContract",
+    "schemaContracts",
+    "evidenceSetContract",
+    "canonicalResultContract",
+    "resultHashRules",
+    "reasonCodeNamespace",
+    "externalContextPolicy"
+  ],
+  "properties": {
+    "schema": { "const": "rvr.verification-profile.v0" },
+    "profileId": { "const": "rvr-generic-sha256-equals-v0" },
+    "verificationSpecification": { "$ref": "#/$defs/dependency" },
+    "conformanceVectorSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "members", "digest", "digestRule"],
+      "properties": {
+        "id": { "const": "rvr-v0-first-falsification-set" },
+        "members": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/dependency" }
+        },
+        "digest": { "$ref": "#/$defs/digest" },
+        "digestRule": { "const": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows" }
+      }
+    },
+    "canonicalByteContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "encoding", "domain", "objectKeyOrder", "arrayOrder", "unicode", "numbers", "whitespace"],
+      "properties": {
+        "id": { "const": "rvr-canonical-json-v0" },
+        "encoding": { "const": "UTF-8" },
+        "domain": { "const": "null-boolean-unicode-scalar-string-array-object" },
+        "objectKeyOrder": { "const": "unicode-scalar-value-ascending" },
+        "arrayOrder": { "const": "preserved-with-duplicates" },
+        "unicode": { "const": "scalar-values-only-no-normalization" },
+        "numbers": { "const": "forbidden" },
+        "whitespace": { "const": "none" }
+      }
+    },
+    "schemaContracts": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/dependency" }
+    },
+    "evidenceSetContract": { "$ref": "#/$defs/schemaPointerContract" },
+    "canonicalResultContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaPath", "schemaSha256", "schemaPointer", "outcomeProjection", "reasonCodeProjection"],
+      "properties": {
+        "schemaPath": { "const": "conformance/rvr-v0/rvr.schema.json" },
+        "schemaSha256": { "$ref": "#/$defs/digest" },
+        "schemaPointer": { "const": "#/$defs/canonicalResult" },
+        "outcomeProjection": { "const": "/outcome" },
+        "reasonCodeProjection": { "const": "/reasonCode" }
+      }
+    },
+    "resultHashRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "input", "encoding", "output"],
+      "properties": {
+        "algorithm": { "const": "SHA-256" },
+        "input": { "const": "rvr-canonical-json-v0(canonicalResult)" },
+        "encoding": { "const": "UTF-8-exactly-once" },
+        "output": { "const": "lowercase-hex-no-prefix" }
+      }
+    },
+    "reasonCodeNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verification", "recomputation", "gateRejections"],
+      "properties": {
+        "verification": { "type": "array", "items": { "type": "string" } },
+        "recomputation": { "type": "array", "items": { "type": "string" } },
+        "gateRejections": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "externalContextPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "ambientInputs", "immutableCommitments"],
+      "properties": {
+        "mode": { "const": "FORBIDDEN_UNLESS_COMMITTED" },
+        "ambientInputs": { "const": "FORBIDDEN" },
+        "immutableCommitments": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "requiredForRecomputation"],
+      "properties": {
+        "id": { "type": "string" },
+        "path": { "type": "string" },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "requiredForRecomputation": { "type": "boolean" }
+      }
+    },
+    "schemaPointerContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaPath", "schemaSha256", "schemaPointer", "digestRule"],
+      "properties": {
+        "schemaPath": { "const": "conformance/rvr-v0/rvr.schema.json" },
+        "schemaSha256": { "$ref": "#/$defs/digest" },
+        "schemaPointer": { "const": "#/$defs/evidenceSet" },
+        "digestRule": { "const": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order" }
+      }
+    }
+  }
+}
