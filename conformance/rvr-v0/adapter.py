@@ -29,6 +29,7 @@ MANIFEST_PATH = PACKAGE / "manifest.json"
 MANIFEST_MEMBERS = (
     "conformance/rvr-v0/README.md",
     "conformance/rvr-v0/adapter.py",
+    "conformance/rvr-v0/adapter.ts",
     "conformance/rvr-v0/expected.json",
     "conformance/rvr-v0/rvr.schema.json",
     "conformance/rvr-v0/vectors.json",
@@ -744,6 +745,7 @@ def run_gate() -> dict[str, Any]:
 
     return {
         "gate": "RVR_V0_CONFORMANCE_PASS",
+        "implementation": "python-independent-rvr-v0",
         "profileId": profile["profileId"],
         "verificationProfileDigest": profile_digest,
         "canonicalByteContract": profile["canonicalByteContract"]["id"],

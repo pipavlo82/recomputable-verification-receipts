@@ -18,6 +18,7 @@ Run the gate:
 
 ```bash
 python conformance/rvr-v0/adapter.py --check
+bun conformance/rvr-v0/adapter.ts --check
 ```
 
 Run the test entrypoint used by CI:
@@ -27,5 +28,5 @@ python -m unittest discover -s tests -p "test_*.py"
 ```
 
 The Verification Profile and its committed contracts are authority. The
-included Python adapter is evidence that an implementation can conform; it is
-not authoritative.
+independent Python and TypeScript adapters are cross-implementation evidence
+of conformance; neither implementation is authoritative.

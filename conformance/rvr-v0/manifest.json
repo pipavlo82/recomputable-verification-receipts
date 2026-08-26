@@ -1,15 +1,19 @@
 {
   "schema": "rvr.conformance-manifest.v0",
   "hashAlgorithm": "sha256-lowercase-hex",
-  "memberCount": 8,
+  "memberCount": 9,
   "members": [
     {
       "path": "conformance/rvr-v0/README.md",
-      "sha256": "1523b5aad58685e7baca53d3d299453802eede43fda26f917ddf5f06b115e018"
+      "sha256": "833d952092adc0e3b7c6bd2d6e136177f81c33b5e66441f5a27ae41dca461042"
     },
     {
       "path": "conformance/rvr-v0/adapter.py",
-      "sha256": "a35ed01d1f0d4cf73b6d7b77f08bc9416b75faef974371944a9efb6e54e55505"
+      "sha256": "9275e96a507d8b7fbaba5ee31b3389bb7509bba0014ef04f08cc05770583f8d6"
+    },
+    {
+      "path": "conformance/rvr-v0/adapter.ts",
+      "sha256": "3ae10e423046c90cd3ae61d7e4e2748e992c15013a5eec3b66030adcc53e3110"
     },
     {
       "path": "conformance/rvr-v0/expected.json",
@@ -37,5 +41,5 @@
     }
   ],
   "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
-  "packageDigest": "23210ad0de2fd3c53f9628303cf8070641ee490941659141aed8bf8b3e94ddd6"
+  "packageDigest": "c9a32a7918b72c53e434bb174ed43abb3a8c55387792f66517da8a8206b3fa60"
 }
