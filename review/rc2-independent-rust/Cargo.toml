@@ -1,0 +1,11 @@
+[package]
+name = "rvr-rc2-independent-reviewer"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+base64 = "0.22"
+serde = "1"
+serde_json = "1"
+sha2 = "0.10"

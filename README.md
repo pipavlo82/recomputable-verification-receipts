@@ -36,6 +36,19 @@ The Verification Profile and its committed contracts are authority. The
 independent Python and TypeScript adapters are cross-implementation evidence
 of conformance; neither implementation is authoritative.
 
+## RC2 review and discussion lane
+
+The frozen [`v0.0.1-rc.2` baseline](docs/review/RVR_V0_0_1_RC2_BASELINE.md)
+is followed by non-normative review material that does not change its profile
+or package identities:
+
+- an [independent Rust implementation/reviewer](review/rc2-independent-rust/README.md);
+- an [ERC-overlap audit](docs/review/ERC_OVERLAP_AUDIT_RC2.md);
+- a [Magicians-ready pre-ERC proposal](docs/proposals/RVR_MAGICIANS_PROPOSAL.md).
+
+The discussion draft requests community feedback before any formal ERC pull
+request is considered.
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE).
