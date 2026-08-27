@@ -4,6 +4,14 @@ Status: publication-preparation review; non-normative.
 
 Snapshot date: 2026-08-26.
 
+Post-snapshot external review: on 2026-08-27, the ERC-8281 author confirmed in
+the [RVR Magicians discussion](https://ethereum-magicians.org/t/recomputable-verification-receipts-rvr/29521)
+that the boundary described by this audit is correct. ERC-8281 determines
+whether exact observation bytes were committed and included; RVR determines
+whether a semantic conclusion can be independently re-derived from committed
+inputs under an identified Verification Profile. The review identified no
+substitution between those guarantees.
+
 ## Audit question
 
 Does Recomputable Verification Receipts duplicate an existing Ethereum
@@ -105,6 +113,15 @@ The terms must not be conflated:
 - either can be used without the other;
 - when composed, the OCP proof and chain context must be part of the RVR
   closure.
+
+The ERC-8281 author's external review confirmed this boundary and added one
+integration requirement. If an RVR evidence set contains an ERC-8281 inclusion
+proof, the Verification Profile must commit the outcome-relevant chain snapshot
+and its resolution rules. The snapshot commitment must identify immutable
+state, such as a block hash or state root. If the required snapshot cannot be
+resolved, recomputation terminates as `CANNOT_RECOMPUTE`; it must not be
+reported as `DIVERGED` or `REFUTED`. This requirement applies to a future
+ERC-8281 integration profile and does not modify the frozen RC2 core.
 
 ### ERC-8299: provenance is an input, not the whole result
 
