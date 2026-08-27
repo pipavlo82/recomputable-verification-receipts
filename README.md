@@ -46,8 +46,14 @@ or package identities:
 - an [ERC-overlap audit](docs/review/ERC_OVERLAP_AUDIT_RC2.md);
 - a [Magicians-ready pre-ERC proposal](docs/proposals/RVR_MAGICIANS_PROPOSAL.md).
 
-The discussion draft requests community feedback before any formal ERC pull
-request is considered.
+Published on Ethereum Magicians:
+[Recomputable Verification Receipts (RVR)](https://ethereum-magicians.org/t/recomputable-verification-receipts-rvr/29521).
+
+The ERC-8281 author has confirmed the commitment/inclusion versus semantic
+recomputation boundary described by the overlap audit. That review also records
+the immutable-chain-snapshot requirement for a future ERC-8281 integration
+profile. Community feedback remains a prerequisite to considering any formal
+ERC pull request.
 
 ## License
 
