@@ -39,7 +39,7 @@
         "rvr.erc8281.v0.block_hash_mismatch"
       ]
     },
-    "envelope": {
+    "envelopeProjection": {
       "type": "object",
       "additionalProperties": false,
       "required": ["version", "digest", "hash_function", "chain_id", "contract", "tx_hash", "block_number", "receipt_log_position", "committer", "block_hash"],
@@ -59,14 +59,14 @@
     "claim": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schema", "proposition", "observationMember", "snapshotMember", "snapshotAssurance", "envelope"],
+      "required": ["schema", "proposition", "observationMember", "snapshotMember", "snapshotAssurance", "envelopeProjection"],
       "properties": {
         "schema": { "const": "rvr.claim.erc8281-committed-receipt-snapshot.v0" },
         "proposition": { "const": "rvr.erc8281.v0.observation_commitment_at_committed_receipt_snapshot" },
         "observationMember": { "const": "observation-bytes" },
         "snapshotMember": { "const": "receipt-snapshot" },
         "snapshotAssurance": { "const": "COMMITTED_RECEIPT_SNAPSHOT" },
-        "envelope": { "$ref": "#/$defs/envelope" }
+        "envelopeProjection": { "$ref": "#/$defs/envelopeProjection" }
       }
     },
     "presentEvidenceMember": {

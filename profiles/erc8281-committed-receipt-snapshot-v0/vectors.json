@@ -9,13 +9,25 @@
     "vectorSha256": "ab50fa0dfbad2966ac998b78d34cdab05e110870ee98f3a9bbe6c944e75da31f"
   },
   "baseCase": {
+    "rawEnvelope": {
+      "version": "erc8281/1",
+      "digest": "0x9f7f3830e030fd0c326a1f4e231c65b97583f06f264dfae60d02a6f8b775445d",
+      "hash_function": "sha2-256",
+      "chain_id": "42161",
+      "contract": "0x0C0117AC70000000000000000000000000000001",
+      "tx_hash": "0x2ad1a7bbf87df18e6fc0c190aa6fa5639cdef2bdc94a3765f7c2e789ea877854",
+      "block_number": "352800417",
+      "receipt_log_position": "0",
+      "committer": "0xc0Aa17dE0000000000000000000000000000beEf",
+      "block_hash": "0x31147401e22d1747af6e1411cf8837a12f27a08d6397e363cd93230059557c3d"
+    },
     "claim": {
       "schema": "rvr.claim.erc8281-committed-receipt-snapshot.v0",
       "proposition": "rvr.erc8281.v0.observation_commitment_at_committed_receipt_snapshot",
       "observationMember": "observation-bytes",
       "snapshotMember": "receipt-snapshot",
       "snapshotAssurance": "COMMITTED_RECEIPT_SNAPSHOT",
-      "envelope": {
+      "envelopeProjection": {
         "version": "erc8281/1",
         "digest": "0x9f7f3830e030fd0c326a1f4e231c65b97583f06f264dfae60d02a6f8b775445d",
         "hash_function": "sha2-256",
@@ -93,7 +105,7 @@
     },
     "invalidEip55Committer": "0xC0Aa17dE0000000000000000000000000000beEf",
     "ignoredEnvelopeExtension": {
-      "uncommittedMeaning": "must-be-rejected"
+      "uncommittedMeaning": "must-be-ignored-before-rvr-identity"
     }
   }
 }

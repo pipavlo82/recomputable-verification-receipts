@@ -27,9 +27,26 @@ PROFILE_SCHEMA_PATH = PACKAGE / "profile.schema.json"
 RVR_SCHEMA_PATH = PACKAGE / "rvr.schema.json"
 VECTORS_PATH = PACKAGE / "vectors.json"
 EXPECTED_PATH = PACKAGE / "expected.json"
+UPSTREAM_SPEC_PATH = PACKAGE / "upstream/erc-8281.md"
+UPSTREAM_VECTORS_PATH = PACKAGE / "upstream/test-vectors.json"
+
+UPSTREAM_SPEC_SHA256 = "8036fb5e232f4f01591d58efd920defd696211b7a5f91d425d672a75890f7bb4"
+UPSTREAM_VECTORS_SHA256 = "ab50fa0dfbad2966ac998b78d34cdab05e110870ee98f3a9bbe6c944e75da31f"
 
 TOPIC0 = "0xdca60c2087041cbb12d9a57628c6cad28ecbd0437e47c7ab6c3aa6e162bf4497"
 PROPOSITION = "rvr.erc8281.v0.observation_commitment_at_committed_receipt_snapshot"
+ENVELOPE_PROJECTION_FIELDS = (
+    "version",
+    "digest",
+    "hash_function",
+    "chain_id",
+    "contract",
+    "tx_hash",
+    "block_number",
+    "receipt_log_position",
+    "committer",
+    "block_hash",
+)
 
 PACKAGE_MEMBERS = (
     "conformance/rvr-v0/verification-profile-manifest.schema.json",
@@ -40,6 +57,8 @@ PACKAGE_MEMBERS = (
     "profiles/erc8281-committed-receipt-snapshot-v0/profile.schema.json",
     "profiles/erc8281-committed-receipt-snapshot-v0/rvr.schema.json",
     "profiles/erc8281-committed-receipt-snapshot-v0/test_profile.py",
+    "profiles/erc8281-committed-receipt-snapshot-v0/upstream/erc-8281.md",
+    "profiles/erc8281-committed-receipt-snapshot-v0/upstream/test-vectors.json",
     "profiles/erc8281-committed-receipt-snapshot-v0/vectors.json",
     "profiles/erc8281-committed-receipt-snapshot-v0/verification-profile.json",
 )
@@ -346,28 +365,72 @@ def observation_hash(name: str, data: bytes) -> str:
     raise GateRejected("rvr.gate.schema_invalid", f"unsupported hash function: {name}")
 
 
-def audit_profile() -> tuple[dict[str, Any], str, dict[str, Any]]:
-    profile = load_json(PROFILE_PATH)
-    generic_schema = load_json(GENERIC_PROFILE_SCHEMA)
-    specific_schema = load_json(PROFILE_SCHEMA_PATH)
+def audit_profile(
+    dependency_overrides: dict[str, bytes] | None = None,
+) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, bytes]]:
+    profile = parse_json(PROFILE_PATH.read_bytes(), str(PROFILE_PATH))
+    generic_schema_bytes = GENERIC_PROFILE_SCHEMA.read_bytes()
+    generic_schema = parse_json(generic_schema_bytes, str(GENERIC_PROFILE_SCHEMA))
     try:
         validate_schema(profile, generic_schema, generic_schema)
+    except SchemaError as error:
+        raise GateRejected("rvr.gate.schema_invalid", str(error)) from error
+
+    pinned_bytes: dict[str, bytes] = {}
+    for dependency in profile_dependencies(profile):
+        try:
+            dependency_bytes = (
+                dependency_overrides[dependency["id"]]
+                if dependency_overrides and dependency["id"] in dependency_overrides
+                else safe_dependency_path(dependency["path"]).read_bytes()
+            )
+        except OSError as error:
+            raise GateRejected("rvr.gate.identity_mismatch", f"dependency unavailable: {dependency['id']}") from error
+        if sha256(dependency_bytes) != dependency["sha256"]:
+            raise GateRejected("rvr.gate.identity_mismatch", f"dependency mismatch: {dependency['id']}")
+        pinned_bytes[dependency["id"]] = dependency_bytes
+
+    manifest_dependency = profile["profileSchemaContract"]["manifest"]
+    if pinned_bytes[manifest_dependency["id"]] != generic_schema_bytes:
+        raise GateRejected("rvr.gate.identity_mismatch", "generic bootstrap schema differs from its pinned bytes")
+    upstream_artifacts = (
+        ("erc8281-specification", UPSTREAM_SPEC_PATH, UPSTREAM_SPEC_SHA256, "erc8281-specification-sha256:"),
+        ("erc8281-vectors", UPSTREAM_VECTORS_PATH, UPSTREAM_VECTORS_SHA256, "erc8281-vectors-sha256:"),
+    )
+    commitments = profile["externalContextPolicy"]["immutableCommitments"]
+    for artifact_id, path, expected_digest, commitment_prefix in upstream_artifacts:
+        try:
+            artifact_bytes = path.read_bytes()
+        except OSError as error:
+            raise GateRejected("rvr.gate.identity_mismatch", f"vendored normative artifact unavailable: {path.name}") from error
+        if sha256(artifact_bytes) != expected_digest or commitment_prefix + expected_digest not in commitments:
+            raise GateRejected("rvr.gate.identity_mismatch", f"vendored normative artifact mismatch: {path.name}")
+        pinned_bytes[artifact_id] = artifact_bytes
+
+    constraints_dependency = profile["profileSchemaContract"]["constraints"]
+    specific_schema = parse_json(
+        pinned_bytes[constraints_dependency["id"]],
+        constraints_dependency["path"],
+    )
+    try:
         validate_schema(profile, specific_schema, specific_schema)
     except SchemaError as error:
         raise GateRejected("rvr.gate.schema_invalid", str(error)) from error
-    for dependency in profile_dependencies(profile):
-        path = safe_dependency_path(dependency["path"])
-        if not path.is_file() or sha256(path.read_bytes()) != dependency["sha256"]:
-            raise GateRejected("rvr.gate.identity_mismatch", f"dependency mismatch: {dependency['id']}")
+
+    parse_json(pinned_bytes["erc8281-vectors"], str(UPSTREAM_VECTORS_PATH))
     vector_members = profile["conformanceVectorSet"]["members"]
     if sha256(dependency_rows(vector_members)) != profile["conformanceVectorSet"]["digest"]:
         raise GateRejected("rvr.gate.identity_mismatch", "vector-set digest mismatch")
-    rvr_schema_digest = sha256(RVR_SCHEMA_PATH.read_bytes())
+    rvr_schema_dependency = next(
+        dependency for dependency in profile["schemaContracts"] if dependency["id"] == "rvr-schema"
+    )
+    rvr_schema_digest = sha256(pinned_bytes[rvr_schema_dependency["id"]])
     if profile["evidenceSetContract"]["schemaSha256"] != rvr_schema_digest:
         raise GateRejected("rvr.gate.identity_mismatch", "evidence schema binding mismatch")
     if profile["canonicalResultContract"]["schemaSha256"] != rvr_schema_digest:
         raise GateRejected("rvr.gate.identity_mismatch", "result schema binding mismatch")
-    return profile, canonical_digest(profile), load_json(RVR_SCHEMA_PATH)
+    rvr_schema = parse_json(pinned_bytes[rvr_schema_dependency["id"]], rvr_schema_dependency["path"])
+    return profile, canonical_digest(profile), rvr_schema, pinned_bytes
 
 
 def present_member(identifier: str, media_type: str, payload: bytes) -> dict[str, Any]:
@@ -406,14 +469,36 @@ def evidence_digest(evidence_set: dict[str, Any]) -> str:
     return canonical_digest(normalized)
 
 
+def validate_envelope_projection(projection: dict[str, Any], rvr_schema: dict[str, Any]) -> None:
+    try:
+        validate_schema(
+            projection,
+            resolve_pointer(rvr_schema, "#/$defs/envelopeProjection"),
+            rvr_schema,
+        )
+    except SchemaError as error:
+        raise GateRejected("rvr.gate.schema_invalid", str(error)) from error
+    if not validate_eip55(projection["contract"]) or not validate_eip55(projection["committer"]):
+        raise GateRejected("rvr.gate.schema_invalid", "contract or committer has an invalid EIP-55 checksum")
+
+
+def derive_envelope_projection(raw_envelope: dict[str, Any], rvr_schema: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(raw_envelope, dict):
+        raise GateRejected("rvr.gate.schema_invalid", "raw ERC-8281 envelope must be an object")
+    missing = [field for field in ENVELOPE_PROJECTION_FIELDS if field not in raw_envelope]
+    if missing:
+        raise GateRejected("rvr.gate.schema_invalid", f"raw ERC-8281 envelope missing fields: {missing}")
+    projection = {field: copy.deepcopy(raw_envelope[field]) for field in ENVELOPE_PROJECTION_FIELDS}
+    validate_envelope_projection(projection, rvr_schema)
+    return projection
+
+
 def validate_claim(claim: dict[str, Any], rvr_schema: dict[str, Any]) -> None:
     try:
         validate_schema(claim, resolve_pointer(rvr_schema, "#/$defs/claim"), rvr_schema)
     except SchemaError as error:
         raise GateRejected("rvr.gate.schema_invalid", str(error)) from error
-    envelope = claim["envelope"]
-    if not validate_eip55(envelope["contract"]) or not validate_eip55(envelope["committer"]):
-        raise GateRejected("rvr.gate.schema_invalid", "contract or committer has an invalid EIP-55 checksum")
+    validate_envelope_projection(claim["envelopeProjection"], rvr_schema)
 
 
 def validate_evidence(evidence_set: dict[str, Any], payloads: dict[str, bytes], rvr_schema: dict[str, Any]) -> None:
@@ -444,7 +529,7 @@ def validate_evidence(evidence_set: dict[str, Any], payloads: dict[str, bytes], 
 
 
 def evaluation_record(claim: dict[str, Any], snapshot: dict[str, Any], observation_digest: str | None) -> dict[str, Any]:
-    envelope = claim["envelope"]
+    envelope = claim["envelopeProjection"]
     position = int(envelope["receipt_log_position"])
     selected = snapshot["logs"][position] if position < len(snapshot["logs"]) else None
     topics = selected["topics"] if selected else []
@@ -496,7 +581,7 @@ def evaluate(claim: dict[str, Any], evidence_set: dict[str, Any], payloads: dict
     observation = payloads.get("observation-bytes")
     if observation is None:
         raise GateRejected("rvr.gate.identity_mismatch", "present observation payload is unavailable")
-    envelope = claim["envelope"]
+    envelope = claim["envelopeProjection"]
     digest = observation_hash(envelope["hash_function"], observation)
     evaluation = evaluation_record(claim, snapshot, digest)
     checks = [
@@ -584,6 +669,12 @@ def recompute(
         return {"recomputationStatus": "CANNOT_RECOMPUTE", "reasonCode": "rvr.recompute.normative_dependency_unavailable", "evaluationPerformed": False}
     if "receipt-snapshot" not in candidate_payloads:
         return {"recomputationStatus": "CANNOT_RECOMPUTE", "reasonCode": "rvr.recompute.committed_snapshot_unavailable", "evaluationPerformed": False}
+    candidate_members = {member["id"]: member for member in candidate_evidence["members"]}
+    if (
+        candidate_members.get("observation-bytes", {}).get("status") == "PRESENT"
+        and "observation-bytes" not in candidate_payloads
+    ):
+        return {"recomputationStatus": "CANNOT_RECOMPUTE", "reasonCode": "rvr.recompute.committed_evidence_unavailable", "evaluationPerformed": False}
     candidate_result = evaluate(candidate_claim, candidate_evidence, candidate_payloads, rvr_schema)
     same = (
         canonical_digest(candidate_claim) == stored["receipt"]["claimDigest"]
@@ -656,12 +747,16 @@ def audit_manifest() -> tuple[str, int]:
 
 
 def run_gate() -> dict[str, Any]:
-    _, profile_digest, rvr_schema = audit_profile()
+    _, profile_digest, rvr_schema, pinned_bytes = audit_profile()
     package_digest, member_count = audit_manifest()
-    vectors = load_json(VECTORS_PATH)
-    expected = load_json(EXPECTED_PATH)
+    vectors = parse_json(pinned_bytes["erc8281-verification-vectors"], str(VECTORS_PATH))
+    expected = parse_json(pinned_bytes["erc8281-expected-results"], str(EXPECTED_PATH))
     base = vectors["baseCase"]
     claim = base["claim"]
+    raw_envelope = base["rawEnvelope"]
+    derived_projection = derive_envelope_projection(raw_envelope, rvr_schema)
+    if derived_projection != claim["envelopeProjection"]:
+        raise ProfileError("base raw envelope does not derive the committed projection")
     observation = base64.b64decode(base["observationBase64"], validate=True)
     snapshot = base["snapshot"]
     original = make_bundle(claim, observation, snapshot, profile_digest, rvr_schema)
@@ -685,6 +780,22 @@ def run_gate() -> dict[str, Any]:
         rvr_schema,
         dependencies_available=False,
     )
+    unresolved_observation_payloads = dict(original["payloads"])
+    del unresolved_observation_payloads["observation-bytes"]
+    observation_cannot = recompute(
+        original,
+        claim,
+        original["evidenceSet"],
+        unresolved_observation_payloads,
+        profile_digest,
+        rvr_schema,
+    )
+
+    tampered_constraints = expect_rejection(
+        lambda: audit_profile({"erc8281-profile-schema": b"{not-valid-json"}),
+        "rvr.gate.identity_mismatch",
+    )
+    tampered_constraints["constraintsApplied"] = False
 
     contradictory = copy.deepcopy(original)
     contradictory["receipt"]["outcome"] = vectors["negativeControls"]["projectionReplacement"]
@@ -695,11 +806,23 @@ def run_gate() -> dict[str, Any]:
     )
     hidden["evaluationPerformed"] = False
     invalid_claim = copy.deepcopy(claim)
-    invalid_claim["envelope"]["committer"] = vectors["negativeControls"]["invalidEip55Committer"]
+    invalid_claim["envelopeProjection"]["committer"] = vectors["negativeControls"]["invalidEip55Committer"]
     invalid_eip55 = expect_rejection(lambda: make_bundle(invalid_claim, observation, snapshot, profile_digest, rvr_schema), "rvr.gate.schema_invalid")
+    extended_raw_envelope = copy.deepcopy(raw_envelope)
+    extended_raw_envelope.update(vectors["negativeControls"]["ignoredEnvelopeExtension"])
+    extended_projection = derive_envelope_projection(extended_raw_envelope, rvr_schema)
     extended_claim = copy.deepcopy(claim)
-    extended_claim["envelope"].update(vectors["negativeControls"]["ignoredEnvelopeExtension"])
-    extension = expect_rejection(lambda: make_bundle(extended_claim, observation, snapshot, profile_digest, rvr_schema), "rvr.gate.schema_invalid")
+    extended_claim["envelopeProjection"] = extended_projection
+    extension_identity = {
+        "sameProjection": extended_projection == derived_projection,
+        "sameClaimDigest": canonical_digest(extended_claim) == canonical_digest(claim),
+    }
+    closed_projection_extension = copy.deepcopy(claim)
+    closed_projection_extension["envelopeProjection"].update(vectors["negativeControls"]["ignoredEnvelopeExtension"])
+    closed_projection_rejection = expect_rejection(
+        lambda: make_bundle(closed_projection_extension, observation, snapshot, profile_digest, rvr_schema),
+        "rvr.gate.schema_invalid",
+    )
 
     hash_passed = 0
     for case in vectors["hashFunctionCases"]:
@@ -723,10 +846,13 @@ def run_gate() -> dict[str, Any]:
         "UNVERIFIABLE_REPRODUCED": unavailable_reproduced,
         "CANNOT_RECOMPUTE": cannot,
         "NORMATIVE_DEPENDENCY_CANNOT_RECOMPUTE": normative_cannot,
+        "PRESENT_OBSERVATION_UNRESOLVED": observation_cannot,
+        "TAMPERED_PROFILE_CONSTRAINTS_PIN": tampered_constraints,
         "PROJECTION_NEGATIVE_CONTROL": projection,
         "HIDDEN_STATE_NEGATIVE_CONTROL": hidden,
         "INVALID_EIP55_NEGATIVE_CONTROL": invalid_eip55,
-        "ENVELOPE_EXTENSION_NEGATIVE_CONTROL": extension,
+        "IGNORED_EXTENSION_PROJECTION_IDENTITY": extension_identity,
+        "CLOSED_PROJECTION_EXTENSION_REJECTED": closed_projection_rejection,
     }
     for identifier, expected_case in expected["cases"].items():
         for key, value in expected_case.items():

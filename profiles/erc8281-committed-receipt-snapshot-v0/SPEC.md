@@ -8,7 +8,8 @@ This file is the complete verification specification for profile
 `rvr-erc8281-committed-receipt-snapshot-v0`. Its exact bytes are pinned by the
 Verification Profile.
 
-The procedure integrates the ERC-8281 Draft reviewed at this immutable source:
+The procedure normatively incorporates the exact ERC-8281 Draft bytes reviewed
+at this immutable source:
 
 ```text
 repository: damonzwicker/ERCs
@@ -18,7 +19,9 @@ byte length: 23927
 SHA-256: 8036fb5e232f4f01591d58efd920defd696211b7a5f91d425d672a75890f7bb4
 ```
 
-The upstream conformance vectors reviewed with it are:
+Those bytes are vendored at
+`profiles/erc8281-committed-receipt-snapshot-v0/upstream/erc-8281.md`. The
+upstream conformance vectors reviewed with them are:
 
 ```text
 path: assets/erc-8281/test-vectors.json
@@ -26,9 +29,18 @@ byte length: 28044
 SHA-256: ab50fa0dfbad2966ac998b78d34cdab05e110870ee98f3a9bbe6c944e75da31f
 ```
 
-These coordinates identify design provenance. Evaluation uses only the exact
-local profile package after every required dependency digest matches. It never
-fetches a live Git repository, RPC endpoint, SDK, indexer, or producer.
+The vector bytes are vendored at
+`profiles/erc8281-committed-receipt-snapshot-v0/upstream/test-vectors.json`.
+Both SHA-256 identities are committed by the Verification Profile and both
+files are members of the profile package. A recomputer MUST resolve and verify
+these exact local bytes. Evaluation never fetches a live Git repository, RPC
+endpoint, SDK, indexer, or producer.
+
+The local specification defines the RVR composition and the deliberately
+narrower snapshot assurance. Where it invokes the `erc8281/1` procedure, the
+vendored upstream specification is normative. The local rules explicitly
+select required `block_hash` and committed-snapshot resolution rather than the
+upstream live-RPC retrieval option.
 
 ## 2. Exact proposition
 
@@ -76,10 +88,13 @@ reasonCode
 resultDigest
 ```
 
-The profile-specific claim contains the closed authenticated projection of the
-ERC-8281 envelope. Additional envelope fields are rejected and cannot change
-input identity. `block_hash`, optional in ERC-8281, is REQUIRED here to freeze
-the snapshot reference.
+The profile-specific claim contains `envelopeProjection`, the closed
+identity-bearing projection of the ERC-8281 envelope. A raw ERC-8281 envelope
+is first validated under the vendored procedure, which ignores unknown
+extension fields. The profile then copies exactly the known required fields
+plus `block_hash` into `envelopeProjection`. Unknown raw fields are neither
+copied nor committed and cannot change `claimDigest`. `block_hash`, optional in
+ERC-8281, is REQUIRED by this profile to freeze the snapshot reference.
 
 The receipt snapshot is exact canonical JSON matching
 `#/$defs/receiptSnapshot` in `rvr.schema.json`. The evidence member digest is
@@ -123,10 +138,18 @@ cannot resolve the required snapshot payload, recomputation returns
 malformed descriptor, wrong payload digest, or hidden payload is instead a gate
 rejection.
 
-## 5. Envelope validation
+If the observation descriptor is `PRESENT` but an independent recomputer
+cannot resolve its payload, recomputation returns `CANNOT_RECOMPUTE` with
+`rvr.recompute.committed_evidence_unavailable` before semantic evaluation.
+This differs from a descriptor that itself commits `UNAVAILABLE`, which is an
+evaluated `UNVERIFIABLE` result.
 
-Before semantic evaluation, the profile validates the closed envelope schema
-and additionally enforces:
+## 5. Raw-envelope projection and validation
+
+Before claim construction, the profile validates the known fields of the raw
+ERC-8281 envelope and ignores fields not named by `erc8281/1`. It then derives
+the closed `envelopeProjection`. Before semantic evaluation, the profile
+validates that closed projection and additionally enforces:
 
 - `version` is exactly `erc8281/1`;
 - `hash_function` is `sha2-256`, `keccak-256`, or `blake2b-256`;
@@ -139,6 +162,10 @@ and additionally enforces:
 
 Failure is a schema/gate rejection. It is not `REFUTED` because no well-formed
 profile claim reached semantic evaluation.
+
+Two raw envelopes that differ only by ignored extension fields MUST derive
+byte-identical projections and the same `claimDigest`. Supplying an extension
+directly inside the closed `envelopeProjection` is malformed and is rejected.
 
 ## 6. Verification procedure
 
@@ -187,6 +214,18 @@ Required committed snapshot unavailable to the recomputer:
 ```text
 CANNOT_RECOMPUTE / rvr.recompute.committed_snapshot_unavailable
 ```
+
+Committed `PRESENT` observation unavailable to the recomputer:
+
+```text
+CANNOT_RECOMPUTE / rvr.recompute.committed_evidence_unavailable
+```
+
+Profile bootstrap follows this exact order: parse the trusted generic manifest
+schema, validate the generic profile envelope, resolve each dependency once,
+verify its committed SHA-256, and only then parse or apply the profile-specific
+constraints schema. A digest-mismatching constraints file MUST be rejected
+without being parsed or semantically applied.
 
 After complete evaluation, matching input/result identities produce
 `REPRODUCED`; any differing claim, evidence-set, or canonical-result identity
