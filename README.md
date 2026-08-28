@@ -44,6 +44,7 @@ or package identities:
 
 - an [independent Rust implementation/reviewer](review/rc2-independent-rust/README.md);
 - an [ERC-overlap audit](docs/review/ERC_OVERLAP_AUDIT_RC2.md);
+- the [first ERC-8281/OCP external-profile design](docs/profiles/RVR_ERC_8281_OCP_PROFILE_DESIGN.md);
 - a [Magicians-ready pre-ERC proposal](docs/proposals/RVR_MAGICIANS_PROPOSAL.md).
 
 Published on Ethereum Magicians:
