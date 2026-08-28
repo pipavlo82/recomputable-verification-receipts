@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/profiles/rvr-erc8281-committed-receipt-snapshot-v0/profile.schema.json",
+  "title": "RVR ERC-8281 committed receipt snapshot profile constraints v0",
+  "type": "object",
+  "required": [
+    "schema",
+    "profileId",
+    "profileSchemaContract",
+    "verificationSpecification",
+    "conformanceVectorSet",
+    "evidenceSetContract",
+    "canonicalResultContract",
+    "externalContextPolicy"
+  ],
+  "properties": {
+    "schema": { "const": "rvr.verification-profile.v0" },
+    "profileId": { "const": "rvr-erc8281-committed-receipt-snapshot-v0" },
+    "profileSchemaContract": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "verification-profile-manifest-schema" },
+            "path": { "const": "conformance/rvr-v0/verification-profile-manifest.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "erc8281-profile-schema" },
+            "path": { "const": "profiles/erc8281-committed-receipt-snapshot-v0/profile.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        }
+      }
+    },
+    "verificationSpecification": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "erc8281-verification-specification" },
+        "path": { "const": "profiles/erc8281-committed-receipt-snapshot-v0/SPEC.md" },
+        "requiredForRecomputation": { "const": true }
+      }
+    },
+    "conformanceVectorSet": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "rvr-erc8281-committed-receipt-snapshot-v0-vectors" }
+      }
+    },
+    "evidenceSetContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "profiles/erc8281-committed-receipt-snapshot-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/evidenceSet" },
+        "digestRule": { "const": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order" }
+      }
+    },
+    "canonicalResultContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "profiles/erc8281-committed-receipt-snapshot-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/canonicalResult" },
+        "outcomeProjection": { "const": "/outcome" },
+        "reasonCodeProjection": { "const": "/reasonCode" }
+      }
+    },
+    "externalContextPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": { "const": "COMMITTED_SNAPSHOTS_ONLY" },
+        "ambientInputs": { "const": "FORBIDDEN" },
+        "immutableCommitments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "const": "erc8281-committed-receipt-snapshot" }
+        }
+      }
+    }
+  }
+}

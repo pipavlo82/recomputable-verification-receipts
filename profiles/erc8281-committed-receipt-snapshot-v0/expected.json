@@ -1,0 +1,52 @@
+{
+  "schema": "rvr.erc8281.expected-results.v0",
+  "cases": {
+    "REPRODUCED": {
+      "verificationOutcome": "VERIFIED",
+      "verificationReasonCode": "rvr.erc8281.v0.commitment_verified",
+      "recomputationStatus": "REPRODUCED",
+      "evaluationPerformed": true
+    },
+    "DIVERGED": {
+      "verificationOutcome": "REFUTED",
+      "verificationReasonCode": "rvr.erc8281.v0.observation_digest_mismatch",
+      "recomputationStatus": "DIVERGED",
+      "evaluationPerformed": true
+    },
+    "UNVERIFIABLE_REPRODUCED": {
+      "verificationOutcome": "UNVERIFIABLE",
+      "verificationReasonCode": "rvr.erc8281.v0.required_observation_unavailable",
+      "recomputationStatus": "REPRODUCED",
+      "evaluationPerformed": true
+    },
+    "CANNOT_RECOMPUTE": {
+      "recomputationStatus": "CANNOT_RECOMPUTE",
+      "reasonCode": "rvr.recompute.committed_snapshot_unavailable",
+      "evaluationPerformed": false
+    },
+    "NORMATIVE_DEPENDENCY_CANNOT_RECOMPUTE": {
+      "recomputationStatus": "CANNOT_RECOMPUTE",
+      "reasonCode": "rvr.recompute.normative_dependency_unavailable",
+      "evaluationPerformed": false
+    },
+    "PROJECTION_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.result_projection_mismatch"
+    },
+    "HIDDEN_STATE_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.evidence_closure_incomplete",
+      "evaluationPerformed": false
+    },
+    "INVALID_EIP55_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.schema_invalid"
+    },
+    "ENVELOPE_EXTENSION_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.schema_invalid"
+    }
+  },
+  "hashFunctionCases": 3,
+  "semanticFailures": 12
+}

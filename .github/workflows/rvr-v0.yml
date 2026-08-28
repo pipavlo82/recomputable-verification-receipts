@@ -55,3 +55,21 @@ jobs:
           cargo clippy --locked
           --manifest-path review/rc2-independent-rust/Cargo.toml
           --all-targets -- -D warnings
+
+  erc8281-committed-receipt-profile:
+    name: External profile — ERC-8281 committed receipt snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Run exact external-profile gate
+        run: python profiles/erc8281-committed-receipt-snapshot-v0/adapter.py --check
+
+      - name: Run focused external-profile test
+        run: python profiles/erc8281-committed-receipt-snapshot-v0/test_profile.py

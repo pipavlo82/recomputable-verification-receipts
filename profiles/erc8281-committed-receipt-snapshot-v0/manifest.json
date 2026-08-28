@@ -1,0 +1,49 @@
+{
+  "schema": "rvr.profile-package-manifest.v0",
+  "hashAlgorithm": "sha256-lowercase-hex",
+  "memberCount": 10,
+  "members": [
+    {
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/README.md",
+      "sha256": "bca51db73fc1f4bb8c279cd21e024300617539901a8f0424193ac1ee22fc36f1"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/SPEC.md",
+      "sha256": "658fe8b98c48ebc34229238929e32e856ecedf2445c3dcb302b6b8ddc0b937c8"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/adapter.py",
+      "sha256": "3f4ef0826daffd35c01ff2f10ae026968632248e1dd739a084b06ecc7caaa1e0"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/expected.json",
+      "sha256": "eee90f45543e8bec1608a35eed3104e493ace263d7ac4fbfa53b56aef8553b2e"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/profile.schema.json",
+      "sha256": "60e2b9315697c9d7766bdcc4aaeb9bfb54d4a8af3c487525a069e8f620f1b71d"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/rvr.schema.json",
+      "sha256": "c183e5fc087edd420dc666919ae692c6fde41b2f599a0cb6b6e70b8cb6266d53"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/test_profile.py",
+      "sha256": "db5b04b7d7cc29979eb347a4475d9fe47e549fac30896f0d91d9e7ef52b5f052"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/vectors.json",
+      "sha256": "05d2d5721b03802bf83ee087efff53672c001ddaf0f56efa0151da84c7f7c388"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/verification-profile.json",
+      "sha256": "5b4e7696a47f116cbb6900230ab599288e7e29688bda6fb1f480038d42035314"
+    }
+  ],
+  "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
+  "packageDigest": "dbcdd6777a7986b3dbc43e5873bef6c2817fc660ecbd7ca9d910d3a844b9f9c1"
+}
