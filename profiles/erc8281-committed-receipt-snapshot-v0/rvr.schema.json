@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/profiles/rvr-erc8281-committed-receipt-snapshot-v0/rvr.schema.json",
+  "title": "RVR ERC-8281 committed receipt snapshot contracts v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claimDigest", "evidenceSetDigest", "verificationProfileDigest", "outcome", "reasonCode", "resultDigest"],
+  "properties": {
+    "claimDigest": { "$ref": "#/$defs/digest" },
+    "evidenceSetDigest": { "$ref": "#/$defs/digest" },
+    "verificationProfileDigest": { "$ref": "#/$defs/digest" },
+    "outcome": { "$ref": "#/$defs/outcome" },
+    "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+    "resultDigest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "hex32": { "type": "string", "pattern": "^0x[0-9a-f]{64}$" },
+    "hexAddress": { "type": "string", "pattern": "^0x[0-9A-Fa-f]{40}$" },
+    "lowerHexAddress": { "type": "string", "pattern": "^0x[0-9a-f]{40}$" },
+    "decimal": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" },
+    "identifier": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" },
+    "outcome": { "enum": ["VERIFIED", "REFUTED", "UNVERIFIABLE"] },
+    "verificationReasonCode": {
+      "enum": [
+        "rvr.erc8281.v0.commitment_verified",
+        "rvr.erc8281.v0.required_observation_unavailable",
+        "rvr.erc8281.v0.observation_digest_mismatch",
+        "rvr.erc8281.v0.chain_id_mismatch",
+        "rvr.erc8281.v0.transaction_hash_mismatch",
+        "rvr.erc8281.v0.receipt_reverted",
+        "rvr.erc8281.v0.log_position_out_of_range",
+        "rvr.erc8281.v0.contract_mismatch",
+        "rvr.erc8281.v0.topic_count_invalid",
+        "rvr.erc8281.v0.topic0_mismatch",
+        "rvr.erc8281.v0.onchain_digest_mismatch",
+        "rvr.erc8281.v0.committer_mismatch",
+        "rvr.erc8281.v0.block_number_mismatch",
+        "rvr.erc8281.v0.block_hash_mismatch"
+      ]
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "digest", "hash_function", "chain_id", "contract", "tx_hash", "block_number", "receipt_log_position", "committer", "block_hash"],
+      "properties": {
+        "version": { "const": "erc8281/1" },
+        "digest": { "$ref": "#/$defs/hex32" },
+        "hash_function": { "enum": ["sha2-256", "keccak-256", "blake2b-256"] },
+        "chain_id": { "$ref": "#/$defs/decimal" },
+        "contract": { "$ref": "#/$defs/hexAddress" },
+        "tx_hash": { "$ref": "#/$defs/hex32" },
+        "block_number": { "$ref": "#/$defs/decimal" },
+        "receipt_log_position": { "$ref": "#/$defs/decimal" },
+        "committer": { "$ref": "#/$defs/hexAddress" },
+        "block_hash": { "$ref": "#/$defs/hex32" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "proposition", "observationMember", "snapshotMember", "snapshotAssurance", "envelope"],
+      "properties": {
+        "schema": { "const": "rvr.claim.erc8281-committed-receipt-snapshot.v0" },
+        "proposition": { "const": "rvr.erc8281.v0.observation_commitment_at_committed_receipt_snapshot" },
+        "observationMember": { "const": "observation-bytes" },
+        "snapshotMember": { "const": "receipt-snapshot" },
+        "snapshotAssurance": { "const": "COMMITTED_RECEIPT_SNAPSHOT" },
+        "envelope": { "$ref": "#/$defs/envelope" }
+      }
+    },
+    "presentEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "mediaType", "byteLength", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "PRESENT" },
+        "mediaType": { "type": "string" },
+        "byteLength": { "$ref": "#/$defs/decimal" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "unavailableEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "reasonCode"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "UNAVAILABLE" },
+        "reasonCode": { "const": "rvr.erc8281.v0.evidence_unavailable" }
+      }
+    },
+    "evidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "members"],
+      "properties": {
+        "schema": { "const": "rvr.evidence-set.v0" },
+        "members": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "oneOf": [{ "$ref": "#/$defs/presentEvidenceMember" }, { "$ref": "#/$defs/unavailableEvidenceMember" }] }
+        }
+      }
+    },
+    "receiptLog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "topics", "logIndex"],
+      "properties": {
+        "address": { "$ref": "#/$defs/lowerHexAddress" },
+        "topics": { "type": "array", "items": { "$ref": "#/$defs/hex32" } },
+        "logIndex": { "$ref": "#/$defs/decimal" }
+      }
+    },
+    "receiptSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "snapshotAssurance", "chainId", "transactionHash", "status", "blockNumber", "blockHash", "logs"],
+      "properties": {
+        "schema": { "const": "rvr.erc8281.receipt-snapshot.v0" },
+        "snapshotAssurance": { "const": "COMMITTED_RECEIPT_SNAPSHOT" },
+        "chainId": { "$ref": "#/$defs/decimal" },
+        "transactionHash": { "$ref": "#/$defs/hex32" },
+        "status": { "enum": ["SUCCESS", "REVERTED"] },
+        "blockNumber": { "$ref": "#/$defs/decimal" },
+        "blockHash": { "$ref": "#/$defs/hex32" },
+        "logs": { "type": "array", "items": { "$ref": "#/$defs/receiptLog" } }
+      }
+    },
+    "nullableDigest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "nullableHex32": { "oneOf": [{ "$ref": "#/$defs/hex32" }, { "type": "null" }] },
+    "nullableAddress": { "oneOf": [{ "$ref": "#/$defs/lowerHexAddress" }, { "type": "null" }] },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["procedure", "snapshotAssurance", "hashFunction", "observationDigest", "envelopeDigest", "receiptSnapshotDigest", "chainId", "transactionHash", "blockNumber", "blockHash", "receiptLogPosition", "emittingContract", "onChainDigest", "committer"],
+      "properties": {
+        "procedure": { "const": "ERC8281_RECOMPUTE_COMPARE_CONFIRM_INCLUSION" },
+        "snapshotAssurance": { "const": "COMMITTED_RECEIPT_SNAPSHOT" },
+        "hashFunction": { "enum": ["sha2-256", "keccak-256", "blake2b-256"] },
+        "observationDigest": { "$ref": "#/$defs/nullableDigest" },
+        "envelopeDigest": { "$ref": "#/$defs/digest" },
+        "receiptSnapshotDigest": { "$ref": "#/$defs/digest" },
+        "chainId": { "$ref": "#/$defs/decimal" },
+        "transactionHash": { "$ref": "#/$defs/hex32" },
+        "blockNumber": { "$ref": "#/$defs/decimal" },
+        "blockHash": { "$ref": "#/$defs/hex32" },
+        "receiptLogPosition": { "$ref": "#/$defs/decimal" },
+        "emittingContract": { "$ref": "#/$defs/nullableAddress" },
+        "onChainDigest": { "$ref": "#/$defs/nullableHex32" },
+        "committer": { "$ref": "#/$defs/nullableAddress" }
+      }
+    },
+    "canonicalResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "proposition", "outcome", "reasonCode", "evaluation"],
+      "properties": {
+        "schema": { "const": "rvr.canonical-result.erc8281-committed-receipt-snapshot.v0" },
+        "proposition": { "const": "rvr.erc8281.v0.observation_commitment_at_committed_receipt_snapshot" },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+        "evaluation": { "$ref": "#/$defs/evaluation" }
+      }
+    }
+  }
+}
