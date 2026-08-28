@@ -147,6 +147,22 @@ private policy decision unless the profile actually closes all inputs needed
 for that computation. This is exactly why RVR keeps `UNVERIFIABLE` and
 `CANNOT_RECOMPUTE` separate from `REFUTED`.
 
+Post-publication feedback sharpened this boundary. Re-deriving a decision from
+the confidential ruleset and verifying a public proof against a committed
+`programKey` establish different propositions, even if each procedure is
+deterministic and closed under its own profile. They therefore require distinct
+Verification Profiles, claim/result contracts, and reason namespaces. A
+passing public proof must not inherit the broader meaning of faithful policy
+re-derivation.
+
+The same feedback identified a general profile-design question: a profile
+whose required dependencies are permanently resolvable only inside one domain
+can use the RVR status vocabulary honestly, but may offer little
+interoperability to readers outside that domain. The profile must make its
+recomputation target and resolution assumptions exact. `REPRODUCED` still
+means that input identities and canonical result bytes matched; it does not by
+itself state which proposition the result established.
+
 ### ERC-8395: mutable authorization context is the important seam
 
 ERC-8395 extends signed HTTP requests with recursive, attenuating delegation,
@@ -181,6 +197,10 @@ number:
 7. The first forum question should include whether this belongs as a
    Standards-Track ERC at all, or should remain an implementation-neutral
    companion specification consumed by Ethereum ERCs.
+8. Each profile must bind the exact proposition established by its canonical
+   results; `REPRODUCED` must not carry an implicit universal claim meaning.
+9. Restricted resolution domains are valid only when explicit, and their
+   interoperability limits must not be concealed by shared status vocabulary.
 
 ## Re-audit triggers
 
