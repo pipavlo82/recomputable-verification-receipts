@@ -74,10 +74,11 @@
         "mode": { "const": "COMMITTED_SNAPSHOTS_ONLY" },
         "ambientInputs": { "const": "FORBIDDEN" },
         "immutableCommitments": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": { "const": "erc8281-committed-receipt-snapshot" }
+          "const": [
+            "erc8281-committed-receipt-snapshot",
+            "erc8281-specification-sha256:8036fb5e232f4f01591d58efd920defd696211b7a5f91d425d672a75890f7bb4",
+            "erc8281-vectors-sha256:ab50fa0dfbad2966ac998b78d34cdab05e110870ee98f3a9bbe6c944e75da31f"
+          ]
         }
       }
     }

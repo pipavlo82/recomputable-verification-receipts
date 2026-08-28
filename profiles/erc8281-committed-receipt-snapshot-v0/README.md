@@ -8,6 +8,9 @@ The profile is deliberately non-normative with respect to the generic RVR core
 and does not modify the frozen `v0.0.1-rc.2` package. Its proposition is narrower
 than consensus-authenticated or finalized chain inclusion: it reproduces the
 ERC-8281 invariant over the exact snapshot committed by the evidence closure.
+The exact reviewed ERC-8281 specification and upstream vector bytes are
+vendored under `upstream/` and committed by SHA-256. Raw envelope extensions
+are ignored before a closed, identity-bearing `envelopeProjection` is derived.
 
 Run the exact gate from the repository root:
 
@@ -21,6 +24,7 @@ Run the focused tests:
 python -m unittest profiles/erc8281-committed-receipt-snapshot-v0/test_profile.py
 ```
 
-The profile, its pinned specification, schemas, and vectors are authority. The
-adapter is standard-library-only conformance evidence and imports neither the
-upstream ERC-8281 reference verifier nor the RVR RC2 adapters.
+The profile, its local composition specification, vendored upstream
+specification, schemas, and vectors are authority. The adapter is
+standard-library-only conformance evidence and imports neither the upstream
+ERC-8281 reference verifier nor the RVR RC2 adapters.

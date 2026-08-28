@@ -1,7 +1,7 @@
 {
   "schema": "rvr.profile-package-manifest.v0",
   "hashAlgorithm": "sha256-lowercase-hex",
-  "memberCount": 10,
+  "memberCount": 12,
   "members": [
     {
       "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
@@ -9,41 +9,49 @@
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/README.md",
-      "sha256": "bca51db73fc1f4bb8c279cd21e024300617539901a8f0424193ac1ee22fc36f1"
+      "sha256": "abc9633fde78d3a97e4022b58bcd8632f7975ee01a63be8ac3ef76642047e9b5"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/SPEC.md",
-      "sha256": "658fe8b98c48ebc34229238929e32e856ecedf2445c3dcb302b6b8ddc0b937c8"
+      "sha256": "52c2e5c686afc26d27fc4353487304cfc3ba9a80dce12019cc818c0755e7d761"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/adapter.py",
-      "sha256": "3f4ef0826daffd35c01ff2f10ae026968632248e1dd739a084b06ecc7caaa1e0"
+      "sha256": "37151dce42a7e1c9e3bb5954709c401cf16d011cb83c0cd7e3c26c7c7278eb06"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/expected.json",
-      "sha256": "eee90f45543e8bec1608a35eed3104e493ace263d7ac4fbfa53b56aef8553b2e"
+      "sha256": "3250bacac069d3c4fcf8d7a73a16741c3f5d874f5c3017d127d1ec67e60dee30"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/profile.schema.json",
-      "sha256": "60e2b9315697c9d7766bdcc4aaeb9bfb54d4a8af3c487525a069e8f620f1b71d"
+      "sha256": "263d07a7672ef9d493b78d9720ff4eada30777de15256d3258c4995eb1193640"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/rvr.schema.json",
-      "sha256": "c183e5fc087edd420dc666919ae692c6fde41b2f599a0cb6b6e70b8cb6266d53"
+      "sha256": "88b4b35c05aae3aeab4a78b962b39a23af7dd0912c1b35ddf316f721742a4afc"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/test_profile.py",
-      "sha256": "db5b04b7d7cc29979eb347a4475d9fe47e549fac30896f0d91d9e7ef52b5f052"
+      "sha256": "caadbc96c76ad15f5fd8155609bf6880aafd0515d4b434cd3a9d6c06fb442936"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/upstream/erc-8281.md",
+      "sha256": "8036fb5e232f4f01591d58efd920defd696211b7a5f91d425d672a75890f7bb4"
+    },
+    {
+      "path": "profiles/erc8281-committed-receipt-snapshot-v0/upstream/test-vectors.json",
+      "sha256": "ab50fa0dfbad2966ac998b78d34cdab05e110870ee98f3a9bbe6c944e75da31f"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/vectors.json",
-      "sha256": "05d2d5721b03802bf83ee087efff53672c001ddaf0f56efa0151da84c7f7c388"
+      "sha256": "05e36f701cfef11f952af5bd60e43cf9d8f2df0b919501dc3f4ad32c0876976b"
     },
     {
       "path": "profiles/erc8281-committed-receipt-snapshot-v0/verification-profile.json",
-      "sha256": "5b4e7696a47f116cbb6900230ab599288e7e29688bda6fb1f480038d42035314"
+      "sha256": "e6363e6f0dfb487ff98f2a82867b554e7623514dbd61faae468ca9644a62d408"
     }
   ],
   "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
-  "packageDigest": "dbcdd6777a7986b3dbc43e5873bef6c2817fc660ecbd7ca9d910d3a844b9f9c1"
+  "packageDigest": "dadc31725fa9f5a5cfb3e20c6849b4043e78d29b30bd7a016aca9184cb8588ba"
 }

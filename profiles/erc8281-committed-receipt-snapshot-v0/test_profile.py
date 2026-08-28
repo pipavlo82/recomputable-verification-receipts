@@ -29,6 +29,16 @@ class Erc8281CommittedReceiptProfileTests(unittest.TestCase):
             report["cases"]["CANNOT_RECOMPUTE"]["recomputationStatus"],
             "CANNOT_RECOMPUTE",
         )
+        self.assertEqual(
+            report["cases"]["PRESENT_OBSERVATION_UNRESOLVED"]["recomputationStatus"],
+            "CANNOT_RECOMPUTE",
+        )
+        self.assertFalse(
+            report["cases"]["TAMPERED_PROFILE_CONSTRAINTS_PIN"]["constraintsApplied"]
+        )
+        self.assertTrue(
+            report["cases"]["IGNORED_EXTENSION_PROJECTION_IDENTITY"]["sameClaimDigest"]
+        )
 
 
 if __name__ == "__main__":
