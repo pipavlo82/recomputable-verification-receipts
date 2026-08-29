@@ -1,0 +1,53 @@
+{
+  "schema": "rvr.profile-package-manifest.v0",
+  "hashAlgorithm": "sha256-lowercase-hex",
+  "memberCount": 11,
+  "members": [
+    {
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/README.md",
+      "sha256": "0e645392bc7d46a1ebbbd8467a7edb55c6dc87d0c451616eef38d5c663a4bdba"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/SPEC.md",
+      "sha256": "d7d3dd0d44538d9ce49ff9aa02031675183ec235954de3e1f494377e3d80ed17"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/adapter.py",
+      "sha256": "966866795fa6184f99180cec25fc5a93fdef4d63586b107e8cacdd0054ec1d88"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/expected.json",
+      "sha256": "927387cb6969c67fb4cca14cd618f03c74368032a8c4e9165d8729a7fbd9ae65"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/profile.schema.json",
+      "sha256": "522f3495aacdca4732ac020755d0f7d97373447f41caad26baf198675890c204"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/rvr.schema.json",
+      "sha256": "35e9673cd3ea626f598bfdb314eaa9b5be00d26c6c3e20b5b7413ad0a51ed9f7"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/test_profile.py",
+      "sha256": "6e711794546ea9981be71e46d9e4a0e277ed5635252ccbee32a9da741cf64e9a"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/upstream/verdict_proof.json",
+      "sha256": "d2817c525e1cfd2a7838d9e3b6b203dd44cb18daa21361d0620f45235da0b98b"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/vectors.json",
+      "sha256": "b00dba75e313741ae9187f7d1ed041336cc8012461fba159b0d9fb9405b9983f"
+    },
+    {
+      "path": "profiles/invinoveritas-signed-verdict-v0/verification-profile.json",
+      "sha256": "5167833e9d28b74dce26aa0e9805a3a3263039b3c85d1719a86aa5abff2c13f1"
+    }
+  ],
+  "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
+  "packageDigest": "4f902ce983e35680b3801f2b163a4953d8ac00892ba21c667544cdfcaa961caa"
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/profiles/rvr-invinoveritas-signed-verdict-v0/profile.schema.json",
+  "title": "RVR invinoveritas signed verdict profile constraints v0",
+  "type": "object",
+  "required": [
+    "schema",
+    "profileId",
+    "profileSchemaContract",
+    "verificationSpecification",
+    "conformanceVectorSet",
+    "evidenceSetContract",
+    "canonicalResultContract",
+    "externalContextPolicy"
+  ],
+  "properties": {
+    "schema": { "const": "rvr.verification-profile.v0" },
+    "profileId": { "const": "rvr-invinoveritas-signed-verdict-v0" },
+    "profileSchemaContract": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "verification-profile-manifest-schema" },
+            "path": { "const": "conformance/rvr-v0/verification-profile-manifest.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "id": { "const": "invinoveritas-signed-verdict-profile-schema" },
+            "path": { "const": "profiles/invinoveritas-signed-verdict-v0/profile.schema.json" },
+            "requiredForRecomputation": { "const": true }
+          }
+        }
+      }
+    },
+    "verificationSpecification": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "invinoveritas-signed-verdict-verification-specification" },
+        "path": { "const": "profiles/invinoveritas-signed-verdict-v0/SPEC.md" },
+        "requiredForRecomputation": { "const": true }
+      }
+    },
+    "conformanceVectorSet": {
+      "type": "object",
+      "properties": {
+        "id": { "const": "rvr-invinoveritas-signed-verdict-v0-vectors" }
+      }
+    },
+    "evidenceSetContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "profiles/invinoveritas-signed-verdict-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/evidenceSet" },
+        "digestRule": { "const": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order" }
+      }
+    },
+    "canonicalResultContract": {
+      "type": "object",
+      "properties": {
+        "schemaPath": { "const": "profiles/invinoveritas-signed-verdict-v0/rvr.schema.json" },
+        "schemaPointer": { "const": "#/$defs/canonicalResult" },
+        "outcomeProjection": { "const": "/outcome" },
+        "reasonCodeProjection": { "const": "/reasonCode" }
+      }
+    },
+    "externalContextPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": { "const": "COMMITTED_SNAPSHOTS_ONLY" },
+        "ambientInputs": { "const": "FORBIDDEN" },
+        "immutableCommitments": {
+          "const": [
+            "invinoveritas-verdict-proof-git:25a239afabc1bb5f066e0738e6a1a7a75535f0e5",
+            "invinoveritas-verdict-proof-sha256:d2817c525e1cfd2a7838d9e3b6b203dd44cb18daa21361d0620f45235da0b98b",
+            "invinoveritas-nostr-verifier-pubkey:6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7"
+          ]
+        }
+      }
+    }
+  }
+}

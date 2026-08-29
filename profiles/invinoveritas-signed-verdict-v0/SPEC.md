@@ -1,0 +1,160 @@
+# RVR invinoveritas signed verdict profile v0
+
+Status: experimental external profile.
+
+## 1. Authority and source identity
+
+This file is the complete verification specification for profile
+`rvr-invinoveritas-signed-verdict-v0`. Its exact bytes are committed by the
+Verification Profile.
+
+The executable base case uses the exact Git blob:
+
+```text
+repository: babyblueviper1/invinoveritas
+revision: 25a239afabc1bb5f066e0738e6a1a7a75535f0e5
+path: examples/rvr-verdict-worked-example/verdict_proof.json
+Git blob: e400c8f9ec188115d7710298cc22c59e7de5ab65
+byte length: 12332
+SHA-256: d2817c525e1cfd2a7838d9e3b6b203dd44cb18daa21361d0620f45235da0b98b
+```
+
+Those exact LF bytes are vendored at `upstream/verdict_proof.json`. Evaluation
+does not call the producer, `/verify-proof`, a key directory, a package registry,
+or any live service.
+
+## 2. Exact proposition and judgment boundary
+
+The proposition identifier is:
+
+```text
+rvr.invinoveritas.v0.signed_verdict_artifact_bindings
+```
+
+For `VERIFIED`, it means:
+
+> The exact artifact bytes, policy-commitment preimage, decision-reference
+> preimage, NIP-01 event identity, and BIP-340 signature all satisfy this
+> profile's deterministic verification relation under the profile-pinned
+> issuer public key.
+
+The producer verdict is not the RVR outcome. The strings `approve`,
+`approve_with_concerns`, or `reject`, confidence, issues, and free judgment
+content are authenticated and bound as data but are not independently
+re-derived. The canonical result states this boundary exactly as:
+
+```text
+COMMITTED_AUTHENTICATED_NOT_REDERIVED
+```
+
+`REPRODUCED` means that the profile-defined canonical result was independently
+reproduced. It never means that an independent LLM reached the same judgment.
+
+This profile establishes neither pre-action mediation nor non-bypassability,
+market truth, policy wisdom, completeness of evidence, consensus identity of
+the issuer, nor ML-DSA companion validity. It verifies BIP-340 under the exact
+issuer key committed by this profile.
+
+## 3. Identity and external byte contracts
+
+RVR claim, evidence-set, receipt, and canonical-result identities use frozen
+`rvr-canonical-json-v0`. JSON numbers therefore do not occur in those identity
+objects.
+
+The external signed-verdict relation uses
+`invinoveritas-jcs-safe-integer-v0`, defined here as:
+
+- UTF-8;
+- null, booleans, strings, arrays, objects, and integers in
+  `[-9007199254740991, 9007199254740991]`;
+- floats and non-finite values forbidden;
+- object keys restricted to ASCII and sorted lexicographically;
+- no whitespace or trailing byte;
+- JSON short escapes for quote, reverse solidus, backspace, tab, LF, form feed,
+  and CR; remaining U+0000..U+001F as lowercase `\\u00xx`;
+- solidus, U+2028, and U+2029 literal; Unicode is not normalized.
+
+This restricted contract is sufficient for the policy and decision preimages
+and for the NIP-01 event serialization used by the pinned artifact. It is not a
+new generic RVR serializer.
+
+NIP-01 event identity is:
+
+```text
+sha256(invinoveritas-jcs-safe-integer-v0(
+  [0, pubkey, created_at, kind, tags, content]
+))
+```
+
+The BIP-340 signature verifies the 32 raw event-id bytes under the 32-byte
+x-only public key committed by the profile.
+
+## 4. Evidence closure
+
+The claim names exactly three evidence members:
+
+```text
+artifact-bytes
+policy-preimage
+signed-event
+```
+
+`artifact-bytes` is arbitrary exact UTF-8 data. `policy-preimage` and
+`signed-event` are exact `invinoveritas-jcs-safe-integer-v0` bytes. Evidence
+descriptors commit each payload's byte length and SHA-256; the evidence set is
+sorted by member `id` before RVR canonical hashing.
+
+No outcome-relevant ambient input is permitted. A hidden live key, policy,
+rubric, API response, clock, model call, or external verdict is a closure gate
+rejection.
+
+A descriptor that commits a required member as `UNAVAILABLE` produces the
+profile's semantic `UNVERIFIABLE` result. If a descriptor says `PRESENT` but the
+recomputer cannot resolve its payload, recomputation returns
+`CANNOT_RECOMPUTE / rvr.recompute.committed_evidence_unavailable` before
+evaluation. These cases MUST NOT collapse.
+
+## 5. Deterministic verification procedure
+
+For complete, well-formed inputs:
+
+1. Recompute SHA-256 over exact artifact bytes and compare with claim
+   `artifactHash`.
+2. Parse the exact policy preimage and require the four fields
+   `policy_version`, `rubric_sha256`, `conformance_suite_repo`, and
+   `conformance_suite_commit`. Recompute SHA-256 over its external canonical
+   bytes and compare with claim `policyCommitment`.
+3. Parse the signed event; require exact fields `id`, `pubkey`, `created_at`,
+   `kind`, `tags`, `content`, and `sig`, with safe integer timestamps/kinds and
+   lowercase hex identities.
+4. Require event `pubkey` to equal the profile-pinned issuer key.
+5. Recompute the NIP-01 event id and require equality with both event `id` and
+   claim `eventId`.
+6. Verify the BIP-340 signature over the raw event-id bytes.
+7. Parse event `content` with duplicate-key rejection.
+8. Require content `artifact_hash`, `policy_commitment`, and `decision_ref` to
+   equal the claim bindings.
+9. Require the policy fields disclosed in content to equal the committed policy
+   preimage. `rubric_doc_path` is metadata and is not silently added to the
+   policy-commitment preimage.
+10. Require the exact `decision_ref_preimage_fields` list. Construct an object
+    containing every named field, using JSON null for absent fields, canonicalize
+    it under the external byte contract, hash it, and compare with claim
+    `decisionRef`.
+
+The first failed semantic check selects the `REFUTED` reason. Passing every
+check yields `VERIFIED / rvr.invinoveritas.v0.signed_verdict_bindings_verified`.
+
+## 6. Recomputation and failure ownership
+
+Stored receipt/result identity and outcome/reason projections are checked before
+candidate evaluation. A contradictory projection is a gate rejection.
+
+Unavailable pinned profile dependency returns `CANNOT_RECOMPUTE` without
+evaluation. Missing committed-present evidence returns `CANNOT_RECOMPUTE`
+without evaluation. A complete, well-formed mutation is evaluated: a different
+artifact remains a real semantic negative control, produces `REFUTED`, and
+returns `DIVERGED` against the fixed receipt.
+
+The profile-specific constraints file is hash-checked before parsing or use.
+Outcome-relevant hidden state is rejected and never reported as reproduced.
