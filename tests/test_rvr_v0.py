@@ -33,6 +33,22 @@ class RvrV0ConformanceTests(unittest.TestCase):
                 report["cases"]["CANNOT_RECOMPUTE"]["recomputationStatus"],
                 "CANNOT_RECOMPUTE",
             )
+            self.assertEqual(
+                report["cases"]["REQUIRED_DEPENDENCY_IDENTITY_MISMATCH"]["recomputationStatus"],
+                "CANNOT_RECOMPUTE",
+            )
+            self.assertEqual(
+                report["cases"]["PRESENT_PAYLOAD_UNRESOLVED"]["recomputationStatus"],
+                "CANNOT_RECOMPUTE",
+            )
+            self.assertEqual(
+                report["cases"]["RESOLVED_PAYLOAD_IDENTITY_MISMATCH"]["gateStatus"],
+                "REJECTED",
+            )
+            self.assertEqual(
+                report["cases"]["OPTIONAL_DEPENDENCY_NONSEMANTIC"],
+                report["cases"]["REPRODUCED"],
+            )
         self.assertNotEqual(python_report["implementation"], typescript_report["implementation"])
         self.assertEqual(
             python_report["verificationProfileDigest"],

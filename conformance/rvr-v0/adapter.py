@@ -570,19 +570,39 @@ def validate_receipt_envelope(bundle: dict[str, Any], profile_digest: str, rvr_s
 
 
 def required_dependency_failure(
-    profile: dict[str, Any], unavailable_dependency_ids: set[str]
-) -> str | None:
+    profile: dict[str, Any],
+    unavailable_dependency_ids: set[str],
+    candidate_dependency_bytes: dict[str, bytes] | None = None,
+) -> dict[str, str] | None:
+    overrides = candidate_dependency_bytes or {}
     for dependency in dependency_entries(profile):
         if not dependency["requiredForRecomputation"]:
             continue
         if dependency["id"] in unavailable_dependency_ids:
-            return dependency["id"]
+            return {"dependencyId": dependency["id"], "kind": "UNRESOLVED"}
         try:
-            actual = exact_file_digest(dependency["path"])
+            if dependency["id"] in overrides:
+                dependency_bytes = overrides[dependency["id"]]
+            else:
+                path = resolve_dependency_path(PROFILE_PACKAGE_ROOT, dependency["path"])
+                if not path.is_file():
+                    raise FileNotFoundError(dependency["path"])
+                dependency_bytes = path.read_bytes()
         except (DependencyResolutionError, OSError):
-            return dependency["id"]
-        if actual != dependency["sha256"]:
-            return dependency["id"]
+            return {"dependencyId": dependency["id"], "kind": "UNRESOLVED"}
+        if sha256_hex(dependency_bytes) != dependency["sha256"]:
+            return {"dependencyId": dependency["id"], "kind": "IDENTITY_MISMATCH"}
+    return None
+
+
+def unresolved_present_member(
+    evidence_set: dict[str, Any], payloads_base64: dict[str, str]
+) -> str | None:
+    if not isinstance(payloads_base64, dict):
+        raise GateRejection("rvr.gate.schema_invalid", "payload map must be an object")
+    for member in evidence_set["members"]:
+        if member["status"] == "PRESENT" and member["id"] not in payloads_base64:
+            return member["id"]
     return None
 
 
@@ -593,16 +613,27 @@ def recompute(
     rvr_schema: dict[str, Any],
     unavailable_dependency_ids: set[str] | None = None,
     outcome_relevant_inputs: list[dict[str, Any]] | None = None,
+    candidate_dependency_bytes: dict[str, bytes] | None = None,
 ) -> dict[str, Any]:
     validate_receipt_envelope(original_bundle, profile_digest, rvr_schema)
     profile = original_bundle["verificationProfile"]
     unavailable = unavailable_dependency_ids or set()
-    dependency_failure = required_dependency_failure(profile, unavailable)
+    dependency_failure = required_dependency_failure(
+        profile,
+        unavailable,
+        candidate_dependency_bytes,
+    )
     if dependency_failure is not None:
+        identity_mismatch = dependency_failure["kind"] == "IDENTITY_MISMATCH"
         return {
             "recomputationStatus": "CANNOT_RECOMPUTE",
-            "reasonCode": "rvr.recompute.normative_dependency_unavailable",
-            "unavailableDependencyId": dependency_failure,
+            "reasonCode": (
+                "rvr.recompute.normative_dependency_identity_mismatch"
+                if identity_mismatch
+                else "rvr.recompute.normative_dependency_unavailable"
+            ),
+            "dependencyId": dependency_failure["dependencyId"],
+            "dependencyFailureKind": dependency_failure["kind"],
             "evaluationPerformed": False,
         }
 
@@ -611,6 +642,15 @@ def recompute(
     payloads_base64 = copy.deepcopy(candidate_case["payloadsBase64"])
     require_schema(claim, rvr_schema, "#/$defs/claim", "candidate claim")
     require_schema(evidence_set, rvr_schema, "#/$defs/evidenceSet", "candidate evidence set")
+    unresolved_member = unresolved_present_member(evidence_set, payloads_base64)
+    if unresolved_member is not None:
+        return {
+            "recomputationStatus": "CANNOT_RECOMPUTE",
+            "reasonCode": "rvr.recompute.committed_evidence_unavailable",
+            "unavailableEvidenceMemberId": unresolved_member,
+            "evidenceFailureKind": "UNRESOLVED_COMMITTED_PRESENT",
+            "evaluationPerformed": False,
+        }
     payloads = validate_evidence_closure(evidence_set, payloads_base64, outcome_relevant_inputs)
     result = evaluate(claim, evidence_set, payloads, rvr_schema)
     recomputed = {
@@ -977,6 +1017,94 @@ def run_gate() -> dict[str, Any]:
     )
     assert_expected(cannot, expected["cases"]["CANNOT_RECOMPUTE"], "CANNOT_RECOMPUTE")
 
+    dependency_mismatch_control = vectors["negativeControls"]["requiredDependencyIdentityMismatch"]
+    dependency_mismatch = recompute(
+        reproduced_bundle,
+        reproduced_case,
+        profile_digest,
+        rvr_schema,
+        candidate_dependency_bytes={
+            dependency_mismatch_control["dependencyId"]: base64.b64decode(
+                dependency_mismatch_control["replacementBase64"],
+                validate=True,
+            )
+        },
+    )
+    assert_expected(
+        dependency_mismatch,
+        expected["cases"]["REQUIRED_DEPENDENCY_IDENTITY_MISMATCH"],
+        "REQUIRED_DEPENDENCY_IDENTITY_MISMATCH",
+    )
+
+    unresolved_payload_control = vectors["negativeControls"]["presentPayloadUnresolved"]
+    unresolved_payload_case = copy.deepcopy(reproduced_case)
+    del unresolved_payload_case["payloadsBase64"][unresolved_payload_control["removePayloadMemberId"]]
+    unresolved_payload = recompute(
+        reproduced_bundle,
+        unresolved_payload_case,
+        profile_digest,
+        rvr_schema,
+    )
+    assert_expected(
+        unresolved_payload,
+        expected["cases"]["PRESENT_PAYLOAD_UNRESOLVED"],
+        "PRESENT_PAYLOAD_UNRESOLVED",
+    )
+
+    payload_mismatch_control = vectors["negativeControls"]["resolvedPayloadIdentityMismatch"]
+    payload_mismatch_case = copy.deepcopy(reproduced_case)
+    original_evidence_descriptor = canonical_bytes(payload_mismatch_case["evidenceSet"])
+    payload_mismatch_case["payloadsBase64"][payload_mismatch_control["replacePayloadMemberId"]] = (
+        payload_mismatch_control["replacementBase64"]
+    )
+    if not payload_mismatch_control["preserveEvidenceDescriptor"]:
+        raise AssertionError("payload mismatch control must preserve the evidence descriptor")
+    if canonical_bytes(payload_mismatch_case["evidenceSet"]) != original_evidence_descriptor:
+        raise AssertionError("payload mismatch control changed the evidence descriptor")
+    try:
+        recompute(
+            reproduced_bundle,
+            payload_mismatch_case,
+            profile_digest,
+            rvr_schema,
+        )
+    except GateRejection as error:
+        payload_mismatch = {
+            "gateStatus": "REJECTED",
+            "reasonCode": error.reason_code,
+            "evaluationPerformed": False,
+        }
+    else:
+        raise AssertionError("resolved payload identity mismatch was accepted")
+    assert_expected(
+        payload_mismatch,
+        expected["cases"]["RESOLVED_PAYLOAD_IDENTITY_MISMATCH"],
+        "RESOLVED_PAYLOAD_IDENTITY_MISMATCH",
+    )
+
+    optional_control = vectors["negativeControls"]["optionalDependencyNonsemantic"]
+    if optional_control["mustEqualCase"] != "REPRODUCED":
+        raise AssertionError("optional dependency control must equal REPRODUCED")
+    optional_nonsemantic = recompute(
+        reproduced_bundle,
+        reproduced_case,
+        profile_digest,
+        rvr_schema,
+        unavailable_dependency_ids=(
+            {optional_control["dependencyId"]}
+            if optional_control["markUnavailable"]
+            else set()
+        ),
+        candidate_dependency_bytes={
+            optional_control["dependencyId"]: base64.b64decode(
+                optional_control["replacementBase64"],
+                validate=True,
+            )
+        },
+    )
+    if not json_same(optional_nonsemantic, reproduced):
+        raise AssertionError("optional dependency influenced semantic recomputation")
+
     projection_control = vectors["negativeControls"]["projectionContradiction"]
     contradictory_bundle = copy.deepcopy(reproduced_bundle)
     field = projection_control["mutateReceiptField"]
@@ -1056,6 +1184,10 @@ def run_gate() -> dict[str, Any]:
             "DIVERGED": diverged,
             "UNVERIFIABLE_REPRODUCED": unverifiable,
             "CANNOT_RECOMPUTE": cannot,
+            "REQUIRED_DEPENDENCY_IDENTITY_MISMATCH": dependency_mismatch,
+            "PRESENT_PAYLOAD_UNRESOLVED": unresolved_payload,
+            "RESOLVED_PAYLOAD_IDENTITY_MISMATCH": payload_mismatch,
+            "OPTIONAL_DEPENDENCY_NONSEMANTIC": optional_nonsemantic,
             "PROJECTION_NEGATIVE_CONTROL": projection,
             "HIDDEN_STATE_NEGATIVE_CONTROL": hidden,
         },

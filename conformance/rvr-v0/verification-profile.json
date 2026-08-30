@@ -24,7 +24,7 @@
   "verificationSpecification": {
     "id": "verification-specification",
     "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
-    "sha256": "ed6f02fa669cf6dfd2f5875692e360cc7b39a4a44bd90d3c36f8940b287b9c52",
+    "sha256": "81077ddbf50624bc70941cf53a4f542604e926a653d7fcb3a36310ff5430b973",
     "requiredForRecomputation": true
   },
   "conformanceVectorSet": {
@@ -33,7 +33,7 @@
       {
         "id": "expected-results",
         "path": "conformance/rvr-v0/expected.json",
-        "sha256": "3a1fa57b8b63fb68823f8c51141b237ef5b0f2a83a6d92a68591821e9cea44ac",
+        "sha256": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce",
         "requiredForRecomputation": false
       },
       {
@@ -45,11 +45,11 @@
       {
         "id": "verification-vectors",
         "path": "conformance/rvr-v0/vectors.json",
-        "sha256": "fb5aabb9571850663c0a008daa5fb1720cf34fa71cbbab81ee09a4d4fc4e31c8",
+        "sha256": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f",
         "requiredForRecomputation": false
       }
     ],
-    "digest": "81dfe25d7b0a9c6ba1ca4e129e9bfbde61c0cd4b8ef0393bcdc2079a936d6762",
+    "digest": "2eb5e0c056d13c4beda4b3da6fafdcd34a6bd96479030e3914a79d08679c0687",
     "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows"
   },
   "canonicalByteContract": {
@@ -101,7 +101,9 @@
     "recomputation": [
       "rvr.recompute.identical",
       "rvr.recompute.canonical_result_diverged",
-      "rvr.recompute.normative_dependency_unavailable"
+      "rvr.recompute.normative_dependency_unavailable",
+      "rvr.recompute.normative_dependency_identity_mismatch",
+      "rvr.recompute.committed_evidence_unavailable"
     ],
     "gateRejections": [
       "rvr.gate.schema_invalid",
