@@ -58,8 +58,9 @@ descriptor and payloads, Verification Profile, and canonical result object.
 `rvr-canonical-json-v0` is an explicit experimental byte contract. Its input
 domain consists only of JSON null, booleans, Unicode scalar-value strings,
 arrays, and objects. JSON numbers are forbidden in identity-bearing objects.
-Decimal quantities such as byte lengths are encoded as canonical decimal
-strings by their governing schema.
+Decimal quantities such as byte lengths are encoded as canonical unsigned
+decimal strings matching `0|[1-9][0-9]*`: no sign and no leading zero except
+for the single-character value `0`.
 
 Canonicalization rules:
 
@@ -129,9 +130,11 @@ evidenceSetDigest =
   SHA-256(UTF-8(rvr-canonical-json-v0(normalizedEvidenceSetDescriptor)))
 ```
 
-Member IDs MUST be unique. A `PRESENT` member MUST have exactly one supplied
-payload whose exact bytes match its length and digest. An `UNAVAILABLE` member
-MUST have no payload.
+Member IDs MUST be unique. A resolved `PRESENT` member MUST have exactly one
+payload whose exact bytes match its length and digest. If a committed-present
+payload cannot be resolved, the descriptor remains valid but recomputation
+MUST return `CANNOT_RECOMPUTE` without evaluation. An `UNAVAILABLE` member MUST
+have no payload.
 
 The conformance-vector-set digest is SHA-256 over UTF-8 rows sorted by path:
 
@@ -200,6 +203,13 @@ digest matches. The bytes that matched the digest MUST be the bytes subsequently
 used; re-reading the locator for semantic use is forbidden. RVR v0 requires no
 HTTP, Git, registry, or global path namespace.
 
+Any dependency whose bytes can affect validation, evaluation, canonical-result
+derivation, or recomputation status MUST set `requiredForRecomputation` to
+`true`. A dependency marked `false` is non-semantic conformance or provenance
+material. Its availability and bytes MUST NOT influence an individual
+recomputation. A package-level conformance audit MAY separately require and
+check such material, but that audit is not semantic recomputation.
+
 ### 6.2 Meaning of committed UNAVAILABLE
 
 Reproducing an `UNVERIFIABLE` result proves that the committed evidence-set
@@ -247,13 +257,24 @@ SHA256_EQUALS(evidenceMember, expectedDigest)
 ## 9. Recomputation procedure
 
 1. Strictly parse and schema-validate the profile and supplied objects.
-2. Recompute profile identity and all exact dependency pins.
+2. Recompute profile identity. Profile bootstrap validation uses its required
+   schema pins; a separate package-level conformance audit may verify
+   non-semantic package members.
 3. Validate the original receipt, canonical result digest, and result
    projections.
-4. Resolve required normative dependencies. If any is unavailable or has the
-   wrong identity, return `CANNOT_RECOMPUTE` without evaluation.
-5. Validate evidence closure and all payload identities. Closure failure is a
-   gate rejection and cannot report `REPRODUCED`.
+4. Resolve all remaining required normative dependencies. An unresolved required dependency
+   returns `CANNOT_RECOMPUTE` with
+   `rvr.recompute.normative_dependency_unavailable`. Resolved bytes whose digest
+   does not equal the dependency pin return `CANNOT_RECOMPUTE` with
+   `rvr.recompute.normative_dependency_identity_mismatch`. Neither path performs
+   evaluation. Dependencies marked `requiredForRecomputation=false` MUST NOT be
+   read or otherwise influence this procedure.
+5. Validate evidence closure. A committed `PRESENT` descriptor whose payload
+   cannot be resolved returns `CANNOT_RECOMPUTE` with
+   `rvr.recompute.committed_evidence_unavailable` and no evaluation. If payload
+   bytes are resolved but their length or digest does not match the descriptor,
+   reject at the gate with `rvr.gate.identity_mismatch`. Other closure failures
+   are gate rejections and cannot report `REPRODUCED`.
 6. Recompute the claim and evidence-set identities.
 7. Run semantic evaluation and derive one canonical result.
 8. Recompute result bytes and digest.
@@ -269,6 +290,12 @@ The pinned suite executes:
 - evaluated evidence mutation producing `DIVERGED` and `REFUTED`;
 - `UNVERIFIABLE` plus `REPRODUCED`;
 - missing normative dependency producing `CANNOT_RECOMPUTE` without evaluation;
+- wrong bytes for a required dependency producing `CANNOT_RECOMPUTE` without
+  parsing or evaluation;
+- unresolved committed-`PRESENT` evidence producing `CANNOT_RECOMPUTE`, while
+  resolved bytes with the wrong identity are gate-rejected;
+- unavailable or substituted `requiredForRecomputation=false` material leaving
+  semantic recomputation byte-for-byte unchanged;
 - contradictory outcome/reason projection rejection;
 - outcome-relevant hidden-state rejection, plus a counterfactual demonstration
   that the forbidden input could change the semantic outcome.

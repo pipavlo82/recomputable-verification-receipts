@@ -1,8 +1,10 @@
 # RVR v0 conformance gate
 
-This directory contains the frozen generic RVR v0 profile, generic profile
+This directory contains the current generic RVR v0 profile, generic profile
 manifest schema, profile-specific constraints schema, schemas, vectors,
 expectations, package manifest, and independent Python and TypeScript adapters.
+The historical RC2 package remains frozen by the `v0.0.1-rc.2` tag; later
+hardening on `main` does not alter that tag or its identities.
 
 Run:
 
@@ -25,3 +27,9 @@ by `rvr-generic-sha256-equals-v0.profile.schema.json`. Its dependency paths are
 resolved only from the explicitly supplied profile package root before exact
 SHA-256 verification. Both adapters are only conformance evidence and are
 deliberately excluded from `verificationProfileDigest`.
+
+The post-RC2 gate additionally distinguishes an unresolved committed-present
+payload from resolved bytes with the wrong identity, distinguishes an
+unresolved required dependency from wrong pinned bytes, and proves that
+dependencies marked `requiredForRecomputation=false` cannot influence semantic
+recomputation.

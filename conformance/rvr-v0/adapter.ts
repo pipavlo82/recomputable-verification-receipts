@@ -554,17 +554,35 @@ function makeBundle(caseValue: RecordJson, profile: RecordJson, profileDigest: s
   return bundle
 }
 
-function requiredDependencyFailure(profile: RecordJson, unavailable: Set<string>): string | null {
+function requiredDependencyFailure(
+  profile: RecordJson,
+  unavailable: Set<string>,
+  candidateDependencyBytes = new Map<string, Buffer>(),
+): RecordJson | null {
   for (const dependency of dependencyEntries(profile)) {
     if (!dependency.requiredForRecomputation) continue
-    if (unavailable.has(dependency.id)) return dependency.id
+    if (unavailable.has(dependency.id)) return { dependencyId: dependency.id, kind: "UNRESOLVED" }
     try {
-      if (exactFileDigest(dependency.path) !== dependency.sha256) return dependency.id
+      const bytes = candidateDependencyBytes.get(dependency.id)
+        ?? readBytes(resolveDependencyPath(PROFILE_PACKAGE_ROOT, dependency.path))
+      if (sha256Hex(bytes) !== dependency.sha256) {
+        return { dependencyId: dependency.id, kind: "IDENTITY_MISMATCH" }
+      }
     } catch {
-      return dependency.id
+      return { dependencyId: dependency.id, kind: "UNRESOLVED" }
     }
   }
   return null
+}
+
+function unresolvedPresentMember(evidenceSet: RecordJson, payloadsBase64: RecordJson): string | null {
+  if (typeof payloadsBase64 !== "object" || payloadsBase64 === null || Array.isArray(payloadsBase64)) {
+    throw new GateRejection("rvr.gate.schema_invalid", "payload map must be an object")
+  }
+  const member = evidenceSet.members.find(
+    (item: RecordJson) => item.status === "PRESENT" && !(item.id in payloadsBase64),
+  )
+  return member?.id ?? null
 }
 
 function recompute(
@@ -574,14 +592,23 @@ function recompute(
   rvrSchema: RecordJson,
   unavailable = new Set<string>(),
   outcomeRelevantInputs: RecordJson[] = [],
+  candidateDependencyBytes = new Map<string, Buffer>(),
 ): RecordJson {
   validateReceiptEnvelope(originalBundle, profileDigest, rvrSchema)
-  const dependencyFailure = requiredDependencyFailure(originalBundle.verificationProfile, unavailable)
+  const dependencyFailure = requiredDependencyFailure(
+    originalBundle.verificationProfile,
+    unavailable,
+    candidateDependencyBytes,
+  )
   if (dependencyFailure) {
+    const identityMismatch = dependencyFailure.kind === "IDENTITY_MISMATCH"
     return {
       recomputationStatus: "CANNOT_RECOMPUTE",
-      reasonCode: "rvr.recompute.normative_dependency_unavailable",
-      unavailableDependencyId: dependencyFailure,
+      reasonCode: identityMismatch
+        ? "rvr.recompute.normative_dependency_identity_mismatch"
+        : "rvr.recompute.normative_dependency_unavailable",
+      dependencyId: dependencyFailure.dependencyId,
+      dependencyFailureKind: dependencyFailure.kind,
       evaluationPerformed: false,
     }
   }
@@ -590,6 +617,16 @@ function recompute(
   const payloadsBase64 = structuredClone(candidateCase.payloadsBase64)
   requireSchema(claim, rvrSchema, "#/$defs/claim", "candidate claim")
   requireSchema(evidenceSet, rvrSchema, "#/$defs/evidenceSet", "candidate evidence set")
+  const unresolvedMember = unresolvedPresentMember(evidenceSet, payloadsBase64)
+  if (unresolvedMember !== null) {
+    return {
+      recomputationStatus: "CANNOT_RECOMPUTE",
+      reasonCode: "rvr.recompute.committed_evidence_unavailable",
+      unavailableEvidenceMemberId: unresolvedMember,
+      evidenceFailureKind: "UNRESOLVED_COMMITTED_PRESENT",
+      evaluationPerformed: false,
+    }
+  }
   const payloads = validateEvidenceClosure(evidenceSet, payloadsBase64, outcomeRelevantInputs)
   const result = evaluate(claim, evidenceSet, payloads, rvrSchema)
   const identities: Record<string, string> = {
@@ -896,6 +933,73 @@ export function runGate(): RecordJson {
   )
   assertExpected(cannot, expected.cases.CANNOT_RECOMPUTE, "CANNOT_RECOMPUTE")
 
+  const dependencyMismatchControl = vectors.negativeControls.requiredDependencyIdentityMismatch
+  const dependencyMismatch = recompute(
+    reproducedBundle,
+    reproducedCase,
+    profileDigest,
+    rvrSchema,
+    new Set(),
+    [],
+    new Map([[dependencyMismatchControl.dependencyId, Buffer.from(dependencyMismatchControl.replacementBase64, "base64")]]),
+  )
+  assertExpected(
+    dependencyMismatch,
+    expected.cases.REQUIRED_DEPENDENCY_IDENTITY_MISMATCH,
+    "REQUIRED_DEPENDENCY_IDENTITY_MISMATCH",
+  )
+
+  const unresolvedPayloadControl = vectors.negativeControls.presentPayloadUnresolved
+  const unresolvedPayloadCase = structuredClone(reproducedCase)
+  delete unresolvedPayloadCase.payloadsBase64[unresolvedPayloadControl.removePayloadMemberId]
+  const unresolvedPayload = recompute(reproducedBundle, unresolvedPayloadCase, profileDigest, rvrSchema)
+  assertExpected(
+    unresolvedPayload,
+    expected.cases.PRESENT_PAYLOAD_UNRESOLVED,
+    "PRESENT_PAYLOAD_UNRESOLVED",
+  )
+
+  const payloadMismatchControl = vectors.negativeControls.resolvedPayloadIdentityMismatch
+  const payloadMismatchCase = structuredClone(reproducedCase)
+  const originalEvidenceDescriptor = canonicalBytes(payloadMismatchCase.evidenceSet)
+  payloadMismatchCase.payloadsBase64[payloadMismatchControl.replacePayloadMemberId] = payloadMismatchControl.replacementBase64
+  if (!payloadMismatchControl.preserveEvidenceDescriptor) {
+    throw new Error("payload mismatch control must preserve the evidence descriptor")
+  }
+  if (!originalEvidenceDescriptor.equals(canonicalBytes(payloadMismatchCase.evidenceSet))) {
+    throw new Error("payload mismatch control changed the evidence descriptor")
+  }
+  let payloadMismatch: RecordJson
+  try {
+    recompute(reproducedBundle, payloadMismatchCase, profileDigest, rvrSchema)
+    throw new Error("resolved payload identity mismatch accepted")
+  } catch (error) {
+    if (!(error instanceof GateRejection)) throw error
+    payloadMismatch = { gateStatus: "REJECTED", reasonCode: error.reasonCode, evaluationPerformed: false }
+  }
+  assertExpected(
+    payloadMismatch,
+    expected.cases.RESOLVED_PAYLOAD_IDENTITY_MISMATCH,
+    "RESOLVED_PAYLOAD_IDENTITY_MISMATCH",
+  )
+
+  const optionalControl = vectors.negativeControls.optionalDependencyNonsemantic
+  if (optionalControl.mustEqualCase !== "REPRODUCED") {
+    throw new Error("optional dependency control must equal REPRODUCED")
+  }
+  const optionalNonsemantic = recompute(
+    reproducedBundle,
+    reproducedCase,
+    profileDigest,
+    rvrSchema,
+    optionalControl.markUnavailable ? new Set([optionalControl.dependencyId]) : new Set(),
+    [],
+    new Map([[optionalControl.dependencyId, Buffer.from(optionalControl.replacementBase64, "base64")]]),
+  )
+  if (!jsonSame(optionalNonsemantic, reproduced)) {
+    throw new Error("optional dependency influenced semantic recomputation")
+  }
+
   const projectionControl = vectors.negativeControls.projectionContradiction
   const contradictoryBundle = structuredClone(reproducedBundle)
   contradictoryBundle.receipt[projectionControl.mutateReceiptField] = projectionControl.replacement
@@ -962,6 +1066,10 @@ export function runGate(): RecordJson {
       DIVERGED: diverged,
       UNVERIFIABLE_REPRODUCED: unverifiable,
       CANNOT_RECOMPUTE: cannot,
+      REQUIRED_DEPENDENCY_IDENTITY_MISMATCH: dependencyMismatch,
+      PRESENT_PAYLOAD_UNRESOLVED: unresolvedPayload,
+      RESOLVED_PAYLOAD_IDENTITY_MISMATCH: payloadMismatch,
+      OPTIONAL_DEPENDENCY_NONSEMANTIC: optionalNonsemantic,
       PROJECTION_NEGATIVE_CONTROL: projection,
       HIDDEN_STATE_NEGATIVE_CONTROL: hidden,
     },

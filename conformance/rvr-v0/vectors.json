@@ -181,6 +181,31 @@
       "unavailableDependencyId": "verification-specification",
       "evaluationMustRun": false
     },
+    "requiredDependencyIdentityMismatch": {
+      "baseCase": "reproduced",
+      "dependencyId": "verification-specification",
+      "replacementBase64": "dGFtcGVyZWQ=",
+      "evaluationMustRun": false
+    },
+    "presentPayloadUnresolved": {
+      "baseCase": "reproduced",
+      "removePayloadMemberId": "subject",
+      "evaluationMustRun": false
+    },
+    "resolvedPayloadIdentityMismatch": {
+      "baseCase": "reproduced",
+      "replacePayloadMemberId": "subject",
+      "replacementBase64": "YmV0YQ==",
+      "preserveEvidenceDescriptor": true,
+      "evaluationMustRun": false
+    },
+    "optionalDependencyNonsemantic": {
+      "baseCase": "reproduced",
+      "dependencyId": "expected-results",
+      "markUnavailable": true,
+      "replacementBase64": "dGFtcGVyZWQ=",
+      "mustEqualCase": "REPRODUCED"
+    },
     "projectionContradiction": {
       "baseCase": "reproduced",
       "mutateReceiptField": "outcome",
