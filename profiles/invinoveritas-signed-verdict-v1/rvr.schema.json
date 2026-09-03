@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/profiles/rvr-invinoveritas-signed-verdict-v1/rvr.schema.json",
+  "title": "RVR invinoveritas signed verdict contracts v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claimDigest", "evidenceSetDigest", "verificationProfileDigest", "outcome", "reasonCode", "resultDigest"],
+  "properties": {
+    "claimDigest": { "$ref": "#/$defs/digest" },
+    "evidenceSetDigest": { "$ref": "#/$defs/digest" },
+    "verificationProfileDigest": { "$ref": "#/$defs/digest" },
+    "outcome": { "$ref": "#/$defs/outcome" },
+    "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+    "resultDigest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "hex64": { "type": "string", "pattern": "^[0-9a-f]{128}$" },
+    "identifier": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" },
+    "outcome": { "enum": ["VERIFIED", "REFUTED", "UNVERIFIABLE"] },
+    "verificationReasonCode": {
+      "enum": [
+        "rvr.invinoveritas.v1.signed_verdict_bindings_verified",
+        "rvr.invinoveritas.v1.required_artifact_unavailable",
+        "rvr.invinoveritas.v1.required_policy_preimage_unavailable",
+        "rvr.invinoveritas.v1.required_signed_event_unavailable",
+        "rvr.invinoveritas.v1.artifact_digest_mismatch",
+        "rvr.invinoveritas.v1.policy_commitment_mismatch",
+        "rvr.invinoveritas.v1.signed_event_invalid",
+        "rvr.invinoveritas.v1.issuer_pubkey_mismatch",
+        "rvr.invinoveritas.v1.event_id_mismatch",
+        "rvr.invinoveritas.v1.signature_invalid",
+        "rvr.invinoveritas.v1.event_content_invalid",
+        "rvr.invinoveritas.v1.event_artifact_binding_mismatch",
+        "rvr.invinoveritas.v1.event_policy_binding_mismatch",
+        "rvr.invinoveritas.v1.event_decision_binding_mismatch",
+        "rvr.invinoveritas.v1.freshness_beacon_invalid",
+        "rvr.invinoveritas.v1.freshness_beacon_binding_mismatch",
+        "rvr.invinoveritas.v1.decision_ref_mismatch"
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "proposition", "artifactMember", "policyMember", "signedEventMember", "artifactHash", "policyCommitment", "decisionRef", "freshnessBeaconHash", "eventId", "issuerPubkey", "judgmentBoundary"],
+      "properties": {
+        "schema": { "const": "rvr.claim.invinoveritas-signed-verdict.v1" },
+        "proposition": { "const": "rvr.invinoveritas.v1.signed_verdict_artifact_bindings" },
+        "artifactMember": { "const": "artifact-bytes" },
+        "policyMember": { "const": "policy-preimage" },
+        "signedEventMember": { "const": "signed-event" },
+        "artifactHash": { "$ref": "#/$defs/digest" },
+        "policyCommitment": { "$ref": "#/$defs/digest" },
+        "decisionRef": { "$ref": "#/$defs/digest" },
+        "freshnessBeaconHash": { "$ref": "#/$defs/digest" },
+        "eventId": { "$ref": "#/$defs/digest" },
+        "issuerPubkey": { "$ref": "#/$defs/digest" },
+        "judgmentBoundary": { "const": "COMMITTED_AUTHENTICATED_NOT_REDERIVED" }
+      }
+    },
+    "presentEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "mediaType", "byteLength", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "PRESENT" },
+        "mediaType": { "type": "string" },
+        "byteLength": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "unavailableEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "reasonCode"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "UNAVAILABLE" },
+        "reasonCode": { "const": "rvr.invinoveritas.v1.evidence_unavailable" }
+      }
+    },
+    "evidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "members"],
+      "properties": {
+        "schema": { "const": "rvr.evidence-set.v0" },
+        "members": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "oneOf": [{ "$ref": "#/$defs/presentEvidenceMember" }, { "$ref": "#/$defs/unavailableEvidenceMember" }] }
+        }
+      }
+    },
+    "nullableDigest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "nullableString": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["procedure", "judgmentSemantics", "freshnessSemantics", "artifactDigest", "declaredArtifactDigest", "policyDigest", "declaredPolicyDigest", "decisionDigest", "declaredDecisionDigest", "freshnessBeaconDigest", "declaredFreshnessBeaconDigest", "eventDigest", "declaredEventDigest", "contentDigest", "issuerPubkey", "producerVerdict", "signatureCheck"],
+      "properties": {
+        "procedure": { "const": "INVINO_SIGNED_VERDICT_BINDING_VERIFY_V1" },
+        "judgmentSemantics": { "const": "COMMITTED_AUTHENTICATED_NOT_REDERIVED" },
+        "freshnessSemantics": { "const": "COMMITMENT_REPRODUCED_CANONICALITY_NOT_ESTABLISHED" },
+        "artifactDigest": { "$ref": "#/$defs/nullableDigest" },
+        "declaredArtifactDigest": { "$ref": "#/$defs/digest" },
+        "policyDigest": { "$ref": "#/$defs/nullableDigest" },
+        "declaredPolicyDigest": { "$ref": "#/$defs/digest" },
+        "decisionDigest": { "$ref": "#/$defs/nullableDigest" },
+        "declaredDecisionDigest": { "$ref": "#/$defs/digest" },
+        "freshnessBeaconDigest": { "$ref": "#/$defs/nullableDigest" },
+        "declaredFreshnessBeaconDigest": { "$ref": "#/$defs/digest" },
+        "eventDigest": { "$ref": "#/$defs/nullableDigest" },
+        "declaredEventDigest": { "$ref": "#/$defs/digest" },
+        "contentDigest": { "$ref": "#/$defs/nullableDigest" },
+        "issuerPubkey": { "$ref": "#/$defs/digest" },
+        "producerVerdict": { "$ref": "#/$defs/nullableString" },
+        "signatureCheck": { "enum": ["VALID", "INVALID", "NOT_PERFORMED"] }
+      }
+    },
+    "canonicalResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "proposition", "outcome", "reasonCode", "evaluation"],
+      "properties": {
+        "schema": { "const": "rvr.canonical-result.invinoveritas-signed-verdict.v1" },
+        "proposition": { "const": "rvr.invinoveritas.v1.signed_verdict_artifact_bindings" },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+        "evaluation": { "$ref": "#/$defs/evaluation" }
+      }
+    }
+  }
+}

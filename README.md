@@ -46,9 +46,11 @@ or package identities:
 - an [ERC-overlap audit](docs/review/ERC_OVERLAP_AUDIT_RC2.md);
 - the [first ERC-8281/OCP external-profile design](docs/profiles/RVR_ERC_8281_OCP_PROFILE_DESIGN.md);
 - the [executable ERC-8281 committed-receipt-snapshot profile](profiles/erc8281-committed-receipt-snapshot-v0/README.md);
-- the [executable invinoveritas signed-verdict profile](profiles/invinoveritas-signed-verdict-v0/README.md),
-  which verifies deterministic artifact/signature bindings without claiming to
-  reproduce the producer's LLM judgment;
+- the frozen [Invinoveritas v12 signed-verdict profile](profiles/invinoveritas-signed-verdict-v0/README.md)
+  and its additive [v17 profile revision](profiles/invinoveritas-signed-verdict-v1/README.md),
+  which verify deterministic artifact, policy, event, signature, decision, and
+  freshness-commitment bindings without claiming to reproduce the producer's
+  LLM judgment or Bitcoin canonicality;
 - a [Magicians-ready pre-ERC proposal](docs/proposals/RVR_MAGICIANS_PROPOSAL.md).
 
 Published on Ethereum Magicians:
