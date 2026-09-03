@@ -7,7 +7,6 @@ neither invinoveritas nor either RVR RC2 implementation.
 from __future__ import annotations
 
 import argparse
-import base64
 import copy
 import hashlib
 import json
@@ -26,17 +25,17 @@ PROFILE_SCHEMA_PATH = PACKAGE / "profile.schema.json"
 RVR_SCHEMA_PATH = PACKAGE / "rvr.schema.json"
 VECTORS_PATH = PACKAGE / "vectors.json"
 EXPECTED_PATH = PACKAGE / "expected.json"
-UPSTREAM_PATH = PACKAGE / "upstream/verdict_proof_v17.json.base64"
+UPSTREAM_PATH = PACKAGE / "upstream/verdict_proof_v17.json"
 
 PROFILE_ID = "rvr-invinoveritas-signed-verdict-v1"
 PROPOSITION = "rvr.invinoveritas.v1.signed_verdict_artifact_bindings"
 ISSUER_PUBKEY = "6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7"
-UPSTREAM_SHA256 = "77058e47d3fc1ac9b84e5110ae4b5b9432ea7aac99903f14c38c41de5c97a1f6"
+UPSTREAM_SHA256 = "7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b"
 UPSTREAM_REVISION = "0e4f1f7b2d24924fc51c9d8c037448ffefaca4f1"
 UPSTREAM_GIT_BLOB = "2b30c729503f96f5545f8d8875e3d473d884a9eb"
 UPSTREAM_REPOSITORY = "babyblueviper1/invinoveritas"
 UPSTREAM_SOURCE_PATH = "examples/rvr-verdict-worked-example/verdict_proof_v17.json"
-UPSTREAM_BYTE_LENGTH = "14362"
+UPSTREAM_BYTE_LENGTH = "14210"
 JUDGMENT_BOUNDARY = "COMMITTED_AUTHENTICATED_NOT_REDERIVED"
 FRESHNESS_BOUNDARY = "COMMITMENT_REPRODUCED_CANONICALITY_NOT_ESTABLISHED"
 DECISION_FIELDS = (
@@ -71,7 +70,7 @@ PACKAGE_MEMBERS = (
     "profiles/invinoveritas-signed-verdict-v1/profile.schema.json",
     "profiles/invinoveritas-signed-verdict-v1/rvr.schema.json",
     "profiles/invinoveritas-signed-verdict-v1/test_profile.py",
-    "profiles/invinoveritas-signed-verdict-v1/upstream/verdict_proof_v17.json.base64",
+    "profiles/invinoveritas-signed-verdict-v1/upstream/verdict_proof_v17.json",
     "profiles/invinoveritas-signed-verdict-v1/vectors.json",
     "profiles/invinoveritas-signed-verdict-v1/verification-profile.json",
 )
@@ -95,22 +94,9 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def decode_upstream_artifact(encoded: bytes) -> bytes:
-    """Decode the exact upstream bytes from one-line RFC 4648 Base64 + LF."""
-    try:
-        text = encoded.decode("ascii")
-    except UnicodeDecodeError as error:
-        raise ProfileError("upstream transport is not ASCII") from error
-    if not text.endswith("\n") or "\r" in text or "\n" in text[:-1]:
-        raise ProfileError("upstream transport is not one Base64 line followed by LF")
-    payload = text[:-1]
-    try:
-        decoded = base64.b64decode(payload, validate=True)
-    except ValueError as error:
-        raise ProfileError("upstream transport is not valid RFC 4648 Base64") from error
-    if base64.b64encode(decoded).decode("ascii") != payload:
-        raise ProfileError("upstream transport is not canonical RFC 4648 Base64")
-    return decoded
+def git_blob_oid(data: bytes) -> str:
+    header = b"blob " + str(len(data)).encode("ascii") + b"\0"
+    return hashlib.sha1(header + data).hexdigest()
 
 
 def reject_constant(value: str) -> Any:
@@ -904,8 +890,7 @@ def run_gate() -> dict[str, Any]:
     package_digest, member_count = audit_manifest()
     vectors = parse_json(pinned["invinoveritas-v1-verification-vectors"], str(VECTORS_PATH))
     expected = parse_json(pinned["invinoveritas-v1-expected-results"], str(EXPECTED_PATH))
-    upstream_transport = pinned["invinoveritas-upstream-verdict-proof-v17"]
-    upstream_bytes = decode_upstream_artifact(upstream_transport)
+    upstream_bytes = pinned["invinoveritas-upstream-verdict-proof-v17"]
     expected_source = {
         "repository": UPSTREAM_REPOSITORY,
         "revision": UPSTREAM_REVISION,
@@ -916,7 +901,11 @@ def run_gate() -> dict[str, Any]:
     }
     if vectors.get("upstream") != expected_source:
         raise ProfileError("upstream source metadata mismatch")
-    if sha256(upstream_bytes) != UPSTREAM_SHA256 or str(len(upstream_bytes)) != UPSTREAM_BYTE_LENGTH:
+    if (
+        git_blob_oid(upstream_bytes) != UPSTREAM_GIT_BLOB
+        or sha256(upstream_bytes) != UPSTREAM_SHA256
+        or str(len(upstream_bytes)) != UPSTREAM_BYTE_LENGTH
+    ):
         raise ProfileError("upstream source identity mismatch")
     source = parse_json(upstream_bytes, str(UPSTREAM_PATH))
     claim, artifact, policy, event = source_inputs(source)

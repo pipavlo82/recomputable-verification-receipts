@@ -15,17 +15,17 @@ repository: babyblueviper1/invinoveritas
 revision: 0e4f1f7b2d24924fc51c9d8c037448ffefaca4f1
 path: examples/rvr-verdict-worked-example/verdict_proof_v17.json
 Git blob: 2b30c729503f96f5545f8d8875e3d473d884a9eb
-byte length: 14362
-SHA-256: 77058e47d3fc1ac9b84e5110ae4b5b9432ea7aac99903f14c38c41de5c97a1f6
+byte length: 14210
+SHA-256: 7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b
 ```
 
-Those exact bytes are vendored at `upstream/verdict_proof_v17.json.base64` under
-the transport contract `RFC 4648 Base64, canonical padded form, exactly one ASCII
-line followed by one LF`. The decoded bytes MUST have the byte length and
-SHA-256 above before they are parsed or used. This transport preserves the
-CRLF-bearing upstream Git blob while every text file in this repository remains
-LF-only. Evaluation does not call the producer, `/verify-proof`, a key directory,
-a package registry, or any live service.
+Those exact raw Git-object bytes are vendored at
+`upstream/verdict_proof_v17.json`. The byte length and SHA-256 above MUST be
+verified and the Git blob OID MUST be recomputed as
+`SHA-1("blob " || canonical unsigned decimal byte length || NUL || bytes)` before
+the bytes are parsed or used. A platform-dependent working-tree checkout is not
+an authoritative source of those bytes. Evaluation does not call the producer,
+`/verify-proof`, a key directory, a package registry, or any live service.
 
 ## 2. Exact proposition and judgment boundary
 

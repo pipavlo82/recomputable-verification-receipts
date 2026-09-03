@@ -17,12 +17,11 @@ That stronger proposition requires committed header/consensus evidence in a
 different profile and cannot be inferred from mutable explorer lookups.
 
 The exact upstream `verdict_proof_v17.json` Git blob is vendored under
-`upstream/` as canonical RFC 4648 Base64 (one line followed by LF). The gate
-decodes that transport and verifies the original byte length and SHA-256 before
-parsing or using the artifact. This preserves the upstream CRLF-bearing Git blob
-without introducing CRLF into this repository's text surface. No live API,
-package, producer implementation, mutable key endpoint, or ambient policy input
-is used by the gate.
+`upstream/`. Its identity is established from the raw Git object, not from a
+platform-dependent working-tree checkout. The gate verifies its byte length and
+SHA-256 and independently recomputes its Git blob OID before parsing or use. No
+live API, package, producer implementation, mutable key endpoint, or ambient
+policy input is used by the gate.
 
 Run the exact gate from the repository root:
 

@@ -76,7 +76,7 @@
         "immutableCommitments": {
           "const": [
             "invinoveritas-verdict-proof-git:0e4f1f7b2d24924fc51c9d8c037448ffefaca4f1",
-            "invinoveritas-verdict-proof-sha256:77058e47d3fc1ac9b84e5110ae4b5b9432ea7aac99903f14c38c41de5c97a1f6",
+            "invinoveritas-verdict-proof-sha256:7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b",
             "invinoveritas-nostr-verifier-pubkey:6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7"
           ]
         }
