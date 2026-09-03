@@ -1,0 +1,28 @@
+{
+  "schema": "rvr.invinoveritas.conformance-vectors.v1",
+  "upstream": {
+    "repository": "babyblueviper1/invinoveritas",
+    "revision": "0e4f1f7b2d24924fc51c9d8c037448ffefaca4f1",
+    "path": "examples/rvr-verdict-worked-example/verdict_proof_v17.json",
+    "gitBlob": "2b30c729503f96f5545f8d8875e3d473d884a9eb",
+    "byteLength": "14210",
+    "sha256": "7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b"
+  },
+  "negativeControls": {
+    "artifactSuffix": " altered",
+    "projectionReplacement": "REFUTED",
+    "hiddenAmbientInput": {
+      "name": "liveVerifierKeyOverride",
+      "value": "https://mutable-key-directory.invalid"
+    }
+  },
+  "semanticFailures": [
+    { "id": "artifact-digest-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.artifact_digest_mismatch" },
+    { "id": "policy-commitment-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.policy_commitment_mismatch" },
+    { "id": "issuer-pubkey-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.issuer_pubkey_mismatch" },
+    { "id": "event-id-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.event_id_mismatch" },
+    { "id": "signature-invalid", "expectedReasonCode": "rvr.invinoveritas.v1.signature_invalid" },
+    { "id": "decision-binding-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.event_decision_binding_mismatch" },
+    { "id": "freshness-beacon-binding-mismatch", "expectedReasonCode": "rvr.invinoveritas.v1.freshness_beacon_binding_mismatch" }
+  ]
+}

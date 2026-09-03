@@ -1,0 +1,60 @@
+{
+  "schema": "rvr.invinoveritas.expected-results.v1",
+  "cases": {
+    "REPRODUCED": {
+      "verificationOutcome": "VERIFIED",
+      "verificationReasonCode": "rvr.invinoveritas.v1.signed_verdict_bindings_verified",
+      "recomputationStatus": "REPRODUCED",
+      "evaluationPerformed": true
+    },
+    "DIVERGED": {
+      "verificationOutcome": "REFUTED",
+      "verificationReasonCode": "rvr.invinoveritas.v1.artifact_digest_mismatch",
+      "recomputationStatus": "DIVERGED",
+      "evaluationPerformed": true
+    },
+    "UNVERIFIABLE_REPRODUCED": {
+      "verificationOutcome": "UNVERIFIABLE",
+      "verificationReasonCode": "rvr.invinoveritas.v1.required_artifact_unavailable",
+      "recomputationStatus": "REPRODUCED",
+      "evaluationPerformed": true
+    },
+    "CANNOT_RECOMPUTE": {
+      "recomputationStatus": "CANNOT_RECOMPUTE",
+      "reasonCode": "rvr.recompute.committed_evidence_unavailable",
+      "evaluationPerformed": false
+    },
+    "NORMATIVE_DEPENDENCY_CANNOT_RECOMPUTE": {
+      "recomputationStatus": "CANNOT_RECOMPUTE",
+      "reasonCode": "rvr.recompute.normative_dependency_unavailable",
+      "evaluationPerformed": false
+    },
+    "TAMPERED_PROFILE_CONSTRAINTS_PIN": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.identity_mismatch",
+      "constraintsApplied": false
+    },
+    "PROJECTION_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.result_projection_mismatch"
+    },
+    "HIDDEN_STATE_NEGATIVE_CONTROL": {
+      "gateStatus": "REJECTED",
+      "reasonCode": "rvr.gate.evidence_closure_incomplete",
+      "evaluationPerformed": false
+    },
+    "JUDGMENT_BOUNDARY": {
+      "verificationOutcome": "VERIFIED",
+      "producerVerdict": "reject",
+      "judgmentSemantics": "COMMITTED_AUTHENTICATED_NOT_REDERIVED",
+      "producerVerdictEqualsRvrOutcome": false
+    },
+    "FRESHNESS_BOUNDARY": {
+      "verificationOutcome": "VERIFIED",
+      "freshnessSemantics": "COMMITMENT_REPRODUCED_CANONICALITY_NOT_ESTABLISHED",
+      "freshnessCommitmentMatches": true,
+      "bitcoinCanonicalityEstablished": false
+    }
+  },
+  "semanticFailures": 7
+}
