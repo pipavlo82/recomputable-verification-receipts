@@ -1,0 +1,137 @@
+{
+  "schema": "rvr.verification-profile.v0",
+  "profileId": "rvr-invinoveritas-signed-verdict-v1",
+  "profileSchemaContract": {
+    "manifest": {
+      "id": "verification-profile-manifest-schema",
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1",
+      "requiredForRecomputation": true
+    },
+    "constraints": {
+      "id": "invinoveritas-signed-verdict-v1-profile-schema",
+      "path": "profiles/invinoveritas-signed-verdict-v1/profile.schema.json",
+      "sha256": "f52cbdb8e893e71e70d795f72a123d44747ab23d81286277a64bb3ea5982e1ca",
+      "requiredForRecomputation": true
+    }
+  },
+  "dependencyResolution": {
+    "base": "SUPPLIED_PROFILE_PACKAGE_ROOT",
+    "pathFormat": "relative-posix-no-empty-dot-dotdot-or-colon-segments",
+    "locatorRole": "NORMATIVE_PACKAGE_RELATIVE_PATH",
+    "verificationOrder": "resolve-read-sha256-match-use"
+  },
+  "verificationSpecification": {
+    "id": "invinoveritas-signed-verdict-v1-verification-specification",
+    "path": "profiles/invinoveritas-signed-verdict-v1/SPEC.md",
+    "sha256": "754957d1f2f83f25a3aac6dfc48577b316f194c006671139129e6d4e5bbafb52",
+    "requiredForRecomputation": true
+  },
+  "conformanceVectorSet": {
+    "id": "rvr-invinoveritas-signed-verdict-v1-vectors",
+    "members": [
+      {
+        "id": "invinoveritas-v1-expected-results",
+        "path": "profiles/invinoveritas-signed-verdict-v1/expected.json",
+        "sha256": "c9cd31057340c600d08f91658085e33fef13c40ffd2c0893bcd4631639a9e8c8",
+        "requiredForRecomputation": false
+      },
+      {
+        "id": "invinoveritas-v1-verification-vectors",
+        "path": "profiles/invinoveritas-signed-verdict-v1/vectors.json",
+        "sha256": "260c0ccb29e0076f251777656a1fb8ce4715dbfc167cfe17d973535ea455a1bb",
+        "requiredForRecomputation": false
+      },
+      {
+        "id": "invinoveritas-upstream-verdict-proof-v17",
+        "path": "profiles/invinoveritas-signed-verdict-v1/upstream/verdict_proof_v17.json",
+        "sha256": "7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b",
+        "requiredForRecomputation": false
+      }
+    ],
+    "digest": "c442a8aa3ac67851d6eea8a618539972ea13c6908ef8f3c6eef22ce20d9e9c50",
+    "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows"
+  },
+  "canonicalByteContract": {
+    "id": "rvr-canonical-json-v0",
+    "encoding": "UTF-8",
+    "domain": "null-boolean-unicode-scalar-string-array-object",
+    "objectKeyOrder": "unicode-scalar-value-ascending",
+    "arrayOrder": "preserved-with-duplicates",
+    "unicode": "scalar-values-only-no-normalization",
+    "numbers": "forbidden",
+    "stringEscaping": "rvr-json-string-escaping-v0",
+    "solidus": "literal",
+    "lineSeparators": "U+2028-and-U+2029-literal",
+    "whitespace": "none"
+  },
+  "schemaContracts": [
+    {
+      "id": "rvr-schema",
+      "path": "profiles/invinoveritas-signed-verdict-v1/rvr.schema.json",
+      "sha256": "21a155de437a8615ec90945027613e396c7ef2d8aa7dcbf3194d171d19a1c3b0",
+      "requiredForRecomputation": true
+    }
+  ],
+  "evidenceSetContract": {
+    "schemaPath": "profiles/invinoveritas-signed-verdict-v1/rvr.schema.json",
+    "schemaSha256": "21a155de437a8615ec90945027613e396c7ef2d8aa7dcbf3194d171d19a1c3b0",
+    "schemaPointer": "#/$defs/evidenceSet",
+    "digestRule": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order"
+  },
+  "canonicalResultContract": {
+    "schemaPath": "profiles/invinoveritas-signed-verdict-v1/rvr.schema.json",
+    "schemaSha256": "21a155de437a8615ec90945027613e396c7ef2d8aa7dcbf3194d171d19a1c3b0",
+    "schemaPointer": "#/$defs/canonicalResult",
+    "outcomeProjection": "/outcome",
+    "reasonCodeProjection": "/reasonCode"
+  },
+  "resultHashRules": {
+    "algorithm": "SHA-256",
+    "input": "rvr-canonical-json-v0(canonicalResult)",
+    "encoding": "UTF-8-exactly-once",
+    "output": "lowercase-hex-no-prefix"
+  },
+  "reasonCodeNamespace": {
+    "verification": [
+      "rvr.invinoveritas.v1.signed_verdict_bindings_verified",
+      "rvr.invinoveritas.v1.required_artifact_unavailable",
+      "rvr.invinoveritas.v1.required_policy_preimage_unavailable",
+      "rvr.invinoveritas.v1.required_signed_event_unavailable",
+      "rvr.invinoveritas.v1.artifact_digest_mismatch",
+      "rvr.invinoveritas.v1.policy_commitment_mismatch",
+      "rvr.invinoveritas.v1.signed_event_invalid",
+      "rvr.invinoveritas.v1.issuer_pubkey_mismatch",
+      "rvr.invinoveritas.v1.event_id_mismatch",
+      "rvr.invinoveritas.v1.signature_invalid",
+      "rvr.invinoveritas.v1.event_content_invalid",
+      "rvr.invinoveritas.v1.event_artifact_binding_mismatch",
+      "rvr.invinoveritas.v1.event_policy_binding_mismatch",
+      "rvr.invinoveritas.v1.event_decision_binding_mismatch",
+      "rvr.invinoveritas.v1.freshness_beacon_invalid",
+      "rvr.invinoveritas.v1.freshness_beacon_binding_mismatch",
+      "rvr.invinoveritas.v1.decision_ref_mismatch"
+    ],
+    "recomputation": [
+      "rvr.recompute.identical",
+      "rvr.recompute.canonical_result_diverged",
+      "rvr.recompute.normative_dependency_unavailable",
+      "rvr.recompute.committed_evidence_unavailable"
+    ],
+    "gateRejections": [
+      "rvr.gate.schema_invalid",
+      "rvr.gate.identity_mismatch",
+      "rvr.gate.result_projection_mismatch",
+      "rvr.gate.evidence_closure_incomplete"
+    ]
+  },
+  "externalContextPolicy": {
+    "mode": "COMMITTED_SNAPSHOTS_ONLY",
+    "ambientInputs": "FORBIDDEN",
+    "immutableCommitments": [
+      "invinoveritas-verdict-proof-git:0e4f1f7b2d24924fc51c9d8c037448ffefaca4f1",
+      "invinoveritas-verdict-proof-sha256:7f83f9bd8b2c6cba0631d642043510ace279fa76d97515eec336277c7829233b",
+      "invinoveritas-nostr-verifier-pubkey:6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7"
+    ]
+  }
+}

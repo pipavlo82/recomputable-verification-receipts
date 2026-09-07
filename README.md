@@ -46,19 +46,24 @@ or package identities:
 - an [ERC-overlap audit](docs/review/ERC_OVERLAP_AUDIT_RC2.md);
 - the [first ERC-8281/OCP external-profile design](docs/profiles/RVR_ERC_8281_OCP_PROFILE_DESIGN.md);
 - the [executable ERC-8281 committed-receipt-snapshot profile](profiles/erc8281-committed-receipt-snapshot-v0/README.md);
-- the [executable invinoveritas signed-verdict profile](profiles/invinoveritas-signed-verdict-v0/README.md),
-  which verifies deterministic artifact/signature bindings without claiming to
-  reproduce the producer's LLM judgment;
-- a [Magicians-ready pre-ERC proposal](docs/proposals/RVR_MAGICIANS_PROPOSAL.md).
+- the frozen [Invinoveritas v12 signed-verdict profile](profiles/invinoveritas-signed-verdict-v0/README.md)
+  and its additive [v17 profile revision](profiles/invinoveritas-signed-verdict-v1/README.md),
+  which verify deterministic artifact, policy, event, signature, decision, and
+  freshness-commitment bindings without claiming to reproduce the producer's
+  LLM judgment or Bitcoin canonicality;
+- the preserved [pre-ERC Magicians proposal source](docs/proposals/RVR_MAGICIANS_PROPOSAL.md),
+  retained as discussion history rather than current status.
 
-Published on Ethereum Magicians:
-[Recomputable Verification Receipts (RVR)](https://ethereum-magicians.org/t/recomputable-verification-receipts-rvr/29521).
+RVR is now assigned **ERC-8404** (Standards Track: ERC, status Draft). The
+[formal proposal PR is open](https://github.com/ethereum/ERCS/pull/1980), and
+the continuing public discussion is
+[ERC-8404: Recomputable Verification Receipts](https://ethereum-magicians.org/t/erc-8404-recomputable-verification-receipts/29521).
 
 The ERC-8281 author has confirmed the commitment/inclusion versus semantic
 recomputation boundary described by the overlap audit. That review also records
-the immutable-chain-snapshot requirement for a future ERC-8281 integration
-profile. Community feedback remains a prerequisite to considering any formal
-ERC pull request.
+the immutable-chain-snapshot requirement implemented by the executable
+ERC-8281 external profile above. The formal ERC-8404 review remains open to
+editor and community feedback.
 
 ## License
 
