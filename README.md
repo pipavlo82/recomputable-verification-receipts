@@ -51,6 +51,10 @@ or package identities:
   which verify deterministic artifact, policy, event, signature, decision, and
   freshness-commitment bindings without claiming to reproduce the producer's
   LLM judgment or Bitcoin canonicality;
+- the [executable Judge Protocol ERC-8183 ruling profile](profiles/judge-protocol-rvr-v0/README.md),
+  which re-derives an evaluator's ruling under its four deterministic checks
+  from a chain snapshot frozen at a named block and the deliverable bytes,
+  without claiming chain canonicality;
 - the preserved [pre-ERC Magicians proposal source](docs/proposals/RVR_MAGICIANS_PROPOSAL.md),
   retained as discussion history rather than current status.
 
