@@ -1,0 +1,17 @@
+/sources/
+/evm/vendor/
+/evm/out/
+/evm/cache/
+/gate-v2/runs/
+/gate-v2/mutations/
+__pycache__/
+*.pyc
+*.key
+*.pem
+*.bundle
+*.zip
+.env*
+.venv/
+*.stdout
+*.stderr
+credentials*.json

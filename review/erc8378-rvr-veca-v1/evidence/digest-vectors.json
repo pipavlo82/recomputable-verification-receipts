@@ -1,0 +1,13 @@
+{
+  "assessment_sha256": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+  "canonical_binding_sha256": "c935d5a6ebbaf07226077eebe265104b45b9efa7442ec68d166b3d15dd02980e",
+  "canonical_evidence_sha256": "1c5f7d8ee66817977b610b12a78b05ee308751cb65a68dad020dd8c9dc4d99d0",
+  "canonical_policy_sha256": "bc593865be255751e67932d6936aa2ab53c1c0f6e7a27f1bf3fb50b914f3f71e",
+  "deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+  "note": "Public sample values; no private key is included.",
+  "rvr_profile_digest": "51f79442e96339ca45e9e6cc0c8232833efbee20e7480df00987dbc97da72948",
+  "rvr_receipt_digest": "d0bac129ef603aa17e6a27819e806768ea4b41d5c5860f99d62751a5b0d760e9",
+  "veca_claim_digest": "794bcad10b1dc1a9f74d24ea02373610061d2d0cadfbcc881e76dc183553d524",
+  "verifier_public_address": "0x017060e61AAEC1a166Af0980191a3f09AD5C78D6",
+  "verifier_signing_digest": "0xa1e53446f605d2c87f217d0e4ecfa586d2708906c9aaf14030ce5ac87eb2a409"
+}

@@ -1,0 +1,8 @@
+web3==7.16.0
+eth-account==0.13.7
+eth-abi==6.0.0b1
+eth-utils==6.0.0
+eth-keys==0.7.0
+PyNaCl==1.6.2
+jsonschema==4.26.0
+pycryptodome==3.23.0

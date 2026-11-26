@@ -1,0 +1,60 @@
+{
+  "baseline_contracts_preserved": true,
+  "baseline_mutations": {
+    "INVALID": 0,
+    "KILLED": 20,
+    "SURVIVED": 0
+  },
+  "baseline_results": {
+    "proof-normal": {
+      "issuer": [
+        43,
+        43
+      ],
+      "native": [
+        68,
+        68
+      ],
+      "offline": [
+        48,
+        48
+      ]
+    },
+    "proof-optimized": {
+      "issuer": [
+        43,
+        43
+      ],
+      "native": [
+        68,
+        68
+      ],
+      "offline": [
+        48,
+        48
+      ]
+    },
+    "proof-repeat": {
+      "issuer": [
+        43,
+        43
+      ],
+      "native": [
+        68,
+        68
+      ],
+      "offline": [
+        48,
+        48
+      ]
+    }
+  },
+  "candidate": "3ecd05e97499463e54992fe57f5f223a7532a955",
+  "core_files_unchanged": 13,
+  "evidence_sha256": "95d99eb26ef340b2ae5cb6b6bed0c77931b87890455967e0c40586eccbdda38d",
+  "parent": "10c5872c4c325a9f169576c4b0a66e32bf89e22c",
+  "publication_decision": "BLOCK_ORIGINAL_HISTORY_AND_ZIP",
+  "raw_archive_publication": "WITHHELD: fixed signing material and personal host metadata",
+  "zip_manifest_verified": 974,
+  "zip_source_files_match_git": 668
+}

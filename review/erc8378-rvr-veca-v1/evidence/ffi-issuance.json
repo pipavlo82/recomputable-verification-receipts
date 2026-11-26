@@ -1,0 +1,389 @@
+{
+  "evidence": {
+    "assessment": {
+      "accepted": true,
+      "deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+      "id": "assessment-ffi",
+      "issuer": "laboratory-assessor",
+      "job_id": "2",
+      "rubric_digest": "017be2373787e73dc991d21eeca0702f56c086a03f75abebbe99ee7415304eb2",
+      "schema": "synthetic-assessment.v1"
+    },
+    "binding": {
+      "amount": "100",
+      "assessment_digest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+      "assessment_id": "assessment-ffi",
+      "assessment_issuer": "laboratory-assessor",
+      "chain_id": "31337",
+      "client": "0x0000000000000000000000000000000000000111",
+      "deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+      "escrow_contract": "0xf5ba21691a8bc011b7b430854b41d5be0b78b938",
+      "evaluator": "0xa78f6c9322c3f1b396720945b6c3035a4a1b3d70",
+      "expiry": "1700010000",
+      "job_id": "2",
+      "nonce": "77",
+      "provider": "0x0000000000000000000000000000000000000222",
+      "revocation_epoch": "0",
+      "rubric_digest": "017be2373787e73dc991d21eeca0702f56c086a03f75abebbe99ee7415304eb2",
+      "rvr_profile_digest": "51f79442e96339ca45e9e6cc0c8232833efbee20e7480df00987dbc97da72948",
+      "rvr_receipt_digest": "d0bac129ef603aa17e6a27819e806768ea4b41d5c5860f99d62751a5b0d760e9",
+      "settlement_conditions_digest": "4cf06b16a7ae2e911aee4c5335f43fd51eae2f4df803573b215f225d77e772dd",
+      "token_contract": "0x5991a2df15a8f6a256d3ec51e99254cd3fb576a9",
+      "token_parameters": [
+        "7000000000000",
+        "1"
+      ],
+      "veca_claim_digest": "794bcad10b1dc1a9f74d24ea02373610061d2d0cadfbcc881e76dc183553d524"
+    },
+    "claim": {
+      "action": "request-evaluator-settlement",
+      "assessment_digest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+      "consumer": "local-evidence-gate-v2",
+      "rvr_receipt_digest": "d0bac129ef603aa17e6a27819e806768ea4b41d5c5860f99d62751a5b0d760e9",
+      "type": "ERC8378_ESCROW_SETTLEMENT_V1"
+    },
+    "conditions": {
+      "fees": "0",
+      "immutable_round": "1",
+      "kind": "full-payout-after-exact-answer",
+      "mutable_prediction": "7000000000000",
+      "normal_accounts_only": true,
+      "schema": "settlement-conditions.v1"
+    },
+    "deliverable": "322b323d340a",
+    "obligations": [
+      "exact-context",
+      "assessor-signature",
+      "current-authority",
+      "rubric-replay",
+      "rvr-recompute",
+      "token-compatibility",
+      "fresh-admission"
+    ],
+    "rubric": {
+      "exact_hex": "322b323d340a",
+      "length": "6",
+      "schema": "exact-answer.v1"
+    },
+    "rvr": {
+      "canonicalResult": {
+        "evaluation": {
+          "evidenceMember": "assessment",
+          "expectedDigest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+          "observedDigest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+          "operation": "SHA256_EQUALS"
+        },
+        "outcome": "VERIFIED",
+        "reasonCode": "rvr.v0.digest_match",
+        "schema": "rvr.canonical-result.v0"
+      },
+      "claim": {
+        "evidenceMember": "assessment",
+        "expectedDigest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+        "operation": "SHA256_EQUALS",
+        "schema": "rvr.claim.sha256-equals.v0"
+      },
+      "evidenceSet": {
+        "members": [
+          {
+            "byteLength": "289",
+            "digest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+            "id": "assessment",
+            "mediaType": "application/json",
+            "status": "PRESENT"
+          }
+        ],
+        "schema": "rvr.evidence-set.v0"
+      },
+      "payloadsBase64": {
+        "assessment": "eyJhY2NlcHRlZCI6dHJ1ZSwiZGVsaXZlcmFibGVfc2hhMjU2IjoiZTU1Njc4MTc4YjMwMWEyYWI1YmQ1YjZlNjMwMWFmODhhMGU2MTRkMjYxZTIxY2Y5NTJkMmI5ODU3YzA4NWE2ZCIsImlkIjoiYXNzZXNzbWVudC1mZmkiLCJpc3N1ZXIiOiJsYWJvcmF0b3J5LWFzc2Vzc29yIiwiam9iX2lkIjoiMiIsInJ1YnJpY19kaWdlc3QiOiIwMTdiZTIzNzM3ODdlNzNkYzk5MWQyMWVlY2EwNzAyZjU2YzA4NmEwM2Y3NWFiZWJiZTk5ZWU3NDE1MzA0ZWIyIiwic2NoZW1hIjoic3ludGhldGljLWFzc2Vzc21lbnQudjEifQ=="
+      },
+      "receipt": {
+        "claimDigest": "b4f4c1e7d772a8574d9542ca1043ed60c004d90e201946af6c2108cf116302bb",
+        "evidenceSetDigest": "e8bf610ca8d5fa8b4c15ed517bada1e6131832997abfe9a316ba0a706ae908c5",
+        "outcome": "VERIFIED",
+        "reasonCode": "rvr.v0.digest_match",
+        "resultDigest": "51268750d265f782de9745d998d64d252d2c66fe2bcad5f7f893e925d0198d2f",
+        "verificationProfileDigest": "51f79442e96339ca45e9e6cc0c8232833efbee20e7480df00987dbc97da72948"
+      },
+      "verificationProfile": {
+        "canonicalByteContract": {
+          "arrayOrder": "preserved-with-duplicates",
+          "domain": "null-boolean-unicode-scalar-string-array-object",
+          "encoding": "UTF-8",
+          "id": "rvr-canonical-json-v0",
+          "lineSeparators": "U+2028-and-U+2029-literal",
+          "numbers": "forbidden",
+          "objectKeyOrder": "unicode-scalar-value-ascending",
+          "solidus": "literal",
+          "stringEscaping": "rvr-json-string-escaping-v0",
+          "unicode": "scalar-values-only-no-normalization",
+          "whitespace": "none"
+        },
+        "canonicalResultContract": {
+          "outcomeProjection": "/outcome",
+          "reasonCodeProjection": "/reasonCode",
+          "schemaPath": "conformance/rvr-v0/rvr.schema.json",
+          "schemaPointer": "#/$defs/canonicalResult",
+          "schemaSha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae"
+        },
+        "conformanceVectorSet": {
+          "digest": "2eb5e0c056d13c4beda4b3da6fafdcd34a6bd96479030e3914a79d08679c0687",
+          "digestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows",
+          "id": "rvr-v0-first-falsification-set",
+          "members": [
+            {
+              "id": "expected-results",
+              "path": "conformance/rvr-v0/expected.json",
+              "requiredForRecomputation": false,
+              "sha256": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce"
+            },
+            {
+              "id": "adversarial-mutants",
+              "path": "conformance/rvr-v0/mutants.json",
+              "requiredForRecomputation": false,
+              "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847"
+            },
+            {
+              "id": "verification-vectors",
+              "path": "conformance/rvr-v0/vectors.json",
+              "requiredForRecomputation": false,
+              "sha256": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f"
+            }
+          ]
+        },
+        "dependencyResolution": {
+          "base": "SUPPLIED_PROFILE_PACKAGE_ROOT",
+          "locatorRole": "NORMATIVE_PACKAGE_RELATIVE_PATH",
+          "pathFormat": "relative-posix-no-empty-dot-dotdot-or-colon-segments",
+          "verificationOrder": "resolve-read-sha256-match-use"
+        },
+        "evidenceSetContract": {
+          "digestRule": "sha256-utf8-rvr-canonical-json-v0-normalized-member-order",
+          "schemaPath": "conformance/rvr-v0/rvr.schema.json",
+          "schemaPointer": "#/$defs/evidenceSet",
+          "schemaSha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae"
+        },
+        "externalContextPolicy": {
+          "ambientInputs": "FORBIDDEN",
+          "immutableCommitments": [],
+          "mode": "FORBIDDEN_UNLESS_COMMITTED"
+        },
+        "profileId": "rvr-generic-sha256-equals-v0",
+        "profileSchemaContract": {
+          "constraints": {
+            "id": "rvr-generic-sha256-equals-profile-schema",
+            "path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+            "requiredForRecomputation": true,
+            "sha256": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf"
+          },
+          "manifest": {
+            "id": "verification-profile-manifest-schema",
+            "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+            "requiredForRecomputation": true,
+            "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1"
+          }
+        },
+        "reasonCodeNamespace": {
+          "gateRejections": [
+            "rvr.gate.schema_invalid",
+            "rvr.gate.identity_mismatch",
+            "rvr.gate.result_projection_mismatch",
+            "rvr.gate.evidence_closure_incomplete"
+          ],
+          "recomputation": [
+            "rvr.recompute.identical",
+            "rvr.recompute.canonical_result_diverged",
+            "rvr.recompute.normative_dependency_unavailable",
+            "rvr.recompute.normative_dependency_identity_mismatch",
+            "rvr.recompute.committed_evidence_unavailable"
+          ],
+          "verification": [
+            "rvr.v0.digest_match",
+            "rvr.v0.digest_mismatch",
+            "rvr.v0.required_evidence_unavailable"
+          ]
+        },
+        "resultHashRules": {
+          "algorithm": "SHA-256",
+          "encoding": "UTF-8-exactly-once",
+          "input": "rvr-canonical-json-v0(canonicalResult)",
+          "output": "lowercase-hex-no-prefix"
+        },
+        "schema": "rvr.verification-profile.v0",
+        "schemaContracts": [
+          {
+            "id": "rvr-schema",
+            "path": "conformance/rvr-v0/rvr.schema.json",
+            "requiredForRecomputation": true,
+            "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae"
+          }
+        ],
+        "verificationSpecification": {
+          "id": "verification-specification",
+          "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
+          "requiredForRecomputation": true,
+          "sha256": "81077ddbf50624bc70941cf53a4f542604e926a653d7fcb3a36310ff5430b973"
+        }
+      }
+    },
+    "rvr_case": {
+      "claim": {
+        "evidenceMember": "assessment",
+        "expectedDigest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+        "operation": "SHA256_EQUALS",
+        "schema": "rvr.claim.sha256-equals.v0"
+      },
+      "evidenceSet": {
+        "members": [
+          {
+            "byteLength": "289",
+            "digest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+            "id": "assessment",
+            "mediaType": "application/json",
+            "status": "PRESENT"
+          }
+        ],
+        "schema": "rvr.evidence-set.v0"
+      },
+      "payloadsBase64": {
+        "assessment": "eyJhY2NlcHRlZCI6dHJ1ZSwiZGVsaXZlcmFibGVfc2hhMjU2IjoiZTU1Njc4MTc4YjMwMWEyYWI1YmQ1YjZlNjMwMWFmODhhMGU2MTRkMjYxZTIxY2Y5NTJkMmI5ODU3YzA4NWE2ZCIsImlkIjoiYXNzZXNzbWVudC1mZmkiLCJpc3N1ZXIiOiJsYWJvcmF0b3J5LWFzc2Vzc29yIiwiam9iX2lkIjoiMiIsInJ1YnJpY19kaWdlc3QiOiIwMTdiZTIzNzM3ODdlNzNkYzk5MWQyMWVlY2EwNzAyZjU2YzA4NmEwM2Y3NWFiZWJiZTk5ZWU3NDE1MzA0ZWIyIiwic2NoZW1hIjoic3ludGhldGljLWFzc2Vzc21lbnQudjEifQ=="
+      }
+    },
+    "signature": "224b88da3a684c32a7476beeae7f4a2d4d52b9c37bab725e24f23073dbe08c5c54699850ff8e9342dfa25eac63743cce0542bfdd6f45034128797147c6a4180d"
+  },
+  "issuance": {
+    "checks": {
+      "assessment": "VERIFIED",
+      "authority": "VERIFIED",
+      "binding": "VERIFIED",
+      "claim": "VERIFIED",
+      "freshness": "VERIFIED",
+      "job": "VERIFIED",
+      "obligations": "VERIFIED",
+      "rubric_result": "VERIFIED",
+      "rvr": "VERIFIED",
+      "scope": "VERIFIED",
+      "shape": "VERIFIED",
+      "signature": "VERIFIED",
+      "source": "VERIFIED"
+    },
+    "confirmation": [
+      2,
+      "0x0000000000000000000000000000000000000111",
+      "0x0000000000000000000000000000000000000222",
+      "0x5991A2dF15A8F6A256D3Ec51E99254Cd3fb576A9",
+      100,
+      "0xc935d5a6ebbaf07226077eebe265104b45b9efa7442ec68d166b3d15dd02980e",
+      "0x1c5f7d8ee66817977b610b12a78b05ee308751cb65a68dad020dd8c9dc4d99d0",
+      "0xbc593865be255751e67932d6936aa2ab53c1c0f6e7a27f1bf3fb50b914f3f71e",
+      "0xe55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+      "0x51f79442e96339ca45e9e6cc0c8232833efbee20e7480df00987dbc97da72948",
+      "0xd0bac129ef603aa17e6a27819e806768ea4b41d5c5860f99d62751a5b0d760e9",
+      "0x794bcad10b1dc1a9f74d24ea02373610061d2d0cadfbcc881e76dc183553d524",
+      "0x3b9099870b8ae4badd49e59f30fc613f918d145d89048031bb3fca631cef16cb",
+      "0xa967002bec56dfe22178b1783da8ad213a4b59c73ce4d0c9281632e9232eb9db",
+      "0x3b9099870b8ae4badd49e59f30fc613f918d145d89048031bb3fca631cef16cb",
+      "0x000000000000000000000000000000000000000000000000000000000000004d",
+      1700000000,
+      1700000600,
+      0,
+      7000000000000,
+      1
+    ],
+    "digest": "0xa1e53446f605d2c87f217d0e4ecfa586d2708906c9aaf14030ce5ac87eb2a409",
+    "issued": true,
+    "observed_state": {
+      "amount": "100",
+      "chain_id": "31337",
+      "client": "0x0000000000000000000000000000000000000111",
+      "escrow_contract": "0xf5ba21691a8bc011b7b430854b41d5be0b78b938",
+      "evaluator": "0xa78f6c9322c3f1b396720945b6c3035a4a1b3d70",
+      "job_id": "2",
+      "next_nonce": "77",
+      "now": "1700000000",
+      "provider": "0x0000000000000000000000000000000000000222",
+      "status": "Submitted",
+      "submitted_deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+      "token_contract": "0x5991a2df15a8f6a256d3ec51e99254cd3fb576a9",
+      "token_parameters": [
+        "7000000000000",
+        "1"
+      ],
+      "used_nonces": []
+    },
+    "result": "VERIFIED",
+    "scope": "experimental profile; verifier assertion, not proof of truth",
+    "signature": "0xbd3bd923e00c5a7b08ab61736b077be95a9b5c0a806da84458555f915bbb7bcd2202d523f7eb434ca6132f99ea70bb9c7a8d1044f37577fa63a35b9b3d9aa0c61c",
+    "signer": "0x017060e61AAEC1a166Af0980191a3f09AD5C78D6"
+  },
+  "pinned_binding": "c935d5a6ebbaf07226077eebe265104b45b9efa7442ec68d166b3d15dd02980e",
+  "policy": {
+    "assessor": "laboratory-assessor",
+    "assessor_key": "b506686ea521950a01b5a4d48c946772ffd41215c477f0840b4aa7474917bacf",
+    "binding": {
+      "amount": "100",
+      "assessment_digest": "c9bf8196c7c8fcf80b9494ffdd326c3eee08bd9f1518d09f9869f91a0fb4d2b2",
+      "assessment_id": "assessment-ffi",
+      "assessment_issuer": "laboratory-assessor",
+      "chain_id": "31337",
+      "client": "0x0000000000000000000000000000000000000111",
+      "deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+      "escrow_contract": "0xf5ba21691a8bc011b7b430854b41d5be0b78b938",
+      "evaluator": "0xa78f6c9322c3f1b396720945b6c3035a4a1b3d70",
+      "expiry": "1700010000",
+      "job_id": "2",
+      "nonce": "77",
+      "provider": "0x0000000000000000000000000000000000000222",
+      "revocation_epoch": "0",
+      "rubric_digest": "017be2373787e73dc991d21eeca0702f56c086a03f75abebbe99ee7415304eb2",
+      "rvr_profile_digest": "51f79442e96339ca45e9e6cc0c8232833efbee20e7480df00987dbc97da72948",
+      "rvr_receipt_digest": "d0bac129ef603aa17e6a27819e806768ea4b41d5c5860f99d62751a5b0d760e9",
+      "settlement_conditions_digest": "4cf06b16a7ae2e911aee4c5335f43fd51eae2f4df803573b215f225d77e772dd",
+      "token_contract": "0x5991a2df15a8f6a256d3ec51e99254cd3fb576a9",
+      "token_parameters": [
+        "7000000000000",
+        "1"
+      ],
+      "veca_claim_digest": "794bcad10b1dc1a9f74d24ea02373610061d2d0cadfbcc881e76dc183553d524"
+    },
+    "consumer": "local-evidence-gate-v2",
+    "epoch": "0",
+    "required_obligations": [
+      "exact-context",
+      "assessor-signature",
+      "current-authority",
+      "rubric-replay",
+      "rvr-recompute",
+      "token-compatibility",
+      "fresh-admission"
+    ],
+    "revoked_assessments": [],
+    "revoked_assessors": [],
+    "rubric": {
+      "exact_hex": "322b323d340a",
+      "length": "6",
+      "schema": "exact-answer.v1"
+    }
+  },
+  "state": {
+    "amount": "100",
+    "chain_id": "31337",
+    "client": "0x0000000000000000000000000000000000000111",
+    "escrow_contract": "0xf5ba21691a8bc011b7b430854b41d5be0b78b938",
+    "evaluator": "0xa78f6c9322c3f1b396720945b6c3035a4a1b3d70",
+    "job_id": "2",
+    "next_nonce": "77",
+    "now": "1700000000",
+    "provider": "0x0000000000000000000000000000000000000222",
+    "status": "Submitted",
+    "submitted_deliverable_sha256": "e55678178b301a2ab5bd5b6e6301af88a0e614d261e21cf952d2b9857c085a6d",
+    "token_contract": "0x5991a2df15a8f6a256d3ec51e99254cd3fb576a9",
+    "token_parameters": [
+      "7000000000000",
+      "1"
+    ],
+    "used_nonces": []
+  },
+  "transport": "LAB_FFI_SHARED_HOST_NOT_INDEPENDENT_CUSTODY"
+}

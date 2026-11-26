@@ -1,0 +1,792 @@
+{
+  "files": [
+    {
+      "extract_solidity_contains": "contract AgenticCommerce is Initializable",
+      "path": "evm/vendor/acp/AgenticCommerce.sol",
+      "ref": "ee3298cc117ecc5311ac5fa3fafc2d8e54984cc3",
+      "repository": "ethereum/ERCs",
+      "sha256": "4f48f573cf5e05c70170b53a3cb95755e76ce40c8f1f8d3d339b95c289e5e8d8",
+      "upstream_path": "ERCS/erc-8183.md"
+    },
+    {
+      "extract_solidity_contains": "interface IACPHook is IERC165",
+      "path": "evm/vendor/acp/IACPHook.sol",
+      "ref": "ee3298cc117ecc5311ac5fa3fafc2d8e54984cc3",
+      "repository": "ethereum/ERCs",
+      "sha256": "00103fb36b2b75118713c60142584e6411b85c721103eb00654aa3421d9305da",
+      "upstream_path": "ERCS/erc-8183.md"
+    },
+    {
+      "path": "evm/vendor/forge-std/Base.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "76b05dda37981797d3d403f29fc6cad79b46e2fc11da47d649ff13acb69158b2",
+      "upstream_path": "src/Base.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdAssertions.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "203de35565c3d68b6599f84e88068f79c23b53a80d18c46056e85d4c5f48613c",
+      "upstream_path": "src/StdAssertions.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdChains.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "981b7ce12f4bc3193c7914c68f51be74d1d03c33732db894f5d36ad8025ab4f5",
+      "upstream_path": "src/StdChains.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdCheats.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "988843996b3e8ebab594c659fba9502bab437220f84e7ded9a9e3f6e730d358e",
+      "upstream_path": "src/StdCheats.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdConstants.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "17dfd996881264de1e6af6697a3dc7a56ae8ff0717e4cb4f1685bd7fb3a45147",
+      "upstream_path": "src/StdConstants.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdError.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "c1f7271f11a44628810ef6beb2da0c43add131ff9cfcac4d7acd633c269ccf7d",
+      "upstream_path": "src/StdError.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdInvariant.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "7d3a62087c7d06766e99f8e4f4e50997b0ff8730fb304986f2c4cd895a67fbbd",
+      "upstream_path": "src/StdInvariant.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdJson.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "556494110d1e791ce0992bf22c2ac6df5e614122659a97cd1269a8d9dce139c0",
+      "upstream_path": "src/StdJson.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdMath.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "7224cea66fc06c7a9d303084cccb14eaedffe4b21b3f9695d06dc590d2894d7d",
+      "upstream_path": "src/StdMath.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdStorage.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "8835d2e5de9ceca2a4988a212916216de052634584f832d5364dc8c42d460113",
+      "upstream_path": "src/StdStorage.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdStyle.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "903ea6f4e4aa31e416b5043abecc09ced41dc78c9ce9dabb5c745337ee13139d",
+      "upstream_path": "src/StdStyle.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdToml.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "682e9c74bd02de5df7be595d27fa44eeaf0a5d96ad5c2db507065386d35eb433",
+      "upstream_path": "src/StdToml.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/StdUtils.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "52d713d886305184e7ed3b3a2e5941ea1440f071d9c9a4d6fea618135e1d3f67",
+      "upstream_path": "src/StdUtils.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/Test.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "2e69383110d088b4c413edf79bb71f9d05e4791625fb7fa53429d34440ea50dd",
+      "upstream_path": "src/Test.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/Vm.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "ad4bc58d4a2cfdb45c6439fe977a7ad390fd83e3e7485ec4597458a278993eeb",
+      "upstream_path": "src/Vm.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/console.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "894dc6e40fe62d887df6243112d8c775df2db60babc3024ee04a5564b90af64d",
+      "upstream_path": "src/console.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/console2.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "62d8ccbd118fec4f99c5e847322d6ca0d7fbe6a0a16e5a26b0590869fcd69357",
+      "upstream_path": "src/console2.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/interfaces/IMulticall3.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "890a5b361034daa6006b3ba2275e743cd6197c4d81e3df5732cdce731d3c0868",
+      "upstream_path": "src/interfaces/IMulticall3.sol"
+    },
+    {
+      "path": "evm/vendor/forge-std/safeconsole.sol",
+      "ref": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "repository": "foundry-rs/forge-std",
+      "sha256": "fd74d8ed377e1470217cd6dce7699dcbc4e79b3893f17ae2a298c0e7e4418181",
+      "upstream_path": "src/safeconsole.sol"
+    },
+    {
+      "path": "evm/vendor/oz-up/access/AccessControlUpgradeable.sol",
+      "ref": "7bf4727aacdbfaa0f36cbd664654d0c9e1dc52bf",
+      "repository": "OpenZeppelin/openzeppelin-contracts-upgradeable",
+      "sha256": "b6fcfbabb4fb0f0b23b018ed667a5302adcda512ce635c52b50ee2704609fdb7",
+      "upstream_path": "contracts/access/AccessControlUpgradeable.sol"
+    },
+    {
+      "path": "evm/vendor/oz-up/proxy/utils/Initializable.sol",
+      "ref": "7bf4727aacdbfaa0f36cbd664654d0c9e1dc52bf",
+      "repository": "OpenZeppelin/openzeppelin-contracts-upgradeable",
+      "sha256": "a8b2a4ade9afe90f8e5026906c69911489389f2a892c5e4fe3de5cb918869251",
+      "upstream_path": "contracts/proxy/utils/Initializable.sol"
+    },
+    {
+      "path": "evm/vendor/oz-up/proxy/utils/UUPSUpgradeable.sol",
+      "ref": "7bf4727aacdbfaa0f36cbd664654d0c9e1dc52bf",
+      "repository": "OpenZeppelin/openzeppelin-contracts-upgradeable",
+      "sha256": "18fd32f4ee1c70a19b089839935db44400e59c4724b7e02e430defd1eb670eb5",
+      "upstream_path": "contracts/proxy/utils/UUPSUpgradeable.sol"
+    },
+    {
+      "path": "evm/vendor/oz-up/utils/ContextUpgradeable.sol",
+      "ref": "7bf4727aacdbfaa0f36cbd664654d0c9e1dc52bf",
+      "repository": "OpenZeppelin/openzeppelin-contracts-upgradeable",
+      "sha256": "caf06b4c93bbc1d54eb772e76e949bd4a2520c535cc591d07e57cbafaf90b2fd",
+      "upstream_path": "contracts/utils/ContextUpgradeable.sol"
+    },
+    {
+      "path": "evm/vendor/oz-up/utils/introspection/ERC165Upgradeable.sol",
+      "ref": "7bf4727aacdbfaa0f36cbd664654d0c9e1dc52bf",
+      "repository": "OpenZeppelin/openzeppelin-contracts-upgradeable",
+      "sha256": "73882072b1bd2744526f0ea1456ae0a53ae867d971ddf744d46b4a7c3c8eee57",
+      "upstream_path": "contracts/utils/introspection/ERC165Upgradeable.sol"
+    },
+    {
+      "path": "evm/vendor/oz/access/IAccessControl.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "140304b7e99d517c57a13f391dfd3b550ca633a507f7b2af130f391b6cd89cc5",
+      "upstream_path": "contracts/access/IAccessControl.sol"
+    },
+    {
+      "path": "evm/vendor/oz/access/Ownable.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "upstream_path": "contracts/access/Ownable.sol"
+    },
+    {
+      "path": "evm/vendor/oz/interfaces/IERC1363.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+      "upstream_path": "contracts/interfaces/IERC1363.sol"
+    },
+    {
+      "path": "evm/vendor/oz/interfaces/IERC165.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+      "upstream_path": "contracts/interfaces/IERC165.sol"
+    },
+    {
+      "path": "evm/vendor/oz/interfaces/IERC1967.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "c4e901318ab6d4963582c62c62ce988a34c68dbae71846b67decacde79e9a317",
+      "upstream_path": "contracts/interfaces/IERC1967.sol"
+    },
+    {
+      "path": "evm/vendor/oz/interfaces/IERC20.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+      "upstream_path": "contracts/interfaces/IERC20.sol"
+    },
+    {
+      "path": "evm/vendor/oz/interfaces/draft-IERC1822.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "73653312bc2eda0ec231553a5295242eaef2d4f46a023532d45fe76cbd0f565f",
+      "upstream_path": "contracts/interfaces/draft-IERC1822.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/ERC1967/ERC1967Proxy.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "41a3040398d53999dea3251ff8906e11ec1a699362a1d8f4a55bfc7709cc00f3",
+      "upstream_path": "contracts/proxy/ERC1967/ERC1967Proxy.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/ERC1967/ERC1967Utils.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "a89ba2032ab25959c6fde1e508ebf8f966ff632703d3ef79684f578a8fa8033f",
+      "upstream_path": "contracts/proxy/ERC1967/ERC1967Utils.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/Proxy.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "fa8aae37b2939371fcbce48b814c0d5c7e57e3e267f348459f29941937746c98",
+      "upstream_path": "contracts/proxy/Proxy.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/beacon/IBeacon.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "c1c9726bbb0ec4c540c7c98059dcded69a8586b46c168036672381033ee76239",
+      "upstream_path": "contracts/proxy/beacon/IBeacon.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/utils/Initializable.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "f527a063813c2bf60c153fb08e38539578935402894fcc36fac42324ca325d3b",
+      "upstream_path": "contracts/proxy/utils/Initializable.sol"
+    },
+    {
+      "path": "evm/vendor/oz/proxy/utils/UUPSUpgradeable.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "b5af3bfd79a32c6da2d09b0be38d9b63dcd0d159a1a4a0198431fd00acc1fd52",
+      "upstream_path": "contracts/proxy/utils/UUPSUpgradeable.sol"
+    },
+    {
+      "path": "evm/vendor/oz/token/ERC20/IERC20.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "upstream_path": "contracts/token/ERC20/IERC20.sol"
+    },
+    {
+      "path": "evm/vendor/oz/token/ERC20/extensions/IERC20Metadata.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+      "upstream_path": "contracts/token/ERC20/extensions/IERC20Metadata.sol"
+    },
+    {
+      "path": "evm/vendor/oz/token/ERC20/utils/SafeERC20.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+      "upstream_path": "contracts/token/ERC20/utils/SafeERC20.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/Address.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "73e54e15285455f0e01e136c3663732641537614723ae5dbd820eb3cb036b1fd",
+      "upstream_path": "contracts/utils/Address.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/Context.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "upstream_path": "contracts/utils/Context.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/Errors.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "0704b9d6c032cca8512a3bc3f30f49f86f1f03102d2896a3d23e794b82efea66",
+      "upstream_path": "contracts/utils/Errors.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/LowLevelCall.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "e128cbe9c6c406d5a42c26e4079c0a95b369ce552f2d0c3dfd2fcb836c5708f2",
+      "upstream_path": "contracts/utils/LowLevelCall.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/ReentrancyGuardTransient.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "cff7c20aed945d939b764d876adbd42e1b7725d62d5b1f2bd303db237567b575",
+      "upstream_path": "contracts/utils/ReentrancyGuardTransient.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/StorageSlot.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "upstream_path": "contracts/utils/StorageSlot.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/TransientSlot.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "ea92f361d697ba8b1fbd322b4d84b989998862c21fbebfa4b45289dc94a9eea2",
+      "upstream_path": "contracts/utils/TransientSlot.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/cryptography/ECDSA.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "ba7c2d314fcd61c9783e0b3f0c664d004b76b408fda6a84edc8267d17c5012d6",
+      "upstream_path": "contracts/utils/cryptography/ECDSA.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/introspection/ERC165.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "61a2b12c96857aaa35f48aeda67a4281637a42494c0b3795be0ae976aa7b3793",
+      "upstream_path": "contracts/utils/introspection/ERC165.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/introspection/ERC165Checker.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "b42cd10397f404b8383363f646c21d59ff4decc7bca3de8c5b84773806605e14",
+      "upstream_path": "contracts/utils/introspection/ERC165Checker.sol"
+    },
+    {
+      "path": "evm/vendor/oz/utils/introspection/IERC165.sol",
+      "ref": "5fd1781b1454fd1ef8e722282f86f9293cacf256",
+      "repository": "OpenZeppelin/openzeppelin-contracts",
+      "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "upstream_path": "contracts/utils/introspection/IERC165.sol"
+    },
+    {
+      "path": "evm/vendor/token/interfaces/IPredictionEngine.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "24bd439682ed29d067a5b9e5419ac24947ac2ee2731558ad467945fa6d3259e2",
+      "upstream_path": "src/interfaces/IPredictionEngine.sol"
+    },
+    {
+      "path": "evm/vendor/token/interfaces/IPredictionToken.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "74d7afec0d57f5b385400a132db1ef4fded0812db8cb0ccb153291f8af120c4b",
+      "upstream_path": "src/interfaces/IPredictionToken.sol"
+    },
+    {
+      "path": "evm/vendor/token/interfaces/spec/IParametricPermissions.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "f5439333186807e5f7e69bb75e0cfd82982293302099e5be7a677810869eb7e9",
+      "upstream_path": "src/interfaces/spec/IParametricPermissions.sol"
+    },
+    {
+      "path": "evm/vendor/token/interfaces/spec/IParametricToken.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "3ee6f13cefe4f2d960e8deb14540050595a37c68a1b5ef082b82dde4933728b6",
+      "upstream_path": "src/interfaces/spec/IParametricToken.sol"
+    },
+    {
+      "path": "evm/vendor/token/libraries/Lib.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "e49a0919be33ab7173f8530803cda58fa919afec681bd0482ebf55735d21ee57",
+      "upstream_path": "src/libraries/Lib.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/Core.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "c3be0f0ebeede80edd8059f48a988465440c9a5de824310374347eed32e3f80d",
+      "upstream_path": "src/prediction/Core.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/Permissions.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "b2154d74b133ba61afcba9a3e2ef1a0b8374e35048dbd7b4e9b3a899029e0d35",
+      "upstream_path": "src/prediction/Permissions.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/Prediction.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "ae5c145ca42e809dea5fc33a7c0db36a4e1fe31fc8e132983e86c1a2f87cf091",
+      "upstream_path": "src/prediction/Prediction.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/PredictionEngine.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "99426e1c3c0b3c766e38421d3ed344bb042f08a2698bf4ceca49aac05a986b96",
+      "upstream_path": "src/prediction/PredictionEngine.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/Router.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "796f255a2d6b8105080328c882b8ce74b4561c13e9c7aa5b2ed1db1b0df5cb82",
+      "upstream_path": "src/prediction/Router.sol"
+    },
+    {
+      "path": "evm/vendor/token/prediction/Storage.sol",
+      "ref": "d2a6d8cef02884970866737b49578bd861f44bc8",
+      "repository": "K2eno/parametric-token",
+      "sha256": "37071d31481809c2e7894794de8dc2f2f6e0330c740ca9c97445b3fdb0198cf4",
+      "upstream_path": "src/prediction/Storage.sol"
+    },
+    {
+      "path": "sources/rvr/LICENSE",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "fa7fe2e14249d2da31c0d2a0bbefc17a1994a93b42ae652a3dab450b6f1c0251",
+      "upstream_path": "LICENSE"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/README.md",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "d963e6126d066c621865e8b86f6fda3fd89a4c6c31c0f7afa495aca3d01c56ad",
+      "upstream_path": "conformance/rvr-v0/README.md"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/adapter.py",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "03505efc8ee993f118fad2c71f706870d25de0da61a393a1f18f7b310bded235",
+      "upstream_path": "conformance/rvr-v0/adapter.py"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/adapter.ts",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "368955fae7a1c1153822e4e58ac9807f69eaddf4e91740eaf231f374154b3e58",
+      "upstream_path": "conformance/rvr-v0/adapter.ts"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/expected.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce",
+      "upstream_path": "conformance/rvr-v0/expected.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/manifest.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "7559d380bf3ddd228b135f9f785b40dba063d0ededcb61ba156f1bb3ad3211f8",
+      "upstream_path": "conformance/rvr-v0/manifest.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/mutants.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847",
+      "upstream_path": "conformance/rvr-v0/mutants.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf",
+      "upstream_path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/rvr.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+      "upstream_path": "conformance/rvr-v0/rvr.schema.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/vectors.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f",
+      "upstream_path": "conformance/rvr-v0/vectors.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1",
+      "upstream_path": "conformance/rvr-v0/verification-profile-manifest.schema.json"
+    },
+    {
+      "path": "sources/rvr/conformance/rvr-v0/verification-profile.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "23cac7eb86aca7a8cc0422985f598b67dd3fe758bd2321f6bcbc5ab2f1c2d8ab",
+      "upstream_path": "conformance/rvr-v0/verification-profile.json"
+    },
+    {
+      "path": "sources/rvr/docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "81077ddbf50624bc70941cf53a4f542604e926a653d7fcb3a36310ff5430b973",
+      "upstream_path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/LICENSE",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "fa7fe2e14249d2da31c0d2a0bbefc17a1994a93b42ae652a3dab450b6f1c0251",
+      "upstream_path": "LICENSE"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/README.md",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "d963e6126d066c621865e8b86f6fda3fd89a4c6c31c0f7afa495aca3d01c56ad",
+      "upstream_path": "conformance/rvr-v0/README.md"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/adapter.py",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "03505efc8ee993f118fad2c71f706870d25de0da61a393a1f18f7b310bded235",
+      "upstream_path": "conformance/rvr-v0/adapter.py"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/adapter.ts",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "368955fae7a1c1153822e4e58ac9807f69eaddf4e91740eaf231f374154b3e58",
+      "upstream_path": "conformance/rvr-v0/adapter.ts"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/expected.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce",
+      "upstream_path": "conformance/rvr-v0/expected.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/manifest.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "7559d380bf3ddd228b135f9f785b40dba063d0ededcb61ba156f1bb3ad3211f8",
+      "upstream_path": "conformance/rvr-v0/manifest.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/mutants.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847",
+      "upstream_path": "conformance/rvr-v0/mutants.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf",
+      "upstream_path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/rvr.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+      "upstream_path": "conformance/rvr-v0/rvr.schema.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/vectors.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f",
+      "upstream_path": "conformance/rvr-v0/vectors.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1",
+      "upstream_path": "conformance/rvr-v0/verification-profile-manifest.schema.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/conformance/rvr-v0/verification-profile.json",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "23cac7eb86aca7a8cc0422985f598b67dd3fe758bd2321f6bcbc5ab2f1c2d8ab",
+      "upstream_path": "conformance/rvr-v0/verification-profile.json"
+    },
+    {
+      "path": "sources/veca/evidence/erc8404/core/docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
+      "ref": "9dd36e882dd372f264b77b179130948aa5adcbde",
+      "repository": "pipavlo82/recomputable-verification-receipts",
+      "sha256": "81077ddbf50624bc70941cf53a4f542604e926a653d7fcb3a36310ff5430b973",
+      "upstream_path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md"
+    },
+    {
+      "path": "sources/veca/fixtures/erc8404/core-lock.json",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "402839bb52ac3190db38c052fb84d91e2d7b5b95078998cc931d786f362eacbc",
+      "upstream_path": "fixtures/erc8404/core-lock.json"
+    },
+    {
+      "path": "sources/veca/src/composition.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "6eff12ecf943729f3484c7ed624b26c091d455c5335ecd71c9d8d66ddd7f22dc",
+      "upstream_path": "src/composition.py"
+    },
+    {
+      "path": "sources/veca/src/erc8404/__init__.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "17d10e79d51c32ce89f39c9890c12b67c8912ba4e3195bdb62f3f95e7fa6a0c9",
+      "upstream_path": "src/erc8404/__init__.py"
+    },
+    {
+      "path": "sources/veca/src/erc8404/cases.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "19e8e20771e1fa764b73ae0dab12f1e7dac3e98ab7646e97b8ca22f179012bfc",
+      "upstream_path": "src/erc8404/cases.py"
+    },
+    {
+      "path": "sources/veca/src/erc8404/engine.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "c16360127cc6bdb824c205184bd46e57f16fd3aeec2cfe58d812d9a9fb9fe412",
+      "upstream_path": "src/erc8404/engine.py"
+    },
+    {
+      "path": "sources/veca/src/integration/__init__.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "16ea4b3228560eb6301b4f1c3204c9873465b5e7cebd4eeb8164797c1f8c42b5",
+      "upstream_path": "src/integration/__init__.py"
+    },
+    {
+      "path": "sources/veca/src/integration/cases.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "41242a1fb5e27cda975ce2bf0fbc292e33a145b9bfb35702144024107d0958f0",
+      "upstream_path": "src/integration/cases.py"
+    },
+    {
+      "path": "sources/veca/src/integration/engine.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "81707638fa076486e71e18df981cc7daaf0e91870f53d457870c0af09fd8fc3c",
+      "upstream_path": "src/integration/engine.py"
+    },
+    {
+      "path": "sources/veca/src/v2/composition.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "71ad471dcb2f322da56eea20060e9a5c8f0930bb87f7e0549b8cfaf2939ba69c",
+      "upstream_path": "src/v2/composition.py"
+    },
+    {
+      "path": "sources/veca/src/v2/scenarios.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "34452c6dc38aea381620eea7e6add519696a2347fda8ea2e44c92d7265ee6ff5",
+      "upstream_path": "src/v2/scenarios.py"
+    },
+    {
+      "path": "sources/veca/src/v3/evidence.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "8d170840fa62815e64548323aba29bd23ea2b1ab155f85631eecd148660cb423",
+      "upstream_path": "src/v3/evidence.py"
+    },
+    {
+      "path": "sources/veca/src/v3/model.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "b91d6c12b7e595f59aff9d931b5e208d850baf93d0e520107d2ee8ff94e6bb1d",
+      "upstream_path": "src/v3/model.py"
+    },
+    {
+      "path": "sources/veca/src/v3/scenarios.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "8c9b257d75687b130a1f1fd015e0cd0c967f24ff95d48244af02718672fe74e6",
+      "upstream_path": "src/v3/scenarios.py"
+    },
+    {
+      "path": "sources/veca/src/v4/__init__.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "3e0ca9401dbdddd89fe5ad47ae2e0615b2e0362542f7c0ab804e6f52beb9d426",
+      "upstream_path": "src/v4/__init__.py"
+    },
+    {
+      "path": "sources/veca/src/v4/model.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "527c89eaea12ac977ca7dc74fd3c6f4fa571878eea2c31ad153a064ab7717734",
+      "upstream_path": "src/v4/model.py"
+    },
+    {
+      "path": "sources/veca/src/v4/observations.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "1fe359e28252fdb2f74c3183154cf4875172ee67d1d5432c6ac291f28d502d19",
+      "upstream_path": "src/v4/observations.py"
+    },
+    {
+      "path": "sources/veca/src/v4/scenarios.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "15893bd4ed6609ed1dcc006f098198347d3e1d33fa4e3268bbf637c210b2f78e",
+      "upstream_path": "src/v4/scenarios.py"
+    },
+    {
+      "path": "sources/veca/src/v4_1/__init__.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "3e0ca9401dbdddd89fe5ad47ae2e0615b2e0362542f7c0ab804e6f52beb9d426",
+      "upstream_path": "src/v4_1/__init__.py"
+    },
+    {
+      "path": "sources/veca/src/v4_1/model.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "7c7a6222a23d4d82a99e1b1f7bb20433674c9c3a4791965f6b92b48b33c3f4b5",
+      "upstream_path": "src/v4_1/model.py"
+    },
+    {
+      "path": "sources/veca/src/v4_1/scenarios.py",
+      "ref": "29155372c6a16f23d1bc2091f2f3671c51e0da4c",
+      "repository": "trustless-ai/verifiable-execution-claim-authorization",
+      "sha256": "6b9b83af725fb7ca922de6b0d6fe57407a9489eed28cb4c3a40033cbd097b04d",
+      "upstream_path": "src/v4_1/scenarios.py"
+    }
+  ],
+  "frozen_core": {
+    "LICENSE": "fa7fe2e14249d2da31c0d2a0bbefc17a1994a93b42ae652a3dab450b6f1c0251",
+    "conformance/rvr-v0/README.md": "d963e6126d066c621865e8b86f6fda3fd89a4c6c31c0f7afa495aca3d01c56ad",
+    "conformance/rvr-v0/adapter.py": "03505efc8ee993f118fad2c71f706870d25de0da61a393a1f18f7b310bded235",
+    "conformance/rvr-v0/adapter.ts": "368955fae7a1c1153822e4e58ac9807f69eaddf4e91740eaf231f374154b3e58",
+    "conformance/rvr-v0/expected.json": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce",
+    "conformance/rvr-v0/manifest.json": "7559d380bf3ddd228b135f9f785b40dba063d0ededcb61ba156f1bb3ad3211f8",
+    "conformance/rvr-v0/mutants.json": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847",
+    "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json": "ecded96c5f58f7057e2c5c0b6d9789942a9a7bf600f4a453387e99f8406e7baf",
+    "conformance/rvr-v0/rvr.schema.json": "97799403d8eb96c046930396c39e0f1c3e76d6c35fd0435937446ce844bd4dae",
+    "conformance/rvr-v0/vectors.json": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f",
+    "conformance/rvr-v0/verification-profile-manifest.schema.json": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1",
+    "conformance/rvr-v0/verification-profile.json": "23cac7eb86aca7a8cc0422985f598b67dd3fe758bd2321f6bcbc5ab2f1c2d8ab",
+    "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md": "81077ddbf50624bc70941cf53a4f542604e926a653d7fcb3a36310ff5430b973"
+  },
+  "schema": "erc8378-review-dependencies.v1"
+}

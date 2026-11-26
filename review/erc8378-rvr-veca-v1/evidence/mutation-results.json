@@ -1,0 +1,442 @@
+[
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testWrongCaller()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "caller",
+    "source_after_sha256": "5bc470d34fe4de3678ed53287430620a5112ab22a989bb8b549c65f221a750e9",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "edb140bb5b30871589ded09e3ecca65fc29201fe481c404f9649309693990973",
+    "test": "testWrongCaller"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testRevokedVerifier()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "revocation",
+    "source_after_sha256": "efeba6d4dda7c2dd721b10a088061aad79944a265e1713626dc60c366894a74c",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "fcfdac7bf42079e1833d44a2ee2961afe1fd4f6e4565e141a5166b17f9199143",
+    "test": "testRevokedVerifier"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testBridgeSignatureCannotReplaceVerifier()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "signature",
+    "source_after_sha256": "95c0b8158c70e28014eaf016c4fdeae253076a2d48701fca0b7557ddf93d76e8",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "d7ed07c6d42a70b0fbeb7505821367a914030f8b6a5ed3f30334374b2fb942d6",
+    "test": "testBridgeSignatureCannotReplaceVerifier"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testRefutedEvenWhenSigned()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "outcomes",
+    "source_after_sha256": "9d9edc45df556b306459f993850d318ef62634a97d68a3538b27015fd35a77d6",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "876f025b0ad7a3d14b7c180f2b03bb3f9fdf54b6f168868905b7bcc936361dab",
+    "test": "testRefutedEvenWhenSigned"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testZeroEvidenceRefusedEvenWhenSigned()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "evidence",
+    "source_after_sha256": "56a0cc496376fc7b1d93d25587d7407969889fa3d5eb5e398b7297170881ac4b",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "87722b92b052798405588e4c29f172638477255748756a804670609221f0bd8c",
+    "test": "testZeroEvidenceRefusedEvenWhenSigned"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testSignedWrongBinding()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "binding",
+    "source_after_sha256": "b9352e376f7fd2da922f2caac614fe4fe0f3082a71e352b258a2bea4bf874e57",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "74defadf1f0560d3b33438711f447b323147d14d277f454eb390fa69cc86ef48",
+    "test": "testSignedWrongBinding"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testExpired()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "freshness",
+    "source_after_sha256": "c2694a44c952fd0c1fd56bf36f0643950d54147157603d409f359883ac04b1d9",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "36fe0aed6b81a01940bf4a58badbdf88dd62686d532cbfb06f75aab272cec559",
+    "test": "testExpired"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testReplayNonceAcrossJobs()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "replay",
+    "source_after_sha256": "aeb597077d18079e5fce6fe62194d9fdac4e54de9d7a6c5064dbbb11e237387d",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "7078beb5fbc4719697540fcd9dfe2152ad2559cd23de6ebda08c52098e285860",
+    "test": "testReplayNonceAcrossJobs"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testExpiredJobCannotSettleWithFreshConfirmation()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "job",
+    "source_after_sha256": "0a2b86ed91e9e56ae0c37f0001498630b5e6e6a68205c3c394638360b797163a",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "1952d5643391e42dfdc94278ee309b2202bd7cb5a4138b836a4cf92433fdfee4",
+    "test": "testExpiredJobCannotSettleWithFreshConfirmation"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        },
+        "testSignedWrongRecipient()": {
+          "reason": "next call did not revert as expected",
+          "status": "Failure"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "context",
+    "source_after_sha256": "a920197cbc3be7b9af6034a40ff6cdd0e75c42600dce8ef226fd91bb9f8cea82",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "177ca2ca7e5439fcaf397ba11e10609bea823b49633f74066b6cfb6c78e3c417",
+    "test": "testSignedWrongRecipient"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testDigestMatchesIndependentDomainEncoding()": {
+          "reason": "assertion failed: 0xc6367863a1a4edcd6f90a818de45ab3b4b8053c0efb09229e73103b10ea1c271 != 0x80843a10d77fc3bd5d19742bd6d22b79139f731ace4fc0279144bbac145a93dd",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "chain_domain",
+    "source_after_sha256": "a3afe12f3058e993e4c37c8103a67008f94b802b3a5db4393ebc8417defe094a",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "46d02bc5ea28467d988fd6fdbbd3b1d28e5c2621615164bac763512716095268",
+    "test": "testDigestMatchesIndependentDomainEncoding"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testDigestMatchesIndependentDomainEncoding()": {
+          "reason": "assertion failed: 0x45fe00acbe7e59f8715920c0f6a50e730988062d66fef02f5dc6ebdc9b69be12 != 0x80843a10d77fc3bd5d19742bd6d22b79139f731ace4fc0279144bbac145a93dd",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "gate_domain",
+    "source_after_sha256": "6ab9106d64923f825b4c793d9b5613ea64495b8199eaf7245dc737b4e0486032",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "d3cc11541d8568c24fd359a3f9f72b28c4827cca38cc72410a34345c04c75834",
+    "test": "testDigestMatchesIndependentDomainEncoding"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testDigestMatchesIndependentDomainEncoding()": {
+          "reason": "assertion failed: 0x00edace25121b717e473d5cc5510a43c4afb46212c6b33b78b56f8a3e3ce3f49 != 0x80843a10d77fc3bd5d19742bd6d22b79139f731ace4fc0279144bbac145a93dd",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "escrow_domain",
+    "source_after_sha256": "b29742ab9d476aa25f1d7cad83538a9c05bac7da153eaa771dc59ccf609ebbfe",
+    "source_before_sha256": "65063c5cb9390d3398ba10bb02db0f502b78c054d7dbe09df65280f99b9c69df",
+    "status": "KILLED",
+    "stdout_sha256": "4ba2a1f97387f3c0f4615dadbbf6f8009a06efbd5ac7506bf9e044b7f8cf8004",
+    "test": "testDigestMatchesIndependentDomainEncoding"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testFactoryRetainsNoEscrowRoles()": {
+          "reason": "assertion failed",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "factory_admin",
+    "source_after_sha256": "6575d14475150ed5d932f65c49971d9c20b8822b1bd71906dac6ca3bd6225a41",
+    "source_before_sha256": "75c503ffb5f4a25c1b599db2c464a9d208faa9142efcb7d154a9d6e37f014731",
+    "status": "KILLED",
+    "stdout_sha256": "5cfae1b4d7bfef7cc9161a1221e90cdc500c9bb27d1a556f0c4c31161bb0e66d",
+    "test": "testFactoryRetainsNoEscrowRoles"
+  },
+  {
+    "detail": {
+      "negative_failed": true,
+      "positive_passed": true,
+      "tests": {
+        "testFactoryRetainsNoEscrowRoles()": {
+          "reason": "assertion failed",
+          "status": "Failure"
+        },
+        "testPositiveNativeERC8378PaymentOnce()": {
+          "reason": null,
+          "status": "Success"
+        }
+      }
+    },
+    "exit": 1,
+    "kind": "native",
+    "name": "factory_upgrade",
+    "source_after_sha256": "a4d5a8ad1a3287b1bd663a1c1771b0a55a2cc453efad781381e23acf3219106a",
+    "source_before_sha256": "75c503ffb5f4a25c1b599db2c464a9d208faa9142efcb7d154a9d6e37f014731",
+    "status": "KILLED",
+    "stdout_sha256": "fecd12203b65507e209be844f2a64c9ecf4aa4cc22c3ccc3e3c76dbcbb9e246b",
+    "test": "testFactoryRetainsNoEscrowRoles"
+  },
+  {
+    "detail": {
+      "invalid_issuances": [
+        "wrong_deliverable"
+      ],
+      "positive_passed": true
+    },
+    "exit": 1,
+    "kind": "issuer",
+    "name": "issuer_validation",
+    "source_after_sha256": "5513be6c26e96d86f1ea9474aeab115ad34e27e1c44c874b0a3cfc4a1fe6d222",
+    "source_before_sha256": "ab5013e0cb23e1a9a943ec0ec2ae8db9bbcd8916a7975b1f091cb9da50fe60e9",
+    "status": "KILLED",
+    "stdout_sha256": "cc6acfdc3b651fc44a6c1955be5314a67a5961d462b7f2fa3b52869d54be55c5",
+    "test": "wrong_deliverable"
+  },
+  {
+    "detail": {
+      "invalid_issuances": [
+        "different_actual_submission"
+      ],
+      "positive_passed": true
+    },
+    "exit": 1,
+    "kind": "issuer",
+    "name": "issuer_submission",
+    "source_after_sha256": "7c0f2272a9ffb7f90ee01b040b55090125b5deaf79d79613efb2797300a7bc5b",
+    "source_before_sha256": "ab5013e0cb23e1a9a943ec0ec2ae8db9bbcd8916a7975b1f091cb9da50fe60e9",
+    "status": "KILLED",
+    "stdout_sha256": "54b713cfaf0ab6201ee513158981739322bf823b14feac734d2e4e76e2b468c1",
+    "test": "different_actual_submission"
+  },
+  {
+    "detail": {
+      "invalid_issuances": [
+        "revoked_verifier"
+      ],
+      "positive_passed": true
+    },
+    "exit": 1,
+    "kind": "issuer",
+    "name": "issuer_revocation",
+    "source_after_sha256": "49bb67d30d8b81155e06dcd0a8d61e015e4608f6d59844fd345928b1204e7b6f",
+    "source_before_sha256": "ab5013e0cb23e1a9a943ec0ec2ae8db9bbcd8916a7975b1f091cb9da50fe60e9",
+    "status": "KILLED",
+    "stdout_sha256": "99c3a95bc6c7d0a9338f288e8f31e06f6fe10e63a8df6acfc5d7ae98bb55dbaf",
+    "test": "revoked_verifier"
+  },
+  {
+    "detail": {
+      "invalid_issuances": [
+        "wrong_client_pin"
+      ],
+      "positive_passed": true
+    },
+    "exit": 1,
+    "kind": "issuer",
+    "name": "issuer_client_pin",
+    "source_after_sha256": "29f8b27d2501d8df5b65cd9fb359f6964e9b56a5f342044e0994dd92980cb669",
+    "source_before_sha256": "ab5013e0cb23e1a9a943ec0ec2ae8db9bbcd8916a7975b1f091cb9da50fe60e9",
+    "status": "KILLED",
+    "stdout_sha256": "d8ea5c167d2ca5052d82a6fbcdc68c673fb3c05c436eb8439aa239283b53c52e",
+    "test": "wrong_client_pin"
+  },
+  {
+    "detail": {
+      "invalid_issuances": [
+        "wrong_verifier_key"
+      ],
+      "positive_passed": true
+    },
+    "exit": 1,
+    "kind": "issuer",
+    "name": "issuer_key_pin",
+    "source_after_sha256": "f634d1bf3d084e020bf2d07bfacd577839fc01a9ca0957a8f082636f1d46ab1d",
+    "source_before_sha256": "ab5013e0cb23e1a9a943ec0ec2ae8db9bbcd8916a7975b1f091cb9da50fe60e9",
+    "status": "KILLED",
+    "stdout_sha256": "8391be5446f7a99188f29c0cbca925a9556be345585dd7e5b0416dbdc349a35d",
+    "test": "wrong_verifier_key"
+  }
+]
