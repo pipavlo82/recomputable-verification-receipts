@@ -30,6 +30,7 @@ jobs:
         run: |
           python research/schema-string-repair/migration_campaign.py --output "$RUNNER_TEMP/migration"
           python research/schema-string-repair/migration_mutations.py --output "$RUNNER_TEMP/migration-mutations"
+          python research/schema-string-repair/migration_runtime_controls.py --output "$RUNNER_TEMP/runtime-controls"
       - name: Replay repaired Unicode CLI and independent schema oracle
         run: |
           curl --fail --location https://www.unicode.org/Public/17.0.0/ucd/UnicodeData.txt --output "$RUNNER_TEMP/UnicodeData-17.txt"
@@ -49,6 +50,8 @@ jobs:
             ${{ runner.temp }}/migration/logs/**
             ${{ runner.temp }}/migration-mutations/*.json
             ${{ runner.temp }}/migration-mutations/logs/**
+            ${{ runner.temp }}/runtime-controls/*.json
+            ${{ runner.temp }}/runtime-controls/logs/**
             ${{ runner.temp }}/unicode/*.json
             ${{ runner.temp }}/unicode/logs/**
             ${{ runner.temp }}/unicode-mutations/*.json

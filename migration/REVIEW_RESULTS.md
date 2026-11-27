@@ -41,6 +41,13 @@ corrected to rejection, with the failed campaign preserved. No adapter was
 changed to fit that expectation. An initial oracle invocation omitted required
 --ucd; it failed with usage exit2 and is not a semantic pass.
 
+Further negative controls found a real dispatcher defect: malformed runtime
+JSON/response shape was incorrectly classified as malformed receipt input.
+Both witnesses and healthy controls were saved before the repair. Runtime
+response parsing/shape validation now returns HOLD/CANNOT_RECOMPUTE instead;
+the receipt and historical adapters are unchanged. These are synthetic runtime
+fault injections in disposable copies, not claims about observed production faults.
+
 Compatibility limits: no automatic conversion of signed receipts, no new
 signature, no external-profile adapter migration, and no universal claim about
 all historical receipts. Unknown historical contracts remain CANNOT_RECOMPUTE.

@@ -91,7 +91,7 @@ def dispatch(raw:bytes,expected_profile:str):
   if sys.version_info[:3]!=(3,12,10):return cannot('UNSUPPORTED_REPLAY_RUNTIME')
   for executable,version in [('bun','1.3.14')]+([('node','v22.15.0')] if route['adapterId']=='ucd17-v1' else []):
    p=subprocess.run([executable,'--version'],capture_output=True,timeout=10)
-   if p.returncode or p.stdout.decode().strip()!=version:return cannot('UNSUPPORTED_REPLAY_RUNTIME')
+   if p.returncode or p.stdout.decode(errors='replace').strip()!=version:return cannot('UNSUPPORTED_REPLAY_RUNTIME')
   # Evaluate only the byte snapshot verified above, never caller-supplied modules.
   with tempfile.TemporaryDirectory(prefix='rvr-selected-profile-') as temp:
    stage=pathlib.Path(temp)
@@ -105,7 +105,15 @@ def dispatch(raw:bytes,expected_profile:str):
    for command in [[sys.executable,'-B',*(['-O'] if sys.flags.optimize else []),str(stage/'bridge.py')],['bun',str(stage/'bridge.ts')]]:
     p=subprocess.run(command,input=raw,capture_output=True,cwd=stage,timeout=30,env={**os.environ,'PYTHONIOENCODING':'utf-8','PYTHONDONTWRITEBYTECODE':'1'})
     if p.returncode!=0:return cannot('ADAPTER_PROCESS_FAILURE',adapterId=route['adapterId'],exit=p.returncode)
-    reports.append(parse(p.stdout))
+    try:reply=parse(p.stdout)
+    except (ValueError,UnicodeError):return cannot('ADAPTER_RESPONSE_INVALID')
+    if not isinstance(reply,dict) or reply.get('kind') not in ('RESULT','GATE','UNAVAILABLE'):return cannot('ADAPTER_RESPONSE_INVALID')
+    if reply['kind']=='RESULT':
+     value=reply.get('result')
+     if not isinstance(value,dict) or value.get('recomputationStatus') not in ('REPRODUCED','DIVERGED','CANNOT_RECOMPUTE'):return cannot('ADAPTER_RESPONSE_INVALID')
+     if value.get('evaluationPerformed') is not (value['recomputationStatus']!='CANNOT_RECOMPUTE'):return cannot('ADAPTER_RESPONSE_INVALID')
+    if reply['kind']=='GATE' and not isinstance(reply.get('reason'),str):return cannot('ADAPTER_RESPONSE_INVALID')
+    reports.append(reply)
    if reports[0]!=reports[1]:return cannot('HISTORICAL_OR_RUNTIME_AMBIGUITY',adapterId=route['adapterId'],implementationResults=reports)
    result=reports[0]
    if result['kind']=='UNAVAILABLE':return cannot('ADAPTER_CHECK_UNAVAILABLE',adapterId=route['adapterId'])
