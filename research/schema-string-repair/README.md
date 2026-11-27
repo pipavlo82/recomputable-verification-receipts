@@ -1,4 +1,28 @@
-# Local schema-string repair candidate — HOLD
+# Local Unicode/reference repair candidate — HOLD
+
+Current follow-up: see UNICODE_REF_POLICY.md. The Python schema regex engine is
+now an explicit Node/V8 dependency, using standard ECMA-262 `u`, with no Python
+regex fallback. TypeScript uses native RegExp `u`. All supported local `$ref`
+siblings are evaluated. This is a proposed versioned adapter behavior, not an
+approved migration for historical profiles. It is not a universal drop-in update.
+
+```text
+python -B research/schema-string-repair/unicode_ref_campaign.py --before --output <new-before>
+python -B research/schema-string-repair/unicode_ref_campaign.py --output <new-after>
+python -B research/schema-string-repair/unicode_ref_oracle.py --campaign <new-after>
+python -B research/schema-string-repair/unicode_ref_mutations.py --output <new-mutations>
+python -B research/schema-string-repair/regressions.py --output <new-regressions>
+```
+
+The old cases.json/oracle.py and no-flags laboratory contract below remain
+unchanged. Their dot/emoji expectation intentionally differs from the new pinned
+Unicode profile. Replay them as a historical compatibility control; do not
+silently rewrite their expected output. A same-outcome negative test initially
+missed global `$ref` removal because oneOf(0) changed to oneOf(2); the expanded
+mutation campaign also runs the mutant on a valid input and catches that loss
+of acceptance. Initial SURVIVED evidence is retained externally.
+
+## Prior ceb9bf18 candidate documentation (historical scope)
 
 Canonical repository: `pipavlo82/recomputable-verification-receipts`.
 Baseline: `9dd36e882dd372f264b77b179130948aa5adcbde` (v0, post-RC2 main).

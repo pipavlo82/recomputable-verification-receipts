@@ -320,7 +320,7 @@ function schemaTypeMatches(value: unknown, expected: string): boolean {
 }
 
 function validateSchema(value: unknown, schema: RecordJson, root = schema, path = "$", errors: string[] = []): string[] {
-  if (schema.$ref) return validateSchema(value, schemaPointer(root, schema.$ref), root, path, errors)
+  if ("$ref" in schema) validateSchema(value, schemaPointer(root, schema.$ref), root, path, errors)
   if (schema.const !== undefined && !jsonSame(value, schema.const)) errors.push(`${path}: const`)
   if (schema.enum && !schema.enum.some((item: unknown) => jsonSame(value, item))) errors.push(`${path}: enum`)
   if (schema.type) {
@@ -340,7 +340,7 @@ function validateSchema(value: unknown, schema: RecordJson, root = schema, path 
   if ("pattern" in schema) {
     if (typeof schema.pattern !== "string") throw new GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
     let expression: RegExp
-    try { expression = new RegExp(schema.pattern) }
+    try { expression = new RegExp(schema.pattern, "u") }
     catch { throw new GateRejection("rvr.gate.schema_invalid", "invalid schema pattern") }
     if (typeof value === "string" && !expression.test(value)) errors.push(`${path}: pattern`)
   }
