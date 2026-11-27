@@ -9,11 +9,11 @@
     },
     {
       "path": "conformance/rvr-v0/adapter.py",
-      "sha256": "03505efc8ee993f118fad2c71f706870d25de0da61a393a1f18f7b310bded235"
+      "sha256": "e315dd767f2c42a305d728ccfc1a644f3274cbf63189847313f17c03cac8afde"
     },
     {
       "path": "conformance/rvr-v0/adapter.ts",
-      "sha256": "368955fae7a1c1153822e4e58ac9807f69eaddf4e91740eaf231f374154b3e58"
+      "sha256": "8705e7f1cdd3036328170119ec5ef353c92a53835ea2301c0daf544bd8cb79db"
     },
     {
       "path": "conformance/rvr-v0/expected.json",
@@ -49,5 +49,5 @@
     }
   ],
   "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
-  "packageDigest": "c56fa659590247b302cf670245523ed3b02902157c27b0d710bad653cb3a0eee"
+  "packageDigest": "49c6e260765a2c63460c8340f77afbd2d562f1b7c1ff12e550ad41b64a3dba17"
 }

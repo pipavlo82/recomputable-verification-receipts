@@ -1,0 +1,572 @@
+[
+  {
+    "id": "min-empty",
+    "rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "value": "",
+    "expected": "REJECT",
+    "required": true
+  },
+  {
+    "id": "min-ascii",
+    "rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "value": "a",
+    "expected": "ACCEPT",
+    "required": true
+  },
+  {
+    "id": "min-emoji-one",
+    "rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "value": "😀",
+    "expected": "ACCEPT",
+    "required": true
+  },
+  {
+    "id": "min-emoji-two",
+    "rule": {
+      "type": "string",
+      "minLength": 2
+    },
+    "value": "😀",
+    "expected": "REJECT",
+    "required": true
+  },
+  {
+    "id": "pattern-search",
+    "rule": {
+      "type": "string",
+      "pattern": "b"
+    },
+    "value": "abc",
+    "expected": "ACCEPT",
+    "required": true
+  },
+  {
+    "id": "pattern-missing",
+    "rule": {
+      "type": "string",
+      "pattern": "b"
+    },
+    "value": "xyz",
+    "expected": "REJECT",
+    "required": true
+  },
+  {
+    "id": "pattern-start",
+    "rule": {
+      "type": "string",
+      "pattern": "^b"
+    },
+    "value": "abc",
+    "expected": "REJECT",
+    "required": true
+  },
+  {
+    "id": "pattern-end",
+    "rule": {
+      "type": "string",
+      "pattern": "b$"
+    },
+    "value": "abc",
+    "expected": "REJECT",
+    "required": true
+  },
+  {
+    "id": "pattern-both",
+    "rule": {
+      "type": "string",
+      "pattern": "^abc$"
+    },
+    "value": "abc",
+    "expected": "ACCEPT",
+    "required": true
+  },
+  {
+    "id": "min-zero",
+    "rule": {
+      "type": "string",
+      "minLength": 0
+    },
+    "value": "",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "min-combining",
+    "rule": {
+      "type": "string",
+      "minLength": 2
+    },
+    "value": "é",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "min-combining-three",
+    "rule": {
+      "type": "string",
+      "minLength": 3
+    },
+    "value": "é",
+    "expected": "REJECT"
+  },
+  {
+    "id": "max-emoji-one",
+    "rule": {
+      "type": "string",
+      "maxLength": 1
+    },
+    "value": "😀",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "max-emoji-zero",
+    "rule": {
+      "type": "string",
+      "maxLength": 0
+    },
+    "value": "😀",
+    "expected": "REJECT"
+  },
+  {
+    "id": "max-ascii-over",
+    "rule": {
+      "type": "string",
+      "maxLength": 1
+    },
+    "value": "ab",
+    "expected": "REJECT"
+  },
+  {
+    "id": "max-combining",
+    "rule": {
+      "type": "string",
+      "maxLength": 1
+    },
+    "value": "é",
+    "expected": "REJECT"
+  },
+  {
+    "id": "length-type",
+    "rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "value": true,
+    "expected": "REJECT"
+  },
+  {
+    "id": "length-nonstring-not-applicable",
+    "rule": {
+      "type": "string",
+      "minLength": 0
+    },
+    "value": "x",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "bound-negative",
+    "rule": {
+      "type": "string",
+      "minLength": -1
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "bound-fraction",
+    "rule": {
+      "type": "string",
+      "minLength": 1.5
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "bound-boolean",
+    "rule": {
+      "type": "string",
+      "minLength": true
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "bound-string",
+    "rule": {
+      "type": "string",
+      "maxLength": "1"
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "pattern-empty-input",
+    "rule": {
+      "type": "string",
+      "pattern": "b"
+    },
+    "value": "",
+    "expected": "REJECT"
+  },
+  {
+    "id": "pattern-empty-pattern",
+    "rule": {
+      "type": "string",
+      "pattern": ""
+    },
+    "value": "",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-unicode",
+    "rule": {
+      "type": "string",
+      "pattern": "é"
+    },
+    "value": "café",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-emoji-literal",
+    "rule": {
+      "type": "string",
+      "pattern": "😀"
+    },
+    "value": "x😀y",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-escape",
+    "rule": {
+      "type": "string",
+      "pattern": "\\."
+    },
+    "value": "a.b",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-escape-negative",
+    "rule": {
+      "type": "string",
+      "pattern": "\\."
+    },
+    "value": "abc",
+    "expected": "REJECT"
+  },
+  {
+    "id": "pattern-unicode-escape",
+    "rule": {
+      "type": "string",
+      "pattern": "\\u00e9"
+    },
+    "value": "café",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-invalid",
+    "rule": {
+      "type": "string",
+      "pattern": "["
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "pattern-invalid-type",
+    "rule": {
+      "type": "string",
+      "pattern": true
+    },
+    "value": "x",
+    "expected": "INVALID_SCHEMA"
+  },
+  {
+    "id": "const-positive",
+    "rule": {
+      "const": "a"
+    },
+    "value": "a",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "const-negative",
+    "rule": {
+      "const": "a"
+    },
+    "value": "b",
+    "expected": "REJECT"
+  },
+  {
+    "id": "enum-positive",
+    "rule": {
+      "enum": [
+        "a",
+        "b"
+      ]
+    },
+    "value": "b",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "enum-negative",
+    "rule": {
+      "enum": [
+        "a",
+        "b"
+      ]
+    },
+    "value": "c",
+    "expected": "REJECT"
+  },
+  {
+    "id": "type-union",
+    "rule": {
+      "type": [
+        "string",
+        "boolean"
+      ]
+    },
+    "value": "a",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "ref-positive",
+    "rule": {
+      "$ref": "#/$defs/identifier"
+    },
+    "value": "abc",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "ref-negative",
+    "rule": {
+      "$ref": "#/$defs/identifier"
+    },
+    "value": "a b",
+    "expected": "REJECT"
+  },
+  {
+    "id": "oneOf-positive",
+    "rule": {
+      "oneOf": [
+        {
+          "const": "a"
+        },
+        {
+          "const": "b"
+        }
+      ]
+    },
+    "value": "a",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "oneOf-overlap",
+    "rule": {
+      "oneOf": [
+        {
+          "const": "a"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "value": "a",
+    "expected": "REJECT"
+  },
+  {
+    "id": "minItems-positive",
+    "target": "members",
+    "rule": {
+      "minItems": 1
+    },
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "minItems-negative",
+    "target": "members",
+    "rule": {
+      "minItems": 2
+    },
+    "expected": "REJECT"
+  },
+  {
+    "id": "maxItems-positive",
+    "target": "members",
+    "rule": {
+      "maxItems": 1
+    },
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "maxItems-negative",
+    "target": "members",
+    "rule": {
+      "maxItems": 0
+    },
+    "expected": "REJECT"
+  },
+  {
+    "id": "items-negative",
+    "target": "members",
+    "rule": {
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected": "REJECT"
+  },
+  {
+    "id": "required-negative",
+    "target": "evidence",
+    "rule": {
+      "required": [
+        "schema",
+        "members",
+        "missing"
+      ]
+    },
+    "expected": "REJECT"
+  },
+  {
+    "id": "additionalProperties-negative",
+    "target": "extra-evidence",
+    "rule": {},
+    "expected": "REJECT"
+  },
+  {
+    "id": "properties-negative",
+    "target": "members",
+    "rule": {
+      "type": "string"
+    },
+    "expected": "REJECT"
+  },
+  {
+    "id": "gap-dollar-final-newline",
+    "rule": {
+      "type": "string",
+      "pattern": "^abc$"
+    },
+    "value": "abc\n",
+    "expected": "REJECT",
+    "known_gap": false
+  },
+  {
+    "id": "gap-dot-astral",
+    "rule": {
+      "type": "string",
+      "pattern": "^.$"
+    },
+    "value": "😀",
+    "expected": "REJECT",
+    "known_gap": true
+  },
+  {
+    "id": "gap-unicode-digit",
+    "rule": {
+      "type": "string",
+      "pattern": "\\d"
+    },
+    "value": "١",
+    "expected": "REJECT",
+    "known_gap": true
+  },
+  {
+    "id": "gap-ref-sibling",
+    "rule": {
+      "$ref": "#/$defs/identifier",
+      "const": "other"
+    },
+    "value": "abc",
+    "expected": "REJECT",
+    "known_gap": true
+  },
+  {
+    "id": "pattern-literal-dollar",
+    "rule": {
+      "type": "string",
+      "pattern": "abc\\$"
+    },
+    "value": "abc$",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-class-dollar",
+    "rule": {
+      "type": "string",
+      "pattern": "[$]"
+    },
+    "value": "$",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-anchor-alternative",
+    "rule": {
+      "type": "string",
+      "pattern": "abc$|x"
+    },
+    "value": "x\n",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-unanchored-final-newline",
+    "rule": {
+      "type": "string",
+      "pattern": "abc"
+    },
+    "value": "abc\n",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "min-integral-float",
+    "rule": {
+      "type": "string",
+      "minLength": 1.0
+    },
+    "value": "a",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "min-integral-float-empty",
+    "rule": {
+      "type": "string",
+      "minLength": 1.0
+    },
+    "value": "",
+    "expected": "REJECT"
+  },
+  {
+    "id": "max-integral-float",
+    "rule": {
+      "type": "string",
+      "maxLength": 1.0
+    },
+    "value": "a",
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "min-nonstring-no-type",
+    "rule": {
+      "minLength": 1
+    },
+    "value": false,
+    "expected": "ACCEPT"
+  },
+  {
+    "id": "pattern-nonstring-no-type",
+    "rule": {
+      "pattern": "b"
+    },
+    "value": false,
+    "expected": "ACCEPT"
+  }
+]

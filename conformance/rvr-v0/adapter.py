@@ -248,6 +248,38 @@ def schema_type_matches(value: Any, expected_type: str) -> bool:
     raise SchemaValidationError(f"unsupported schema type: {expected_type}")
 
 
+def schema_pattern_source(pattern: str) -> str:
+    # RegExp without multiline flags requires absolute end-of-input for `$`.
+    # Python `$` additionally matches before a final LF. Do not rewrite escaped
+    # dollars or dollars in character classes. This is not an ECMA-262 engine.
+    result: list[str] = []
+    escaped = False
+    in_class = False
+    class_start = False
+    for character in pattern:
+        if escaped:
+            result.append(character)
+            escaped = False
+            if in_class:
+                class_start = False
+        elif character == "\\":
+            result.append(character)
+            escaped = True
+        elif in_class:
+            result.append(character)
+            if character == "]" and not class_start:
+                in_class = False
+            elif not (class_start and character == "^"):
+                class_start = False
+        elif character == "[":
+            result.append(character)
+            in_class = True
+            class_start = True
+        else:
+            result.append("\\Z" if character == "$" else character)
+    return "".join(result)
+
+
 def validate_schema(
     value: Any,
     schema: dict[str, Any],
@@ -271,8 +303,27 @@ def validate_schema(
             errors.append(f"{path}: type")
             return errors
 
-    if isinstance(value, str) and "pattern" in schema:
-        if re.fullmatch(schema["pattern"], value) is None:
+    # Schema documents are raw pinned dependencies, not number-free instances.
+    for keyword in ("minLength", "maxLength"):
+        if keyword in schema:
+            bound = schema[keyword]
+            integral = type(bound) is int or (type(bound) is float and bound.is_integer())
+            if not integral or bound < 0:
+                raise GateRejection("rvr.gate.schema_invalid", f"invalid schema keyword: {keyword}")
+    if isinstance(value, str):
+        length = len(normalize_scalar_text(value))
+        if "minLength" in schema and length < schema["minLength"]:
+            errors.append(f"{path}: minLength")
+        if "maxLength" in schema and length > schema["maxLength"]:
+            errors.append(f"{path}: maxLength")
+    if "pattern" in schema:
+        if not isinstance(schema["pattern"], str):
+            raise GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
+        try:
+            expression = re.compile(schema_pattern_source(schema["pattern"]))
+        except re.error as error:
+            raise GateRejection("rvr.gate.schema_invalid", "invalid schema pattern") from error
+        if isinstance(value, str) and expression.search(value) is None:
             errors.append(f"{path}: pattern")
 
     if isinstance(value, list):

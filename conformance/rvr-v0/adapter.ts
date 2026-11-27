@@ -327,7 +327,23 @@ function validateSchema(value: unknown, schema: RecordJson, root = schema, path 
     const types = Array.isArray(schema.type) ? schema.type : [schema.type]
     if (!types.some((item: string) => schemaTypeMatches(value, item))) { errors.push(`${path}: type`); return errors }
   }
-  if (typeof value === "string" && schema.pattern && !new RegExp(schema.pattern).test(value)) errors.push(`${path}: pattern`)
+  for (const keyword of ["minLength", "maxLength"]) {
+    if (keyword in schema && (typeof schema[keyword] !== "number" || !Number.isInteger(schema[keyword]) || schema[keyword] < 0)) {
+      throw new GateRejection("rvr.gate.schema_invalid", `invalid schema keyword: ${keyword}`)
+    }
+  }
+  if (typeof value === "string") {
+    const length = Array.from(value).length
+    if (schema.minLength !== undefined && length < schema.minLength) errors.push(`${path}: minLength`)
+    if (schema.maxLength !== undefined && length > schema.maxLength) errors.push(`${path}: maxLength`)
+  }
+  if ("pattern" in schema) {
+    if (typeof schema.pattern !== "string") throw new GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
+    let expression: RegExp
+    try { expression = new RegExp(schema.pattern) }
+    catch { throw new GateRejection("rvr.gate.schema_invalid", "invalid schema pattern") }
+    if (typeof value === "string" && !expression.test(value)) errors.push(`${path}: pattern`)
+  }
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) errors.push(`${path}: minItems`)
     if (schema.maxItems !== undefined && value.length > schema.maxItems) errors.push(`${path}: maxItems`)
