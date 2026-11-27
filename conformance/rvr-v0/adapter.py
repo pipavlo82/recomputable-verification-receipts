@@ -35,6 +35,7 @@ MANIFEST_MEMBERS = (
     "conformance/rvr-v0/README.md",
     "conformance/rvr-v0/adapter.py",
     "conformance/rvr-v0/adapter.ts",
+    "conformance/rvr-v0/ecma-unicode.cjs",
     "conformance/rvr-v0/expected.json",
     "conformance/rvr-v0/mutants.json",
     "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
@@ -260,11 +261,13 @@ class SchemaEngineUnavailable(RvrError):
 
 _REGEX_BRIDGE = r'''
 import { createInterface } from 'node:readline';
+import { createRequire } from 'node:module';
+const compile = createRequire(import.meta.url)(process.argv[1]);
 const lines = createInterface({input: process.stdin});
 lines.on('line', line => {
   const x = JSON.parse(line);
   let r;
-  try { r = new RegExp(x.pattern, 'u'); }
+  try { r = compile(x.pattern); }
   catch { console.log(JSON.stringify({valid: false})); return; }
   console.log(JSON.stringify({valid: true, match: x.value === null || r.test(x.value)}));
 });
@@ -296,7 +299,7 @@ def ecma_pattern_matches(pattern: str, value: str | None) -> bool:
         try:
             if _regex_child is None:
                 env = {k: v for k, v in os.environ.items() if k.upper() not in ('NODE_OPTIONS', 'NODE_PATH')}
-                child = subprocess.Popen(['node', '--input-type=module', '-e', _REGEX_BRIDGE],
+                child = subprocess.Popen(['node', '--input-type=module', '-e', _REGEX_BRIDGE, str(PACKAGE / 'ecma-unicode.cjs')],
                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                     text=True, encoding='utf-8', env=env)
                 replies = queue.Queue()

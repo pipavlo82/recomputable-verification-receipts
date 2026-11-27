@@ -3,6 +3,8 @@
 import { createHash } from "node:crypto"
 import { readFileSync, realpathSync } from "node:fs"
 import { resolve, sep } from "node:path"
+import { createRequire } from "node:module"
+const compileUnicodePattern = createRequire(import.meta.url)("./ecma-unicode.cjs") as (pattern: string) => RegExp
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json }
 type RecordJson = { [key: string]: any }
@@ -18,6 +20,7 @@ const MANIFEST_MEMBERS = [
   "conformance/rvr-v0/README.md",
   "conformance/rvr-v0/adapter.py",
   "conformance/rvr-v0/adapter.ts",
+  "conformance/rvr-v0/ecma-unicode.cjs",
   "conformance/rvr-v0/expected.json",
   "conformance/rvr-v0/mutants.json",
   "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
@@ -340,7 +343,7 @@ function validateSchema(value: unknown, schema: RecordJson, root = schema, path 
   if ("pattern" in schema) {
     if (typeof schema.pattern !== "string") throw new GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
     let expression: RegExp
-    try { expression = new RegExp(schema.pattern, "u") }
+    try { expression = compileUnicodePattern(schema.pattern) }
     catch { throw new GateRejection("rvr.gate.schema_invalid", "invalid schema pattern") }
     if (typeof value === "string" && !expression.test(value)) errors.push(`${path}: pattern`)
   }

@@ -1,3 +1,11 @@
+# Current stage: pinned Unicode data repair
+
+The additive Unicode 17 candidate and explicit migration/publication boundary are
+documented in [UNICODE_DATA_POLICY.md](UNICODE_DATA_POLICY.md). Use
+`unicode_data_campaign.py`, `unicode_data_oracle.py`, `unicode_data_scan.py` and
+`unicode_data_mutations.py` for this stage. Earlier sections below describe prior
+repair stages and do not replace that current policy or erase their failures.
+
 # Local Unicode/reference repair candidate — HOLD
 
 Current follow-up: see UNICODE_REF_POLICY.md. The Python schema regex engine is
