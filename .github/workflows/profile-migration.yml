@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   migration:
-    runs-on: ubuntu-latest
+    # Python 3.12.10 has an official 24.04 build; ubuntu-latest may move.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
