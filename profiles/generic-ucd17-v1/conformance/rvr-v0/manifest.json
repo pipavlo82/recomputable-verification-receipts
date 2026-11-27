@@ -1,0 +1,57 @@
+{
+  "schema": "rvr.conformance-manifest.v0",
+  "hashAlgorithm": "sha256-lowercase-hex",
+  "memberCount": 12,
+  "members": [
+    {
+      "path": "conformance/rvr-v0/README.md",
+      "sha256": "d963e6126d066c621865e8b86f6fda3fd89a4c6c31c0f7afa495aca3d01c56ad"
+    },
+    {
+      "path": "conformance/rvr-v0/adapter.py",
+      "sha256": "bad733e21e0e833673e5cbab790cf3a4163b7b1f3d5f2bf14fad9c32b1135b78"
+    },
+    {
+      "path": "conformance/rvr-v0/adapter.ts",
+      "sha256": "43f6be6d0b7d12b8de8dc82cc1e4e0fec739cbd0cec80df24a441e273438fd53"
+    },
+    {
+      "path": "conformance/rvr-v0/ecma-unicode.cjs",
+      "sha256": "2d3b3ff7024c30fcda4ddc03e635883f5a417fe629c383453b23b194a3d17648"
+    },
+    {
+      "path": "conformance/rvr-v0/expected.json",
+      "sha256": "0ed23ee3530df93dde2f879981d28ddb3f60fc250c8652d109dd65fdb22193ce"
+    },
+    {
+      "path": "conformance/rvr-v0/mutants.json",
+      "sha256": "d5d16cc53ec0d9be53968d7ffc01fe019cb8b2630390c04431f6ee9f54edf847"
+    },
+    {
+      "path": "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
+      "sha256": "93193da3856630edf2fa47a27c6e0060afcb4ac1ca0bc0c1db354a49d9f09144"
+    },
+    {
+      "path": "conformance/rvr-v0/rvr.schema.json",
+      "sha256": "4711c2932dce548398226bd0c61a30b3aae28ead1010a6c8824efecfbc6fe34c"
+    },
+    {
+      "path": "conformance/rvr-v0/vectors.json",
+      "sha256": "170fc62576fa8edb22073f73b28d9ac0deff26451ef651378839cd458da7312f"
+    },
+    {
+      "path": "conformance/rvr-v0/verification-profile-manifest.schema.json",
+      "sha256": "148afeb484d3866c1caae82e574182c1b748dd461dfaeb1d8095ecf4905690c1"
+    },
+    {
+      "path": "conformance/rvr-v0/verification-profile.json",
+      "sha256": "f33a2e6cae106a085b3146f37a01ba74c896c7122b4b430599a55691403eb49c"
+    },
+    {
+      "path": "docs/spec/RECOMPUTABLE_VERIFICATION_RECEIPTS_V0.md",
+      "sha256": "3e6b2987e20fcde3c4d4fec8ed85acea8a0a56fa2aa50bd781393eb974f5f188"
+    }
+  ],
+  "packageDigestRule": "sha256-utf8-sorted-path-tab-file-sha256-lf-rows-manifest-excluded",
+  "packageDigest": "9b790831e6adcb5a2fed24acd7cd7c3100e6b40d56fb5b5b4bba97714be720b7"
+}

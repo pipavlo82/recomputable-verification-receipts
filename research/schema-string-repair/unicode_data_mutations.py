@@ -5,7 +5,7 @@ import unicode_data_campaign as u
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);ap.add_argument('--ids');a=ap.parse_args();o=a.output.resolve()
     if o.exists():raise RuntimeError('Existing output')
-    o.mkdir(parents=True);sources={n:(h.ROOT/'conformance/rvr-v0'/n).read_bytes() for n in ['adapter.py','adapter.ts','ecma-unicode.cjs']};files=h.baseline();cases={c['id']:c for c in u.cases()}
+    o.mkdir(parents=True);sources=u.sources();files=h.baseline();cases={c['id']:c for c in u.cases()}
     mutations=[
       ('py-min','adapter.py','if "minLength" in schema and length < schema["minLength"]:','if False:','min-empty','min-ascii'),
       ('ts-min','adapter.ts','if (schema.minLength !== undefined && length < schema.minLength)','if (false)','min-empty','min-ascii'),

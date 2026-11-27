@@ -3,8 +3,6 @@
 import { createHash } from "node:crypto"
 import { readFileSync, realpathSync } from "node:fs"
 import { resolve, sep } from "node:path"
-import { createRequire } from "node:module"
-const compileUnicodePattern = createRequire(import.meta.url)("./ecma-unicode.cjs") as (pattern: string) => RegExp
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json }
 type RecordJson = { [key: string]: any }
@@ -20,7 +18,6 @@ const MANIFEST_MEMBERS = [
   "conformance/rvr-v0/README.md",
   "conformance/rvr-v0/adapter.py",
   "conformance/rvr-v0/adapter.ts",
-  "conformance/rvr-v0/ecma-unicode.cjs",
   "conformance/rvr-v0/expected.json",
   "conformance/rvr-v0/mutants.json",
   "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
@@ -323,30 +320,14 @@ function schemaTypeMatches(value: unknown, expected: string): boolean {
 }
 
 function validateSchema(value: unknown, schema: RecordJson, root = schema, path = "$", errors: string[] = []): string[] {
-  if ("$ref" in schema) validateSchema(value, schemaPointer(root, schema.$ref), root, path, errors)
+  if (schema.$ref) return validateSchema(value, schemaPointer(root, schema.$ref), root, path, errors)
   if (schema.const !== undefined && !jsonSame(value, schema.const)) errors.push(`${path}: const`)
   if (schema.enum && !schema.enum.some((item: unknown) => jsonSame(value, item))) errors.push(`${path}: enum`)
   if (schema.type) {
     const types = Array.isArray(schema.type) ? schema.type : [schema.type]
     if (!types.some((item: string) => schemaTypeMatches(value, item))) { errors.push(`${path}: type`); return errors }
   }
-  for (const keyword of ["minLength", "maxLength"]) {
-    if (keyword in schema && (typeof schema[keyword] !== "number" || !Number.isInteger(schema[keyword]) || schema[keyword] < 0)) {
-      throw new GateRejection("rvr.gate.schema_invalid", `invalid schema keyword: ${keyword}`)
-    }
-  }
-  if (typeof value === "string") {
-    const length = Array.from(value).length
-    if (schema.minLength !== undefined && length < schema.minLength) errors.push(`${path}: minLength`)
-    if (schema.maxLength !== undefined && length > schema.maxLength) errors.push(`${path}: maxLength`)
-  }
-  if ("pattern" in schema) {
-    if (typeof schema.pattern !== "string") throw new GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
-    let expression: RegExp
-    try { expression = compileUnicodePattern(schema.pattern) }
-    catch { throw new GateRejection("rvr.gate.schema_invalid", "invalid schema pattern") }
-    if (typeof value === "string" && !expression.test(value)) errors.push(`${path}: pattern`)
-  }
+  if (typeof value === "string" && schema.pattern && !new RegExp(schema.pattern).test(value)) errors.push(`${path}: pattern`)
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) errors.push(`${path}: minItems`)
     if (schema.maxItems !== undefined && value.length > schema.maxItems) errors.push(`${path}: maxItems`)

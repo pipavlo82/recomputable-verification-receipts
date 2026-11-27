@@ -30,7 +30,7 @@ def sources(before=False):
     if before:
         raw=subprocess.check_output(['git','archive','--format=zip',PRIOR],cwd=h.ROOT)
         with zipfile.ZipFile(io.BytesIO(raw)) as z:return {n:z.read('conformance/rvr-v0/'+n) for n in ['adapter.py','adapter.ts']}
-    return {n:(h.ROOT/'conformance/rvr-v0'/n).read_bytes() for n in ['adapter.py','adapter.ts','ecma-unicode.cjs']}
+    return {n:(h.ROOT/'profiles/generic-ucd17-v1/conformance/rvr-v0'/n).read_bytes() for n in ['adapter.py','adapter.ts','ecma-unicode.cjs']}
 
 def package(out,files,case,src):
     root=u.package(out,files,case,src);pkg=root/'conformance/rvr-v0'

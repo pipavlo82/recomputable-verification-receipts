@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Research RVR adapter; schema regex requires Node's ECMAScript Unicode engine.
+"""Independent, standard-library-only RVR v0 conformance adapter.
 
 The profile and its pinned contracts are authority. This adapter is only
 evidence of conformance and imports no producer implementation.
@@ -7,19 +7,13 @@ evidence of conformance and imports no producer implementation.
 from __future__ import annotations
 
 import argparse
-import atexit
 import base64
 import copy
 import hashlib
 import json
-import os
-import queue
 import re
-import subprocess
 import sys
-import threading
 import unicodedata
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -35,7 +29,6 @@ MANIFEST_MEMBERS = (
     "conformance/rvr-v0/README.md",
     "conformance/rvr-v0/adapter.py",
     "conformance/rvr-v0/adapter.ts",
-    "conformance/rvr-v0/ecma-unicode.cjs",
     "conformance/rvr-v0/expected.json",
     "conformance/rvr-v0/mutants.json",
     "conformance/rvr-v0/rvr-generic-sha256-equals-v0.profile.schema.json",
@@ -255,78 +248,6 @@ def schema_type_matches(value: Any, expected_type: str) -> bool:
     raise SchemaValidationError(f"unsupported schema type: {expected_type}")
 
 
-class SchemaEngineUnavailable(RvrError):
-    """Implementation inability, not a receipt rejection or semantic outcome."""
-
-
-_REGEX_BRIDGE = r'''
-import { createInterface } from 'node:readline';
-import { createRequire } from 'node:module';
-const compile = createRequire(import.meta.url)(process.argv[1]);
-const lines = createInterface({input: process.stdin});
-lines.on('line', line => {
-  const x = JSON.parse(line);
-  let r;
-  try { r = compile(x.pattern); }
-  catch { console.log(JSON.stringify({valid: false})); return; }
-  console.log(JSON.stringify({valid: true, match: x.value === null || r.test(x.value)}));
-});
-'''
-_regex_child = None
-_regex_replies = None
-_regex_lock = threading.Lock()
-
-
-def close_schema_engine() -> None:
-    global _regex_child, _regex_replies
-    child, _regex_child = _regex_child, None
-    _regex_replies = None
-    if child is not None:
-        if child.poll() is None:
-            child.kill()
-        child.wait()
-        child.stdin.close()
-        child.stdout.close()
-
-
-atexit.register(close_schema_engine)
-
-
-@lru_cache(maxsize=4096)
-def ecma_pattern_matches(pattern: str, value: str | None) -> bool:
-    global _regex_child, _regex_replies
-    with _regex_lock:
-        try:
-            if _regex_child is None:
-                env = {k: v for k, v in os.environ.items() if k.upper() not in ('NODE_OPTIONS', 'NODE_PATH')}
-                child = subprocess.Popen(['node', '--input-type=module', '-e', _REGEX_BRIDGE, str(PACKAGE / 'ecma-unicode.cjs')],
-                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                    text=True, encoding='utf-8', env=env)
-                replies = queue.Queue()
-                def read_replies():
-                    for line in child.stdout:
-                        replies.put(line)
-                    replies.put(None)
-                threading.Thread(target=read_replies, daemon=True).start()
-                _regex_child, _regex_replies = child, replies
-            _regex_child.stdin.write(json.dumps({'pattern': pattern, 'value': value}, ensure_ascii=True)+'\n')
-            _regex_child.stdin.flush()
-            raw = _regex_replies.get(timeout=5)
-            if raw is None:
-                raise SchemaEngineUnavailable('ECMAScript engine terminated')
-            response = json.loads(raw)
-            if response == {'valid': False}:
-                raise GateRejection('rvr.gate.schema_invalid', 'invalid schema pattern')
-            if response.get('valid') is not True or type(response.get('match')) is not bool:
-                raise SchemaEngineUnavailable('Invalid ECMAScript engine response')
-            return response['match']
-        except GateRejection:
-            raise
-        except (OSError, queue.Empty, ValueError, SchemaEngineUnavailable) as error:
-            close_schema_engine()
-            raise SchemaEngineUnavailable('ECMAScript check unavailable; no fallback') from error
-
-
 def validate_schema(
     value: Any,
     schema: dict[str, Any],
@@ -334,11 +255,11 @@ def validate_schema(
     path: str = "$",
 ) -> list[str]:
     root = root_schema or schema
-    errors: list[str] = []
     if "$ref" in schema:
         target = schema_pointer(root, schema["$ref"])
-        errors.extend(validate_schema(value, target, root, path))
+        return validate_schema(value, target, root, path)
 
+    errors: list[str] = []
     if "const" in schema and not json_same(value, schema["const"]):
         errors.append(f"{path}: const")
     if "enum" in schema and not any(json_same(value, item) for item in schema["enum"]):
@@ -350,23 +271,8 @@ def validate_schema(
             errors.append(f"{path}: type")
             return errors
 
-    # Schema documents are raw pinned dependencies, not number-free instances.
-    for keyword in ("minLength", "maxLength"):
-        if keyword in schema:
-            bound = schema[keyword]
-            integral = type(bound) is int or (type(bound) is float and bound.is_integer())
-            if not integral or bound < 0:
-                raise GateRejection("rvr.gate.schema_invalid", f"invalid schema keyword: {keyword}")
-    if isinstance(value, str):
-        length = len(normalize_scalar_text(value))
-        if "minLength" in schema and length < schema["minLength"]:
-            errors.append(f"{path}: minLength")
-        if "maxLength" in schema and length > schema["maxLength"]:
-            errors.append(f"{path}: maxLength")
-    if "pattern" in schema:
-        if not isinstance(schema["pattern"], str):
-            raise GateRejection("rvr.gate.schema_invalid", "invalid schema keyword: pattern")
-        if not ecma_pattern_matches(schema["pattern"], value if isinstance(value, str) else None):
+    if isinstance(value, str) and "pattern" in schema:
+        if re.fullmatch(schema["pattern"], value) is None:
             errors.append(f"{path}: pattern")
 
     if isinstance(value, list):
@@ -1304,9 +1210,6 @@ def main() -> int:
             parser.error("one of --check or --write-manifest is required")
         print(json.dumps(run_gate(), ensure_ascii=False, indent=2))
         return 0
-    except SchemaEngineUnavailable as error:
-        print(f"RVR schema check unavailable: {error}", file=sys.stderr)
-        return 2
     except Exception as error:
         print(f"RVR v0 gate failed: {error}", file=sys.stderr)
         return 1

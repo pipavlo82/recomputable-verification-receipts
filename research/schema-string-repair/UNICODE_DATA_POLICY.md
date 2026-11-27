@@ -1,5 +1,12 @@
 # Unicode data repair candidate: explicit compatibility boundary
 
+Migration follow-up: this document records the f42d356 candidate boundary.
+The new [exact-profile layer](../../migration/README.md) now implements separate
+historical/new routes. The repaired bytes live in profiles/generic-ucd17-v1;
+conformance/rvr-v0 is restored to the published baseline. The earlier publication
+blocker below is retained as history; current readiness requires the migration
+controls and independent Draft PR review. No old receipt acquires this policy.
+
 This is an opt-in research candidate, not a replacement for frozen RC2 or a
 retroactive interpretation of an existing signed receipt. The ERC is unchanged.
 

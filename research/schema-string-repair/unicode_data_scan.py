@@ -6,7 +6,7 @@ def main():
     data=a.ucd.read_bytes()
     if hashlib.sha256(data).hexdigest()!='2e1efc1dcb59c575eedf5ccae60f95229f706ee6d031835247d843c11d96470c':raise RuntimeError('Not the independently pinned UCD17 bytes')
     expected=[int(l.split(';')[0],16) for l in data.decode().splitlines() if l.split(';')[2]=='Nd']
-    compiler=Path(__file__).resolve().parents[2]/'conformance/rvr-v0/ecma-unicode.cjs'
+    compiler=Path(__file__).resolve().parents[2]/'profiles/generic-ucd17-v1/conformance/rvr-v0/ecma-unicode.cjs'
     js=r'''const compile=require(process.argv[1]);const native=/^\p{Decimal_Number}$/u;
 const patterns=['^\\p{Decimal_Number}$','^\\P{Decimal_Number}$','^\\d$','^.$'];
 const r=patterns.map(compile);let nd=[],nativeNd=[],badComplement=[],badDigit=[],badDot=[];

@@ -1,0 +1,226 @@
+{
+  "schema": "rvr.conformance-vectors.v0",
+  "canonicalByteVectors": [
+    {
+      "id": "object-key-order",
+      "kind": "canonical",
+      "value": {"z": true, "a": false},
+      "expected": "{\"a\":false,\"z\":true}"
+    },
+    {
+      "id": "unicode-scalar-key-order",
+      "kind": "canonical",
+      "value": {"𐀀": "astral", "": "bmp"},
+      "expected": "{\"\":\"bmp\",\"𐀀\":\"astral\"}"
+    },
+    {
+      "id": "array-order-and-duplicates",
+      "kind": "different",
+      "left": ["a", "a", "b"],
+      "right": ["a", "b", "a"]
+    },
+    {
+      "id": "null-is-present",
+      "kind": "different",
+      "left": {"value": null},
+      "right": {}
+    },
+    {
+      "id": "unicode-not-normalized",
+      "kind": "different",
+      "left": "é",
+      "right": "é"
+    },
+    {
+      "id": "json-string-escaping",
+      "kind": "canonical",
+      "value": "a\"b\\c\n",
+      "expected": "\"a\\\"b\\\\c\\n\""
+    },
+    {
+      "id": "all-control-character-escapes",
+      "kind": "canonical",
+      "value": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f",
+      "expected": "\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f\""
+    },
+    {
+      "id": "solidus-is-literal",
+      "kind": "canonical",
+      "value": "</rvr/profile>",
+      "expected": "\"</rvr/profile>\""
+    },
+    {
+      "id": "u2028-u2029-are-literal-utf8",
+      "kind": "canonical-utf8-hex",
+      "value": "\u2028\u2029",
+      "expectedHex": "22e280a8e280a922"
+    },
+    {
+      "id": "numbers-forbidden",
+      "kind": "reject-value",
+      "value": 1
+    },
+    {
+      "id": "duplicate-keys-forbidden",
+      "kind": "reject-json",
+      "rawJson": "{\"a\":true,\"a\":false}"
+    },
+    {
+      "id": "lone-surrogate-forbidden",
+      "kind": "reject-json",
+      "rawJson": "\"\\ud800\""
+    },
+    {
+      "id": "escaped-surrogate-pair-is-scalar",
+      "kind": "canonical-json",
+      "rawJson": "{\"value\":\"\\ud800\\udc00\"}",
+      "expected": "{\"value\":\"𐀀\"}"
+    }
+  ],
+  "resolverVectors": [
+    {
+      "id": "package-relative-posix-path",
+      "path": "conformance/rvr-v0/vectors.json",
+      "expected": "ACCEPTED"
+    },
+    {
+      "id": "reject-absolute-path",
+      "path": "/conformance/rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-reverse-solidus",
+      "path": "conformance\\rvr-v0\\vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-empty-segment",
+      "path": "conformance//rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-dot-segment",
+      "path": "conformance/./rvr-v0/vectors.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-dotdot-segment",
+      "path": "conformance/rvr-v0/../../../outside.json",
+      "expected": "REJECTED"
+    },
+    {
+      "id": "reject-colon-segment",
+      "path": "C:/outside.json",
+      "expected": "REJECTED"
+    }
+  ],
+  "profileSchemaBoundary": {
+    "alternateProfileId": "example-external-profile-v0",
+    "genericManifestMustAccept": true,
+    "sha256EqualsConstraintsMustAccept": false,
+    "tamperedConstraintsDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tamperedConstraintsPinMustReject": true
+  },
+  "verificationCases": {
+    "reproduced": {
+      "claim": {
+        "schema": "rvr.claim.sha256-equals.v0",
+        "operation": "SHA256_EQUALS",
+        "evidenceMember": "subject",
+        "expectedDigest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+      },
+      "evidenceSet": {
+        "schema": "rvr.evidence-set.v0",
+        "members": [
+          {
+            "id": "subject",
+            "status": "PRESENT",
+            "mediaType": "application/octet-stream",
+            "byteLength": "5",
+            "digest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+          }
+        ]
+      },
+      "payloadsBase64": {
+        "subject": "YWxwaGE="
+      }
+    },
+    "unverifiableReproduced": {
+      "claim": {
+        "schema": "rvr.claim.sha256-equals.v0",
+        "operation": "SHA256_EQUALS",
+        "evidenceMember": "subject",
+        "expectedDigest": "8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8"
+      },
+      "evidenceSet": {
+        "schema": "rvr.evidence-set.v0",
+        "members": [
+          {
+            "id": "subject",
+            "status": "UNAVAILABLE",
+            "reasonCode": "rvr.v0.evidence_unavailable"
+          }
+        ]
+      },
+      "payloadsBase64": {}
+    }
+  },
+  "negativeControls": {
+    "diverged": {
+      "baseCase": "reproduced",
+      "mutation": {
+        "kind": "replace-evidence-payload-and-rebuild-descriptor",
+        "memberId": "subject",
+        "replacementBase64": "YmV0YQ=="
+      },
+      "receiptClaimMustRemainFixed": true,
+      "evaluationMustRun": true
+    },
+    "cannotRecompute": {
+      "baseCase": "reproduced",
+      "unavailableDependencyId": "verification-specification",
+      "evaluationMustRun": false
+    },
+    "requiredDependencyIdentityMismatch": {
+      "baseCase": "reproduced",
+      "dependencyId": "verification-specification",
+      "replacementBase64": "dGFtcGVyZWQ=",
+      "evaluationMustRun": false
+    },
+    "presentPayloadUnresolved": {
+      "baseCase": "reproduced",
+      "removePayloadMemberId": "subject",
+      "evaluationMustRun": false
+    },
+    "resolvedPayloadIdentityMismatch": {
+      "baseCase": "reproduced",
+      "replacePayloadMemberId": "subject",
+      "replacementBase64": "YmV0YQ==",
+      "preserveEvidenceDescriptor": true,
+      "evaluationMustRun": false
+    },
+    "optionalDependencyNonsemantic": {
+      "baseCase": "reproduced",
+      "dependencyId": "expected-results",
+      "markUnavailable": true,
+      "replacementBase64": "dGFtcGVyZWQ=",
+      "mustEqualCase": "REPRODUCED"
+    },
+    "projectionContradiction": {
+      "baseCase": "reproduced",
+      "mutateReceiptField": "outcome",
+      "replacement": "REFUTED",
+      "preserveResultDigest": true
+    },
+    "hiddenState": {
+      "baseCase": "reproduced",
+      "outcomeRelevantInput": {
+        "name": "expectedDigestOverride",
+        "value": "f44e64e75f3948e9f73f8dfa94721c4ce8cbb4f265c4790c702b2d41cfbf2753",
+        "commitment": null
+      },
+      "unsafeCounterfactualMustChangeOutcome": true,
+      "evaluationMustRun": false
+    }
+  }
+}

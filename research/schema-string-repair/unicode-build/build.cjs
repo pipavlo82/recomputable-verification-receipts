@@ -25,7 +25,7 @@ module.exports = function compile(pattern) {
   return new RegExp(source);
 };`, resolveDir:base, sourcefile:'rvr-unicode17-entry.cjs'},
   bundle:true, platform:'node', format:'cjs', charset:'ascii', minify:false,
-  outfile:path.resolve(base,'../../../conformance/rvr-v0/ecma-unicode.cjs'),
+  outfile:path.resolve(base,'../../../profiles/generic-ucd17-v1/conformance/rvr-v0/ecma-unicode.cjs'),
   plugins:[{name:'static-unicode-property-table',setup(build){
     build.onLoad({filter:/rewrite-pattern\.js$/}, args=>{
       if(path.resolve(args.path)!==path.resolve(original)) return;
