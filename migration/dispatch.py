@@ -19,7 +19,10 @@ def pairs(xs):
 
 def parse(b):
  if len(b)>MAX_INPUT:raise ValueError('input too large')
- return json.loads(b.decode('utf-8'),object_pairs_hook=pairs,parse_constant=lambda _:(_ for _ in ()).throw(ValueError('nonfinite JSON')))
+ try:
+  return json.loads(b.decode('utf-8'),object_pairs_hook=pairs,parse_constant=lambda _:(_ for _ in ()).throw(ValueError('nonfinite JSON')))
+ except RecursionError as error:
+  raise ValueError('JSON decoder nesting limit exceeded') from error
 
 def canonical(x):
  if x is None:return 'null'
