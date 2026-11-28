@@ -38,6 +38,11 @@ of conformance; neither implementation is authoritative.
 
 ## RC2 review and discussion lane
 
+The optional [exact-profile migration candidate](migration/README.md) keeps the
+published and frozen adapters intact and routes new Unicode-17 receipts through
+a separately identified profile. Unknown identities have no upgrade fallback.
+It is a Draft research repair for independent review, not production approval.
+
 The frozen [`v0.0.1-rc.2` baseline](docs/review/RVR_V0_0_1_RC2_BASELINE.md)
 is followed by non-normative review material that does not change its profile
 or package identities:

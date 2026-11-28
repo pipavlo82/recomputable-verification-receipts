@@ -1,0 +1,43 @@
+{
+  "baseline": "ab476f466ad3f3c039b40b5174ec318da2ef8012",
+  "scenarios": 158,
+  "prior_scenarios": 97,
+  "new_scenarios": 61,
+  "cli_executions": 790,
+  "mismatches": 0,
+  "mutation_verdicts": {
+    "py-min": "KILLED",
+    "ts-min": "KILLED",
+    "py-max": "KILLED",
+    "ts-max": "KILLED",
+    "ts-utf16": "KILLED",
+    "py-implicit-fullmatch": "KILLED",
+    "py-no-unicode": "KILLED",
+    "ts-no-unicode": "KILLED",
+    "py-ref-skips-siblings": "KILLED",
+    "ts-ref-skips-siblings": "KILLED",
+    "py-ignore-target": "KILLED",
+    "py-regex-bypass": "KILLED",
+    "ts-regex-bypass": "KILLED",
+    "py-nonascii-digit-accepted": "KILLED",
+    "ts-nonascii-digit-accepted": "KILLED",
+    "py-integral-float": "KILLED",
+    "py-multiline-anchors": "KILLED",
+    "py-host-property-regression": "KILLED",
+    "ts-property-inversion": "KILLED",
+    "bundle-host-property-regression": "KILLED",
+    "bundle-native-names": "KILLED"
+  },
+  "mutation_executions": 126,
+  "inherited_command_count": 32,
+  "ucd": "17.0.0",
+  "runtime_files": {
+    "adapter.py": "bad733e21e0e833673e5cbab790cf3a4163b7b1f3d5f2bf14fad9c32b1135b78",
+    "adapter.ts": "43f6be6d0b7d12b8de8dc82cc1e4e0fec739cbd0cec80df24a441e273438fd53",
+    "ecma-unicode.cjs": "2d3b3ff7024c30fcda4ddc03e635883f5a417fe629c383453b23b194a3d17648",
+    "manifest.json": "39d7bc38de37cb77054b887f817ac4bf125a716cd809e3c0bf2bd0867c53bb56"
+  },
+  "policy": "Opt-in new laboratory contract only; no historical migration",
+  "publication": "HOLD: old profile does not authenticate Unicode17 policy; new production profile binding/migration not agreed",
+  "third_party_audit": false
+}

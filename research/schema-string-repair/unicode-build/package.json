@@ -1,0 +1,11 @@
+{
+  "name": "rvr-unicode-regex-research-build",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "esbuild": "0.28.2",
+    "regenerate-unicode-properties": "10.2.2",
+    "regexpu-core": "6.4.0",
+    "regjsparser": "0.13.0"
+  }
+}

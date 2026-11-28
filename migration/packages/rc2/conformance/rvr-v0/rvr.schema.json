@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rvr.dev/schemas/rvr.v0.schema.json",
+  "title": "Recomputable Verification Receipt v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claimDigest",
+    "evidenceSetDigest",
+    "verificationProfileDigest",
+    "outcome",
+    "reasonCode",
+    "resultDigest"
+  ],
+  "properties": {
+    "claimDigest": { "$ref": "#/$defs/digest" },
+    "evidenceSetDigest": { "$ref": "#/$defs/digest" },
+    "verificationProfileDigest": { "$ref": "#/$defs/digest" },
+    "outcome": { "$ref": "#/$defs/outcome" },
+    "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+    "resultDigest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9._-]*$"
+    },
+    "decimalLength": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "outcome": {
+      "enum": ["VERIFIED", "REFUTED", "UNVERIFIABLE"]
+    },
+    "verificationReasonCode": {
+      "enum": [
+        "rvr.v0.digest_match",
+        "rvr.v0.digest_mismatch",
+        "rvr.v0.required_evidence_unavailable"
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "operation", "evidenceMember", "expectedDigest"],
+      "properties": {
+        "schema": { "const": "rvr.claim.sha256-equals.v0" },
+        "operation": { "const": "SHA256_EQUALS" },
+        "evidenceMember": { "$ref": "#/$defs/identifier" },
+        "expectedDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "presentEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "mediaType", "byteLength", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "PRESENT" },
+        "mediaType": { "type": "string" },
+        "byteLength": { "$ref": "#/$defs/decimalLength" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "unavailableEvidenceMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "reasonCode"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "status": { "const": "UNAVAILABLE" },
+        "reasonCode": { "const": "rvr.v0.evidence_unavailable" }
+      }
+    },
+    "evidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "members"],
+      "properties": {
+        "schema": { "const": "rvr.evidence-set.v0" },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              { "$ref": "#/$defs/presentEvidenceMember" },
+              { "$ref": "#/$defs/unavailableEvidenceMember" }
+            ]
+          }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation", "evidenceMember", "expectedDigest", "observedDigest"],
+      "properties": {
+        "operation": { "const": "SHA256_EQUALS" },
+        "evidenceMember": { "$ref": "#/$defs/identifier" },
+        "expectedDigest": { "$ref": "#/$defs/digest" },
+        "observedDigest": {
+          "oneOf": [
+            { "$ref": "#/$defs/digest" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "canonicalResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "outcome", "reasonCode", "evaluation"],
+      "properties": {
+        "schema": { "const": "rvr.canonical-result.v0" },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "reasonCode": { "$ref": "#/$defs/verificationReasonCode" },
+        "evaluation": { "$ref": "#/$defs/evaluation" }
+      }
+    }
+  }
+}
